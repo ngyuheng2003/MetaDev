@@ -5,11 +5,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -40,7 +40,10 @@ public class StartUpController implements Initializable {
             startup = false;
         }
         else{
-
+            logo.setOpacity(0);
+            animation.fade(logo, 0.5, 0.5, 0, 1);
+            animation.fade(containerRight, 0.5, 0.5, 0, 1);
+            animation.fade(loginPane, 0.5, 0.5, 0, 1);
         }
     }
 
@@ -74,9 +77,6 @@ public class StartUpController implements Initializable {
         loginPane.toFront();
         animation.fade(otpPane, 0.5, 0, 1, 0);
         animation.fade(loginPane, 0.5, 0.5, 0, 1);
-        if(true){
-            newSignUpForm();
-        }
     }
 
     public void newSignUpForm(){
@@ -87,4 +87,7 @@ public class StartUpController implements Initializable {
     }
 
 
+    public void loginButtonClicked(ActionEvent event) throws IOException {
+        new StartUp(event, "NewsFeedView.fxml");
+    }
 }
