@@ -17,4 +17,12 @@ public class StartUp {
         Scene scene = new Scene(root, primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
         primaryStage.setScene(scene);
     }
+
+//    public StartUp(ActionEvent event, String fxml, String css) throws IOException {
+//        Parent root = FXMLLoader.load(Objects.requireNonNull(StartUp.class.getResource(fxml)));
+//        Stage primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//        Scene scene = new Scene(root, primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
+//        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource(css)).toExternalForm());
+//        primaryStage.setScene(scene);
+//    }
 }
