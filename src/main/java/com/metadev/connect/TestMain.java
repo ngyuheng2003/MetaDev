@@ -1,5 +1,10 @@
 package testmain;
 
+import com.metadev.connect.DatabaseSQL;
+import com.metadev.connect.UserRepository;
+import com.metadev.connect.UserRepositoryImpl;
+import com.metadev.connect.UserService;
+
 import java.io.File;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -11,6 +16,37 @@ import java.util.Scanner;
 public class TestMain {
 
     public static void main(String[] args) {
+        DatabaseSQL databaseSQL = new DatabaseSQL();
+        UserRepository userRepository = new UserRepositoryImpl(databaseSQL);
+        UserService userService = new UserService(userRepository);
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter username: ");
+        String username = sc.nextLine();
+
+        System.out.print("Enter password: ");
+        String password = sc.nextLine();
+
+        if (userService.registerUser(username, password)) {
+            System.out.println("User registered successfully!");
+        } else {
+            System.out.println("Failed to register user.");
+        }
+
+        System.out.print("Enter username to login: ");
+        String loginUsername = sc.nextLine();
+
+        System.out.print("Enter password to login: ");
+        String loginPassword = sc.nextLine();
+
+        if (userService.loginUser(loginUsername, loginPassword)) {
+            System.out.println("Login successful!");
+        } else {
+            System.out.println("Login failed.");
+        }
+
+        sc.close();
         Scanner scanner = new Scanner(System.in);
         boolean quit = false;
         CommentTree commentTree = new CommentTree();
