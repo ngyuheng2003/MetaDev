@@ -5,7 +5,6 @@ import javafx.event.ActionEvent;
 import java.io.IOException;
 
 public class SettingController {
-
     public void logoutButtonClicked(ActionEvent event) throws IOException {
         new StartUp(event, "StartUpView.fxml");
     }

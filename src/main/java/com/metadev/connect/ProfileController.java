@@ -6,8 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 
 public class ProfileController {
-
-    @FXML private Button postSectionButton, repliesSectionButton;
+    @FXML
+    private Button postSectionButton, repliesSectionButton;
     @FXML private VBox vbox;
 
     public void addPostButtonClicked(ActionEvent event) {

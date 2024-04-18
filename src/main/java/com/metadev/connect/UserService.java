@@ -1,10 +1,10 @@
 package com.metadev.connect;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import java.util.Base64;
-
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 public class UserService {

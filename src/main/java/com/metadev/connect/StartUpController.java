@@ -8,14 +8,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+@Component
 public class StartUpController implements Initializable {
-
-    @FXML private AnchorPane loginPane, signUpPane, otpPane;
+    @FXML
+    private AnchorPane loginPane, signUpPane, otpPane;
     @FXML private ImageView logo;
     @FXML private VBox containerRight;
     @FXML private TextField usernameSU, emailSU, passwordSU, conPasswordSU;

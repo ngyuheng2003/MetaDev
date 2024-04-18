@@ -4,13 +4,12 @@ import javafx.animation.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.ProgressIndicator;
 import javafx.util.Duration;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-public class Animation{
-
+public class Animation {
     PauseTransition pause = new PauseTransition();
 
     public void translateLeft(Node node, double duration, double delay, double distance){
@@ -21,27 +20,6 @@ public class Animation{
         translateLeft.setDelay(Duration.seconds(delay));
         translateLeft.setDuration(Duration.seconds(duration));
         translateLeft.play();
-    }
-
-    public void fade(Node node, double duration, double delay, double initialValue, double finalValue, String fxml){
-        FadeTransition fade = new FadeTransition();
-        fade.setNode(node);
-        fade.setInterpolator(Interpolator.EASE_BOTH);
-        fade.setDelay(Duration.seconds(delay));
-        fade.setDuration(Duration.seconds(duration));
-        fade.setFromValue(initialValue);
-        fade.setToValue(finalValue);
-        fade.setOnFinished(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    new StartUp(event, fxml);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-        fade.play();
     }
 
     public void fade(Node node, double duration, double delay, double initialValue, double finalValue){

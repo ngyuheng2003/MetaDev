@@ -1,28 +1,55 @@
 package com.metadev.connect;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
+import javafx.application.HostServices;
+import javafx.application.Platform;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
-import java.io.IOException;
-import java.util.Objects;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 
 public class StartApplication extends Application {
+
+    private ConfigurableApplicationContext context;
+
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("StartUpView.fxml")));
-        Scene scene = new Scene(root);
-        primaryStage.setTitle("Connect");
-        primaryStage.getIcons().add(new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("Images/Logo/logo_colour.png"))));
-        primaryStage.setScene(scene);
-        primaryStage.show();
+    public void init() throws Exception{
+        ApplicationContextInitializer<GenericApplicationContext> initializer =
+                new ApplicationContextInitializer<GenericApplicationContext>() {
+                    @Override
+                    public void initialize(GenericApplicationContext applicationContext) {
+                        applicationContext.registerBean(Application.class, ()-> StartApplication.this);
+                        applicationContext.registerBean(Parameters.class, ()-> getParameters());
+                        applicationContext.registerBean(HostServices.class, () -> getHostServices());
+                    }
+                };
+
+        this.context = new SpringApplicationBuilder()
+                .sources(ConnectApplication.class)
+                .initializers(initializer)
+                .run(getParameters().getRaw().toArray(new String[00]));
     }
 
-    public static void main(String[] args) {
-        launch();
+    @Override
+    public void start(Stage stage) throws Exception {
+        this.context.publishEvent(new StageReadyEvent(stage));
+    }
+
+    @Override
+    public void stop() throws Exception{
+        this.context.close();
+        Platform.exit();
+    }
+}
+
+class StageReadyEvent extends ApplicationEvent {
+    public Stage getStage(){
+        return (Stage) getSource();
+    }
+
+    public StageReadyEvent(Stage source) {
+        super(source);
     }
 }

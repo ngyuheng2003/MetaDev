@@ -3,7 +3,6 @@ package com.metadev.connect;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
@@ -11,8 +10,8 @@ import javafx.scene.text.Text;
 import java.io.IOException;
 
 public class AddPostController {
-
-    @FXML private AnchorPane addLocationPane, addTagsPane, emptyPane;
+    @FXML
+    private AnchorPane addLocationPane, addTagsPane, emptyPane;
     @FXML private TextArea postText;
     @FXML private Text postTextCount;
     boolean locationPaneDisplay = false;

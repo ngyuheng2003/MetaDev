@@ -1,12 +1,10 @@
-package testmain;
+package com.metadev.connect;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommentNode implements Serializable {
-
+public class CommentNode {
     private static final long serialVersionUID = 1L;
 
     private static int nextCommentId = 1;
@@ -84,5 +82,4 @@ public class CommentNode implements Serializable {
     public static boolean isValidCommentId(int commentId, int totalComments) {
         return commentId >= MIN_COMMENT_ID && commentId <= totalComments;
     }
-
 }

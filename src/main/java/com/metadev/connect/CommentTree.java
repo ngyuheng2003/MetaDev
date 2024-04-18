@@ -1,18 +1,12 @@
-package testmain;
+package com.metadev.connect;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommentTree implements Serializable {
-
+public class CommentTree {
     private static final long serialVersionUID = 1L;
     private CommentNode root;
     private int totalComments; // Counter for total comments
@@ -191,7 +185,7 @@ public class CommentTree implements Serializable {
         }
     }
 
-// Helper method to find the parent of a comment
+    // Helper method to find the parent of a comment
     private CommentNode findParent(CommentNode node) {
         for (CommentNode topLevelComment : topLevelComments) {
             CommentNode parent = findParentRecursive(topLevelComment, node);
@@ -202,7 +196,7 @@ public class CommentTree implements Serializable {
         return null;
     }
 
-// Recursive helper method to find the parent of a comment
+    // Recursive helper method to find the parent of a comment
     private CommentNode findParentRecursive(CommentNode currentNode, CommentNode nodeToFind) {
         if (currentNode.getChildComment().contains(nodeToFind)) {
             return currentNode;
@@ -228,5 +222,4 @@ public class CommentTree implements Serializable {
             e.printStackTrace();
         }
     }
-
 }

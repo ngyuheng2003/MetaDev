@@ -1,9 +1,10 @@
 package com.metadev.connect;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Date;
 
 public class AddPost {
-
     private String postText;
     private String[] tags;
     private String location;
@@ -15,10 +16,4 @@ public class AddPost {
         this.location = location;
         this.postCreatedDate = new Date();
     }
-
-
-
-
-
-
 }
