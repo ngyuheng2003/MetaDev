@@ -17,15 +17,15 @@ public class AddPostController {
     boolean locationPaneDisplay = false;
     boolean tagsPaneDisplay = false;
     public void postNextButtonClicked(ActionEvent event) throws IOException {
-        new StartUp(event, "NewsFeedView.fxml");
+        new StartUp(event, "/NewsFeedView.fxml");
     }
 
     public void resetButtonClicked(ActionEvent event) throws IOException {
-        new StartUp(event, "AddPostView.fxml");
+        new StartUp(event, "/AddPostView.fxml");
     }
 
     public void newsFeedButtonClicked(ActionEvent event) throws IOException {
-        new StartUp(event, "NewsFeedView.fxml");
+        new StartUp(event, "/NewsFeedView.fxml");
     }
 
     public void addLocationButtonClicked(ActionEvent event) {
@@ -67,6 +67,6 @@ public class AddPostController {
     }
 
     public void settingButtonClicked(ActionEvent event) throws IOException {
-        new StartUp(event, "SettingView.fxml");
+        new StartUp(event, "/SettingView.fxml");
     }
 }

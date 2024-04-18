@@ -29,7 +29,7 @@ public class StartApplication extends Application {
         this.context = new SpringApplicationBuilder()
                 .sources(ConnectApplication.class)
                 .initializers(initializer)
-                .run(getParameters().getRaw().toArray(new String[00]));
+                .run(getParameters().getRaw().toArray(new String[0]));
     }
 
     @Override
