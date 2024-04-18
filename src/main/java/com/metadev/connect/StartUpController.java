@@ -90,6 +90,6 @@ public class StartUpController implements Initializable {
 
 
     public void loginButtonClicked(ActionEvent event) throws IOException {
-        new StartUp(event, "NewsFeedView.fxml");
+        new StartUp(event, "/NewsFeedView.fxml");
     }
 }

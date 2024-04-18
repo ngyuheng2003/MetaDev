@@ -1,13 +1,8 @@
 package com.metadev.connect;
 
 import javafx.animation.*;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.util.Duration;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 
 public class Animation {
     PauseTransition pause = new PauseTransition();
