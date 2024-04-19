@@ -1,25 +1,25 @@
-#postSectionButton{
+#profileSelectedButton{
     -fx-background-color: rgb(211,211,211,0.5);
     -fx-background-radius: 20px;
 }
 
-#postSectionButton:hover{
+#profileSelectedButton:hover{
     -fx-background-color: rgb(211,211,211,0.75);
 }
 
-#postSectionButton:pressed{
+#profileSelectedButton:pressed{
     -fx-background-color: rgb(211,211,211);
 }
 
-#repliesSectionButton{
+#profileNotSelectedButton{
     -fx-background-color: transparent;
     -fx-background-radius: 20px;
 }
 
-#repliesSectionButton:hover{
+#profileNotSelectedButton:hover{
     -fx-background-color: rgb(211,211,211,0.75);
 }
 
-#repliesSectionButton:pressed{
+#profileNotSelectedButton:pressed{
     -fx-background-color: rgb(211,211,211);
 }

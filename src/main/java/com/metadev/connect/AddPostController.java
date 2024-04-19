@@ -16,6 +16,10 @@ public class AddPostController {
     @FXML private Text postTextCount;
     boolean locationPaneDisplay = false;
     boolean tagsPaneDisplay = false;
+
+    public void profileButtonClicked(ActionEvent event) throws IOException {
+        new StartUp(event, "/ProfileView.fxml");
+    }
     public void postNextButtonClicked(ActionEvent event) throws IOException {
         new StartUp(event, "/NewsFeedView.fxml");
     }

@@ -73,3 +73,16 @@
 #postButton:pressed{
     -fx-background-color: rgb(4,0,70);
 }
+
+#transparentButton{
+    -fx-background-color: rgb(211,211,211,0.5);
+    -fx-background-radius: 20px;
+}
+
+#transparentButton:hover{
+    -fx-background-color: rgb(211,211,211,0.75);
+}
+
+#transparentButton:pressed{
+    -fx-background-color: rgb(211,211,211);
+}
