@@ -674,7 +674,7 @@
                                     </HBox>
                                     <HBox>
                                        <children>
-                                          <Button id="navButton" mnemonicParsing="false" onAction="#logoutButtonClicked" prefHeight="65.0" prefWidth="595.0" style="-fx-text-fill: rgb(192, 64, 0)rgb(192, 64, 0);" text="Logout">
+                                          <Button id="navButton" mnemonicParsing="false" onAction="#logoutButtonClicked" prefHeight="65.0" prefWidth="595.0" style="-fx-text-fill: rgb(192, 64, 0);" text="Logout">
                                              <font>
                                                 <Font name="Roboto" size="22.0" />
                                              </font>
