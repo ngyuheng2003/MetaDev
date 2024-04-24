@@ -1,0 +1,35 @@
+
+
+#logo{
+    -fx-max-height:  332px;
+    -fx-max-width: 500px;
+}
+
+#TFInput{
+    -fx-background-color: transparent;
+    -fx-border-color: rgb(4,0,70);
+    -fx-border-width: 0 0 2px 0;
+    -fx-font-size: 15;
+}
+
+#acceptedTFInput{
+    -fx-background-color: transparent;
+    -fx-border-color: rgb(0,128,0);
+    -fx-border-width: 0 0 2px 0;
+    -fx-font-size: 15;
+}
+
+#rejectedTFInput{
+    -fx-background-color: transparent;
+    -fx-border-color: rgb(192, 64, 0);
+    -fx-border-width: 0 0 2px 0;
+    -fx-font-size: 15;
+}
+
+#passMessage{
+    -fx-fill: rgb(0,128,0);
+}
+
+#errorMessage{
+    -fx-fill: rgb(192, 64, 0);
+}
