@@ -3,50 +3,125 @@ package com.metadev.connect.Service;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.Optional;
-import java.util.regex.Pattern;
+import java.util.List;
 
-import com.metadev.connect.Controller.User;
+import com.metadev.connect.Controller.DataSourceConfig;
+import com.metadev.connect.RowMapper.UserRowMapper;
+import com.metadev.connect.Entity.User;
 import com.metadev.connect.Repository.UserRepository;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.stereotype.Service;
 
-public class UserService {
+@Service
+public class UserService implements UserRepository {
     private static final int SALT_LENGTH = 16; // Length of the salt in bytes
-    private final UserRepository userRepository;
+    private final DataSourceConfig dataSourceConfig = new DataSourceConfig();
+    private final JdbcTemplate jdbc = new JdbcTemplate(dataSourceConfig.getDataSource());
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+
+    @Override
+    public int registerNewUser(String username, String email, String password) {
+        String sql = """
+                    INSERT INTO 
+                    [dbo].[user] 
+                    ([username], [email], [password]) 
+                    VALUES 
+                    (?, ?, ?)
+                    """;
+        return jdbc.update(sql, username, email, hashPassword(password));
     }
 
-    public boolean registerUser(String username, String password) {
-        // Check if the username is already taken
-        if (userRepository.findByUsername(username).isPresent()) {
-            return false;
-        }
-
-        // Validate the password against the policy
-        if (!isPasswordValid(password)) {
-            return false;
-        }
-
-        // Hash the password with a salt and store the user
-        String hashedPassword = hashPassword(password);
-        User user = new User(username, hashedPassword);
-        userRepository.save(user);
-        return true;
+    @Override
+    public List<String> findUserByUsername(String username) throws InterruptedException {
+        String sql = """
+                    SELECT 
+                    username 
+                    FROM 
+                    [dbo].[user] 
+                    WHERE 
+                    username = ?
+                    """;
+        return jdbc.queryForList(sql, new Object[]{username}, String.class);
     }
 
-    public boolean loginUser(String username, String password) {
-        // Fetch the hashed password from the database for the given username
-        Optional<User> userOptional = userRepository.findByUsername(username);
-        if (userOptional.isEmpty()) {
+    @Override
+    public List<String> findUserUsernameById(Long user_id) throws InterruptedException {
+        String sql = """
+                    SELECT 
+                    username 
+                    FROM 
+                    [dbo].[user] 
+                    WHERE 
+                    user_id = ?
+                    """;
+        return jdbc.queryForList(sql, new Object[]{user_id}, String.class);
+    }
+
+    @Override
+    public List<String> findUserByEmail(String email) {
+        String sql = """
+                    SELECT 
+                    email 
+                    FROM 
+                    [dbo].[user] 
+                    WHERE 
+                    email = ?
+                    """;
+        return jdbc.queryForList(sql, new Object[]{email}, String.class);
+    }
+
+    @Override
+    public List<User> findUserInfoByUsername(String username) {
+        String sql = """
+                    SELECT 
+                    *
+                    FROM 
+                    [dbo].[user] 
+                    WHERE 
+                    username = ?
+                    """;
+        return jdbc.query(sql, new UserRowMapper(), username);
+
+    }
+
+    @Override
+    public boolean loginUserByEmail(String email, String password) {
+        String sql = """
+                    SELECT 
+                    * 
+                    FROM 
+                    [dbo].[user] 
+                    WHERE 
+                    email = ? AND password = ?
+                    """;
+        List<String> lists = jdbc.queryForList(sql, new Object[]{email, hashPassword(password)}, String.class);
+
+        return lists.isEmpty();
+    }
+
+    @Override
+    public boolean loginUserByUsername(String username, String inputPassword) {
+        String sql = """
+                    SELECT 
+                    password 
+                    FROM 
+                    [dbo].[user] 
+                    WHERE 
+                    username = ?
+                    """;
+        String userPassword;
+        try{
+            userPassword = jdbc.queryForObject(sql, new Object[]{username}, String.class);
+        }
+        catch(Exception e){
+            System.out.println(e);
             return false;
         }
-        User user = userOptional.get();
-
-        // Verify the password
-        return verifyPassword(password, user.getPassword());
+        return verifyPassword(inputPassword, userPassword);
     }
+
+    // Password Hashing
 
     private String hashPassword(String password) {
         try {
@@ -72,13 +147,9 @@ public class UserService {
         String hashedPassword = parts[1];
 
         // Hash the input password with the extracted salt and compare the result
-        String hashedInputPassword = BCrypt.hashpw(password, new String(salt));
         return BCrypt.checkpw(password, hashedPassword);
     }
 
-    private boolean isPasswordValid(String password) {
-        // Define the password policy rules
-        Pattern pattern = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=])(?=\\S+$).{8,}$");
-        return pattern.matcher(password).matches();
-    }
+
+
 }

@@ -53,13 +53,13 @@
                               </Text>
                               <HBox alignment="CENTER" layoutX="60.0" layoutY="470.0" prefHeight="35.0" prefWidth="380.0">
                                  <children>
-                                    <Button mnemonicParsing="false" onAction="#otpBackButtonClicked" prefHeight="35.0" prefWidth="135.0" style="-fx-background-color: #5D63E1; -fx-text-fill: white; -fx-background-radius: 27; -fx-font-size: 18; -fx-padding: 0;" text="Back">
+                                    <Button id="leftButton" mnemonicParsing="false" onAction="#otpBackButtonClicked" prefHeight="35.0" prefWidth="135.0" text="Back">
                                        <font>
                                           <Font name="Roboto" size="12.0" />
                                        </font>
                                     </Button>
                                     <Pane prefHeight="35.0" prefWidth="45.0" />
-                                    <Button mnemonicParsing="false" onAction="#otpVerifyButtonClicked" prefHeight="35.0" prefWidth="135.0" style="-fx-background-color: rgb(4,0,70); -fx-text-fill: white; -fx-background-radius: 27; -fx-font-size: 18; -fx-padding: 0;" text="Verify">
+                                    <Button id="rightButton" mnemonicParsing="false" onAction="#otpVerifyButtonClicked" prefHeight="35.0" prefWidth="135.0" text="Verify">
                                        <font>
                                           <Font name="Roboto" size="12.0" />
                                        </font>
@@ -72,6 +72,22 @@
                                     <Font name="HarmonyOS Sans SC" size="20.0" />
                                  </font>
                               </Text>
+                              <Pane layoutX="60.0" layoutY="315.0" prefHeight="70.0" prefWidth="380.0">
+                                 <children>
+                                    <VBox fx:id="signUpError" alignment="CENTER_LEFT" layoutY="16.0" opacity="0.0" prefHeight="40.0" prefWidth="380.0" style="-fx-background-radius: 10; -fx-background-color: rgb(4,0,70);">
+                                       <children>
+                                          <Text fx:id="signUpErrorMessage" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Signing up ...">
+                                             <font>
+                                                <Font name="Roboto" size="18.0" />
+                                             </font>
+                                          </Text>
+                                       </children>
+                                       <padding>
+                                          <Insets left="25.0" />
+                                       </padding>
+                                    </VBox>
+                                 </children>
+                              </Pane>
                            </children>
                         </AnchorPane>
                         <AnchorPane fx:id="signUpPane" minHeight="550.0" minWidth="500.0" opacity="0.0">
@@ -83,13 +99,13 @@
                               </Text>
                               <HBox alignment="CENTER" layoutX="60.0" layoutY="470.0" prefHeight="35.0" prefWidth="380.0">
                                  <children>
-                                    <Button mnemonicParsing="false" onAction="#signUpBackButtonClicked" prefHeight="35.0" prefWidth="135.0" style="-fx-background-color: #5D63E1; -fx-text-fill: white; -fx-background-radius: 27; -fx-font-size: 18; -fx-padding: 0;" text="Back">
+                                    <Button id="leftButton" mnemonicParsing="false" onAction="#signUpBackButtonClicked" prefHeight="35.0" prefWidth="135.0" text="Back">
                                        <font>
                                           <Font name="Roboto" size="12.0" />
                                        </font>
                                     </Button>
                                     <Pane prefHeight="35.0" prefWidth="45.0" />
-                                    <Button disable="true" fx:id="nextSignUpButton" mnemonicParsing="false" onAction="#signUpNextButtonClicked" prefHeight="35.0" prefWidth="135.0" style="-fx-background-color: rgb(4,0,70); -fx-text-fill: white; -fx-background-radius: 27; -fx-font-size: 18; -fx-padding: 0;" text="Next">
+                                    <Button id="rightButton" fx:id="nextSignUpButton" disable="true" mnemonicParsing="false" onAction="#signUpNextButtonClicked" prefHeight="35.0" prefWidth="135.0" text="Next">
                                        <font>
                                           <Font name="Roboto" size="12.0" />
                                        </font>
@@ -158,12 +174,26 @@
                                     <Font name="HarmonyOS Sans SC" size="70.0" />
                                  </font>
                               </Text>
-                              <Pane layoutX="60.0" layoutY="152.6666717529297" prefHeight="70.0" prefWidth="380.0" />
-                              <TextField layoutX="60.0" layoutY="230.0" prefHeight="40.0" prefWidth="380.0" promptText="Username / Email Address" style="-fx-background-color: transparent; -fx-border-color: rgb(4,0,70); -fx-border-width: 0 0 2px 0; -fx-font-size: 15;" />
+                              <Pane layoutX="60.0" layoutY="152.6666717529297" prefHeight="70.0" prefWidth="380.0">
+                                 <children>
+                                    <VBox fx:id="loginError" alignment="CENTER_LEFT" layoutY="16.0" opacity="0.0" prefHeight="40.0" prefWidth="380.0" style="-fx-background-radius: 10; -fx-background-color: rgb(4,0,70);">
+                                       <children>
+                                          <Text fx:id="loginErrorMessage" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Logging in ...">
+                                             <font>
+                                                <Font name="Roboto" size="18.0" />
+                                             </font>
+                                          </Text>
+                                       </children>
+                                       <padding>
+                                          <Insets left="25.0" />
+                                       </padding>
+                                    </VBox>
+                                 </children></Pane>
+                              <TextField fx:id="usernameLI" layoutX="60.0" layoutY="230.0" prefHeight="40.0" prefWidth="380.0" promptText="Username / Email Address" style="-fx-background-color: transparent; -fx-border-color: rgb(4,0,70); -fx-border-width: 0 0 2px 0; -fx-font-size: 15;" />
                               <Pane layoutX="60.0" layoutY="282.6666564941406" prefHeight="20.0" prefWidth="380.0" />
-                              <TextField layoutX="60.0" layoutY="310.0" prefHeight="40.0" prefWidth="380.0" promptText="Password" style="-fx-background-color: transparent; -fx-border-color: rgb(4,0,70); -fx-border-width: 0 0 2px 0; -fx-font-size: 15;" />
+                              <PasswordField fx:id="passwordLI" layoutX="60.0" layoutY="310.0" prefHeight="40.0" prefWidth="380.0" promptText="Password" style="-fx-background-color: transparent; -fx-border-color: rgb(4,0,70); -fx-border-width: 0 0 2px 0; -fx-font-size: 15;" />
                               <Pane layoutX="60.0" layoutY="362.6666564941406" prefHeight="40.0" prefWidth="380.0" />
-                              <Button layoutX="60.0" layoutY="410.0" mnemonicParsing="false" onAction="#loginButtonClicked" prefHeight="40.0" prefWidth="380.0" style="-fx-background-color: rgb(4,0,70); -fx-text-fill: white; -fx-background-radius: 27; -fx-font-size: 18; -fx-padding: 0;" text="Login">
+                              <Button id="rightButton" layoutX="60.0" layoutY="410.0" mnemonicParsing="false" onAction="#loginButtonClicked" prefHeight="40.0" prefWidth="380.0" text="Login">
                                  <font>
                                     <Font name="Roboto" size="12.0" />
                                  </font>

@@ -1,18 +1,61 @@
 package com.metadev.connect.FXMLController;
 
 import com.metadev.connect.Controller.StartUp;
+import com.metadev.connect.Entity.Post;
+import com.metadev.connect.Entity.User;
+import com.metadev.connect.Entity.UserLogined;
+import com.metadev.connect.Service.PostService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import org.springframework.security.core.parameters.P;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
-public class NewsFeedController {
+public class NewsFeedController implements Initializable {
 
-    @FXML private VBox newsFeedPane, searchPane;
+    @FXML private VBox newsFeedPane, searchPane, newFeedPostContainer;
     @FXML private TextField searchTF;
+    @FXML private Button usernameButton;
+
+    private List<Post> listOfPost;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        PostService postService = new PostService();
+        usernameButton.setText(UserLogined.getUsername());
+
+        listOfPost = postService.fetchPost();
+        try {
+            for (int i = 0; i < listOfPost.size(); i++) {
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                fxmlLoader.setLocation(getClass().getResource("/postContainer.fxml"));
+                VBox newFeedPostBox = fxmlLoader.load();
+                PostContainerController postContainerController = fxmlLoader.getController();
+                postContainerController.setPostContainer(listOfPost.get(i));
+                newFeedPostContainer.getChildren().add(newFeedPostBox);
+
+            }
+        }catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
+
+
     public void addPostButtonClicked(ActionEvent event) throws IOException {
         new StartUp(event, "/AddPostView.fxml");
     }
@@ -37,4 +80,6 @@ public class NewsFeedController {
             newsFeedPane.setOpacity(0);
         }
     }
+
+
 }

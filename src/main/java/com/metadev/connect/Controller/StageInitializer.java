@@ -24,10 +24,15 @@ public class StageInitializer implements ApplicationListener<StageReadyEvent> {
 
     public StageInitializer(@Value("${spring.application.name}") String applicationTitle,
                             @Value("classpath:/StartUpView.fxml") Resource resourse,
-                            ApplicationContext context) {
+                            ApplicationContext context,
+                            @Value("${spring.datasource.url}") String url,
+                            @Value("${spring.datasource.username}") String username,
+                            @Value("${spring.datasource.password}")String password) {
         this.applicationTitle = applicationTitle;
         this.fxml = resourse;
         this.context = context;
+        new DataSourceConfig(url, username, password);
+
     }
 
 

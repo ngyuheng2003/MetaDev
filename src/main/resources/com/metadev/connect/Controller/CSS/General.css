@@ -23,6 +23,11 @@
 
 .scroll-pane{
     -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.scroll-bar{
+    -fx-opacity: 0;
 }
 
 /* Add Tags */

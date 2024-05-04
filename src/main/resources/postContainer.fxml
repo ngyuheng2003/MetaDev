@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="-Infinity" maxWidth="595.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="580.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.metadev.connect.FXMLController.PostContainerController">
+   <children>
+      <AnchorPane prefHeight="100.0" prefWidth="595.0">
+         <children>
+            <ImageView fx:id="post_profileImage" fitHeight="50.0" fitWidth="50.0" layoutX="30.0" layoutY="20.0" preserveRatio="true">
+               <image>
+                  <Image url="@Images/General/defaultProfilePic_icon.png" />
+               </image>
+            </ImageView>
+            <Text fx:id="post_username" layoutX="100.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" text="username" wrappingWidth="300.0">
+               <font>
+                  <Font name="Roboto" size="20.0" />
+               </font>
+            </Text>
+            <Text fx:id="post_createdDate" layoutX="101.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" text="post_date" />
+         </children>
+      </AnchorPane>
+      <VBox prefHeight="100.0" prefWidth="510.0">
+         <children>
+            <Text fx:id="post_content" strokeType="OUTSIDE" strokeWidth="0.0" text="Content" wrappingWidth="510.0">
+               <font>
+                  <Font name="Roboto" size="20.0" />
+               </font>
+            </Text>
+         </children>
+         <VBox.margin>
+            <Insets left="40.0" right="40.0" />
+         </VBox.margin>
+      </VBox>
+   </children>
+</VBox>
