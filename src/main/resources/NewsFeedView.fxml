@@ -65,7 +65,7 @@
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#profileButtonClicked" prefHeight="50.0" prefWidth="215.0" style="-fx-background-color: transparent; -fx-background-radius: 15; -fx-alignment: center_left; -fx-line-spacing: 50;" text="UsernameN/A">
+                              <Button fx:id="usernameButton" mnemonicParsing="false" onAction="#profileButtonClicked" prefHeight="50.0" prefWidth="215.0" style="-fx-background-color: transparent; -fx-background-radius: 15; -fx-alignment: center_left; -fx-line-spacing: 50;" text="UsernameN/A">
                                  <font>
                                     <Font name="Roboto" size="20.0" />
                                  </font>
@@ -144,28 +144,32 @@
             </ScrollPane>
             <ScrollPane prefHeight="640.0" prefWidth="600.0" style="-fx-background-color: transparent;">
               <content>
-                  <AnchorPane>
+                  <VBox fx:id="newFeedPostContainer">
                      <children>
-                        <VBox fx:id="searchPane" opacity="0.0">
+                        <AnchorPane>
                            <children>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="595.0" />
-                           </children>
-                        </VBox>
-                        <VBox fx:id="newsFeedPane">
-                           <children>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="595.0">
+                              <VBox fx:id="searchPane" opacity="0.0">
                                  <children>
-                                    <Text layoutX="14.0" layoutY="75.0" strokeType="OUTSIDE" strokeWidth="0.0" text="News Feed">
-                                       <font>
-                                          <Font name="ABeeZee Regular" size="35.0" />
-                                       </font>
-                                    </Text>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="595.0" />
                                  </children>
-                              </AnchorPane>
+                              </VBox>
+                              <VBox fx:id="newsFeedPane">
+                                 <children>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="595.0">
+                                       <children>
+                                          <Text layoutX="14.0" layoutY="75.0" strokeType="OUTSIDE" strokeWidth="0.0" text="News Feed">
+                                             <font>
+                                                <Font name="ABeeZee Regular" size="35.0" />
+                                             </font>
+                                          </Text>
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </VBox>
                            </children>
-                        </VBox>
+                        </AnchorPane>
                      </children>
-                  </AnchorPane>
+                  </VBox>
               </content>
             </ScrollPane>
             <VBox prefHeight="200.0" prefWidth="300.0" />

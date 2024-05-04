@@ -1,6 +1,13 @@
 package com.metadev.connect.FXMLController;
 
 import com.metadev.connect.Controller.StartUp;
+import com.metadev.connect.Controller.Validation;
+import com.metadev.connect.Entity.Post;
+import com.metadev.connect.Entity.UserLogined;
+import com.metadev.connect.Service.PostService;
+import com.metadev.connect.Service.UserService;
+import com.metadev.connect.ThreadPool.ThreadPool;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
@@ -9,6 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 public class AddPostController {
     @FXML
@@ -17,12 +25,35 @@ public class AddPostController {
     @FXML private Text postTextCount;
     boolean locationPaneDisplay = false;
     boolean tagsPaneDisplay = false;
+    private ThreadPool threadPoolAddPost;
 
     public void profileButtonClicked(ActionEvent event) throws IOException {
         new StartUp(event, "/ProfileView.fxml");
     }
-    public void postNextButtonClicked(ActionEvent event) throws IOException {
-        new StartUp(event, "/NewsFeedView.fxml");
+    public void postNextButtonClicked(ActionEvent event) throws Exception {
+        threadPoolAddPost = new ThreadPool(1,1);
+        Post newPost = new Post(null,UserLogined.getUserId(),postText.getText(),null, null,0, null);
+        threadPoolAddPost.execute(()-> {
+            System.out.println("Creating post ...");
+            PostService postService = new PostService();
+            boolean status = postService.createPost(newPost) == 1;
+            if(status) {
+                System.out.println("Post created successfully");
+                threadPoolAddPost.stop();
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            new StartUp(event, "/NewsFeedView.fxml");
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+                });
+            }
+
+        });
     }
 
     public void resetButtonClicked(ActionEvent event) throws IOException {

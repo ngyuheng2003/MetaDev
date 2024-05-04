@@ -1,11 +1,14 @@
 package com.metadev.connect.Controller;
 
+import com.metadev.connect.Service.UserService;
+
 public class Validation {
+    static UserService userService = new UserService();
 
     // Validation for Username
 
-    public static boolean checkUsernameExisted(String username){
-        return false; // Connect this to UserService
+    public static boolean checkUsernameExisted(String username) throws InterruptedException {
+        return !(userService.findUserByUsername(username)).isEmpty(); // Connect this to UserService
     }
 
     public static boolean checkUsernameLengthMin(String username){
@@ -31,7 +34,7 @@ public class Validation {
     // Validation for Email Address
 
     public static boolean checkEmailExisted(String email){
-        return false; // Connect this to UserService
+        return !(userService.findUserByEmail(email)).isEmpty();
     }
 
     public static boolean checkEmailFormat(String email){
@@ -80,5 +83,11 @@ public class Validation {
                 return true;
         }
         return false;
+    }
+
+    // Login
+
+    public static boolean loginUsingUsername(String username, String password){
+        return userService.loginUserByUsername(username, password);
     }
 }
