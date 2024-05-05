@@ -1,0 +1,32 @@
+#threeDot_icon{
+    -fx-background-radius: 50;
+    -fx-background-color: transparent;
+}
+
+#threeDot_icon:hover{
+    -fx-background-color: rgb(211,211,211,0.6);
+}
+
+#threeDot_icon:pressed{
+    -fx-background-color: rgb(211,211,211);
+}
+
+#menu_button{
+    -fx-background-radius: 10;
+    -fx-background-color: transparent;
+}
+
+#menu_button:hover{
+    -fx-background-color: rgb(211,211,211,0.6);
+}
+
+#menu_button:pressed{
+    -fx-background-color: rgb(211,211,211);
+}
+
+#menu_container{
+    -fx-background-color: white;
+    -fx-effect: dropshadow(two-pass-box, grey, 15, 0, 2, 2);
+    -fx-background-radius: 10;
+
+}
