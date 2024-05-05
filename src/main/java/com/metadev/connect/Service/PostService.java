@@ -51,10 +51,11 @@ public class PostService implements PostRepository {
     @Override
     public List<Post> fetchPost() {
         String sql = """
-                    SELECT TOP 5
+                    SELECT TOP 10
                     *
                     FROM 
-                    [dbo].[post] 
+                    [dbo].[post]
+                    ORDER BY post_created_date DESC 
                     """;
         return jdbc.query(sql, new PostRowMapper());
     }

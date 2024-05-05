@@ -340,20 +340,29 @@ public class StartUpController implements Initializable{
         UserService userService = new UserService();
         signUpError.setStyle("-fx-background-radius: 10; -fx-background-color: rgb(4,0,70);");
         signUpErrorMessage.setText("Signing up ...");
+        signUpError.setOpacity(1);
         threadPoolSU.execute(()->{
             System.out.println("Checking register status ...");
             boolean status = userService.registerNewUser(usernameSU.getText(), emailSU.getText(), passwordSU.getText()) == 1;
-            if(status) {
-                loginPane.toFront();
-                animation.fade(otpPane, 0.5, 0, 1, 0);
-                animation.fade(loginPane, 0.5, 0.5, 0, 1);
-                threadPoolLI = new ThreadPool(1, 1);
-                loginErrorMessage.setText("Sign up successfully");
-                loginError.setOpacity(1);
-            } else {
-                signUpErrorMessage.setText("Error when signing up");
-                signUpError.setStyle("-fx-background-radius: 10; -fx-background-color: rgb(192, 64, 0);");
-            }
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    if(status) {
+
+                        loginPane.toFront();
+                        animation.fade(otpPane, 0.5, 0, 1, 0);
+                        animation.fade(loginPane, 0.5, 0.5, 0, 1);
+                        threadPoolLI = new ThreadPool(1, 1);
+                        loginErrorMessage.setText("Sign up successfully");
+                        loginError.setOpacity(1);
+                    } else {
+                        signUpErrorMessage.setText("Error when signing up");
+                        signUpError.setStyle("-fx-background-radius: 10; -fx-background-color: rgb(192, 64, 0);");
+                    }
+                }
+
+            });
+
         });
 
     }
