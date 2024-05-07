@@ -47,6 +47,20 @@ public class PostContainerController {
                 postService.getLikeCount(post.getPostId()),
                 postService.getUserLikeStatus(post.getPostId(), UserLogined.getUserId()
                 ));
+        if(like.getUserLikeStatus()){
+            postLikeButton.setId("postLikeTrue");
+            ImageView icon = new ImageView("Images/General/love_icon_resized_red.png");
+            icon.setFitHeight(20);
+            icon.setFitWidth(20);
+            postLikeButton.setGraphic(icon);
+        }
+        else{
+            postLikeButton.setId("postLikeFalse");
+            ImageView icon = new ImageView("Images/General/love_icon_resized.png");
+            icon.setFitHeight(20);
+            icon.setFitWidth(20);
+            postLikeButton.setGraphic(icon);
+        }
         post_like_counter.setText(String.valueOf(like.getTotalNumOfLikes()));
 
 
@@ -84,7 +98,22 @@ public class PostContainerController {
                 @Override
                 public void run() {
                     post_like_counter.setText(String.valueOf(like.getTotalNumOfLikes()));
+                    if(like.getUserLikeStatus()){
+                        postLikeButton.setId("postLikeTrue");
+                        ImageView icon = new ImageView("Images/General/love_icon_resized_red.png");
+                        icon.setFitHeight(20);
+                        icon.setFitWidth(20);
+                        postLikeButton.setGraphic(icon);
+                    }
+                    else{
+                        postLikeButton.setId("postLikeFalse");
+                        ImageView icon = new ImageView("Images/General/love_icon_resized.png");
+                        icon.setFitHeight(20);
+                        icon.setFitWidth(20);
+                        postLikeButton.setGraphic(icon);
+                    }
                 }
+
             });
             // Terminating the thread
             threadPoolPostContainer.stop();

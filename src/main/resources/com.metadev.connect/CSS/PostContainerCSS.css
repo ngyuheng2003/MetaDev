@@ -37,20 +37,35 @@
 
 }
 
-#actionButton{
-    -fx-background-color: transparent;
-    -fx-background-radius: 5;
-}
-
-#actionButton:hover{
-    -fx-background-color: rgb(211,211,211,0.4);
-
-}
 
 .text-area, .text-area .viewport, .text-area .content{
     -fx-background-color: transparent;
 }
 
-#actionButton:pressed{
-    -fx-background-color: rgb(211,211,211, 0.8);
+#postLikeTrue{
+    -fx-background-color: transparent;
+    -fx-background-radius: 5;
+    -fx-text-fill: rgb(192, 64, 0);
+}
+
+#postLikeTrue:hover{
+    -fx-background-color: rgb(211,211,211,0.4);
+}
+
+#postLikeTrue:pressed{
+    -fx-background-color: rgb(211,211,211,0.4);
+}
+
+#postLikeFalse{
+    -fx-background-color: transparent;
+    -fx-background-radius: 5;
+    -fx-text-fill: rgb(0,0,0);
+}
+
+#postLikeFalse:hover{
+    -fx-background-color: rgb(211,211,211,0.4);
+}
+
+#postLikeFalse:pressed{
+    -fx-background-color: rgb(211,211,211,0.4);
 }

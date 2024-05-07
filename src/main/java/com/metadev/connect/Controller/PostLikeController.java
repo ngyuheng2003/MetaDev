@@ -4,11 +4,11 @@ import com.metadev.connect.Service.PostService;
 
 public class PostLikeController {
     private int totalNumOfLikes;
-    private boolean liked; // Added boolean variable to track whether the post has been liked
+    private boolean userLikeStatus; // Added boolean variable to track whether the post has been liked
 
     public PostLikeController(int totalNumOfLikes, boolean userLikeStatus) {
         this.totalNumOfLikes = totalNumOfLikes;
-        this.liked = userLikeStatus; // Initialize liked to false
+        this.userLikeStatus = userLikeStatus; // Initialize liked to false
     }
 
     public int getTotalNumOfLikes() {
@@ -19,24 +19,20 @@ public class PostLikeController {
         this.totalNumOfLikes = totalNumOfLikes;
     }
 
-    public boolean isLiked() {
-        return liked;
-    }
-
-    public void setLiked(boolean liked) {
-        this.liked = liked;
+    public boolean getUserLikeStatus() {
+        return userLikeStatus;
     }
 
     public void setUserLikeStatus(Long post_id, Long user_id){
         PostService postService = new PostService();
-        if (!liked) {
+        if (!userLikeStatus) {
             postService.addLike(post_id, user_id);
-            liked = true; // Set liked to true to indicate that the user has liked the post
+            userLikeStatus = true; // Set liked to true to indicate that the user has liked the post
             System.out.println("POSTL: Post like added successfully.");
             totalNumOfLikes = postService.getLikeCount(post_id);
         } else {
             postService.removeLike(post_id, user_id);
-            liked = false; // Set liked to true to indicate that the user has liked the post
+            userLikeStatus = false; // Set liked to true to indicate that the user has liked the post
             System.out.println("POSTL: Post like remove successfully.");
             totalNumOfLikes = postService.getLikeCount(post_id);
         }
