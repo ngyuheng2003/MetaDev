@@ -5,6 +5,8 @@ import com.metadev.connect.Entity.Post;
 import com.metadev.connect.Entity.User;
 import com.metadev.connect.Entity.UserLogined;
 import com.metadev.connect.Service.PostService;
+import com.metadev.connect.ThreadPool.ThreadPool;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,7 +25,7 @@ import java.util.ResourceBundle;
 
 public class NewsFeedController implements Initializable {
 
-    @FXML private VBox newsFeedPane, searchPane, newFeedPostContainer;
+    @FXML private VBox newsFeedPane, searchPane, newFeedPostContainer,loadingContainer, middleContainer;
     @FXML private TextField searchTF;
     @FXML private Button usernameButton;
 
@@ -31,30 +33,38 @@ public class NewsFeedController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        ThreadPool threadPoolFetchPost = new ThreadPool(1, 1);
         PostService postService = new PostService();
         usernameButton.setText(UserLogined.getUsername());
-
-        listOfPost = postService.fetchPost();
         try {
-            for (int i = 0; i < listOfPost.size(); i++) {
-                FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("/postContainer.fxml"));
-                VBox newFeedPostBox = fxmlLoader.load();
-                PostContainerController postContainerController = fxmlLoader.getController();
-                postContainerController.setPostContainer(listOfPost.get(i));
-                newFeedPostContainer.getChildren().add(newFeedPostBox);
-
-            }
-        }catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+            threadPoolFetchPost.execute(()->{
+                System.out.println("NEWFD: Fetching New Feeds ...");
+                listOfPost = postService.fetchPost();
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        middleContainer.getChildren().remove(loadingContainer);
+                        try {
+                            for(int i = 0; i < listOfPost.size(); i++) {
+                                FXMLLoader fxmlLoader = new FXMLLoader();
+                                fxmlLoader.setLocation(getClass().getResource("/postContainer.fxml"));
+                                VBox newFeedPostBox = fxmlLoader.load();
+                                PostContainerController postContainerController = fxmlLoader.getController();
+                                postContainerController.setPostContainer(listOfPost.get(i));
+                                newFeedPostContainer.getChildren().add(newFeedPostBox);
+                            }
+                        }catch (IOException | InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+                System.out.println("NEWFD: Fetching completed ...");
+                threadPoolFetchPost.stop();
+            });
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-
-
-
-
 
     public void addPostButtonClicked(ActionEvent event) throws IOException {
         new StartUp(event, "/AddPostView.fxml");

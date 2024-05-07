@@ -37,7 +37,7 @@ public class StartUpController implements Initializable{
     @FXML private Hyperlink signUpHyperLink;
     @FXML private Text usernameSUMessage, emailSUMessage, passwordSUMessage, confirmPasswordSUMessage;
     @FXML private Text loginErrorMessage,signUpErrorMessage;
-    @FXML private Button nextSignUpButton;
+    @FXML private Button nextSignUpButton, loginButton;
 
     private static boolean startup = true;
     private boolean usernameValidate = false, emailValidate = false;
@@ -45,7 +45,7 @@ public class StartUpController implements Initializable{
 
     Animation animation = new Animation();
 
-    private ThreadPool threadPoolLI, threadPoolSUUsername, threadPoolSUEmail, threadPoolSU;
+    private ThreadPool threadPoolSUUsername, threadPoolSUEmail, threadPoolSU;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -67,43 +67,59 @@ public class StartUpController implements Initializable{
             animation.fade(containerRight, 0.5, 0.5, 0, 1);
             animation.fade(loginPane, 0.5, 0.5, 0, 1);
         }
-        threadPoolLI = new ThreadPool(1, 2);
-
     }
 
     // Login Pane
 
     public void loginButtonClicked(ActionEvent event) throws Exception {
         loginError.setOpacity(1);
-        loginError.setStyle("-fx-background-radius: 10; -fx-background-color: rgb(4,0,70);");
-        loginErrorMessage.setText("Logging in ...");
-        threadPoolLI.execute(()-> {
-            System.out.println("Checking login credential ...");
-            boolean status = Validation.loginUsingUsername(usernameLI.getText(), passwordLI.getText());
-            if (status) {
-                UserService userService = new UserService();
-                System.out.println("Login successful");
-                threadPoolLI.stop();
-                new UserLogined(userService.findUserInfoByUsername(usernameLI.getText()).getFirst());
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            new StartUp(event, "/NewsFeedView.fxml");
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
+        loginButton.setDisable(true);
+        // Checking whether any input is blank
+        if(usernameLI.getText().isBlank() || passwordLI.getText().isBlank()){
+            loginError.setStyle("-fx-background-radius: 10; -fx-background-color: rgb(192, 64, 0);");
+            loginErrorMessage.setText("Username or password shouldn't be blank");
+            System.out.println("ERROR: Input is blanked");
+            loginButton.setDisable(false);
+        }
+        else{
+            // Telling the user the program is logging the user in
+            loginError.setStyle("-fx-background-radius: 10; -fx-background-color: rgb(4,0,70); -fx-font-size: 18px");
+            loginErrorMessage.setText("Logging in ...");
+            // Creating a thread for checking credentials in database
+            ThreadPool threadPoolLI = new ThreadPool(1, 2);
+            // Using the thread to search in the database
+            threadPoolLI.execute(() -> {
+                System.out.println("LOGIN: Checking login credential ...");
+                // Get login status based on user input
+                boolean status = Validation.loginUsingUsername(usernameLI.getText(), passwordLI.getText());
+                // Using result from database to decide next step
+                if (status) {
+                    // Allow user to enter the program
+                    UserService userService = new UserService();
+                    System.out.println("LOGIN: Login successful");
+                    new UserLogined(userService.findUserInfoByUsername(usernameLI.getText()).getFirst());
+                    // Switching to the next scene
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                new StartUp(event, "/NewsFeedView.fxml");
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
-                    }
-
-                });
-            } else {
-                loginError.setStyle("-fx-background-radius: 10; -fx-background-color: rgb(192, 64, 0);");
-                loginErrorMessage.setText("Incorrect username or password");
-            }
-        });
-
-
-
+                    });
+                } else {
+                    // Prompt user that the input from them is wrong and need to try again
+                    loginError.setStyle("-fx-background-radius: 10; -fx-background-color: rgb(192, 64, 0);");
+                    loginErrorMessage.setText("Incorrect username or password");
+                    loginButton.setDisable(false);
+                    System.out.println("ERROR: Incorrect credentials");
+                }
+                // Terminating the thread after finish executing
+                threadPoolLI.stop();
+            });
+        }
     }
 
     public void signUpButtonClicked(ActionEvent event) {
@@ -112,8 +128,6 @@ public class StartUpController implements Initializable{
         animation.fade(loginPane, 0.5, 0, 1, 0);
         animation.fade(signUpPane, 0.5, 0.5, 0, 1);
         newSignUpForm();
-        loginErrorMessage.setOpacity(0);
-        threadPoolLI.stop();
         threadPoolSUUsername = new ThreadPool(1, 1);
         threadPoolSUEmail = new ThreadPool(1, 1);
     }
@@ -121,11 +135,15 @@ public class StartUpController implements Initializable{
     // Sign Up Pane
 
     public void signUpBackButtonClicked(ActionEvent event) {
+        // Switching back to login pane
         loginPane.toFront();
+        loginError.setOpacity(0);
         animation.fade(signUpPane, 0.5, 0, 1, 0);
         animation.fade(loginPane, 0.5, 0.5, 0, 1);
+        // Terminating thread
         threadPoolSUUsername.stop();
         threadPoolSUEmail.stop();
+
     }
 
     public void signUpNextButtonClicked(ActionEvent event) {
@@ -348,11 +366,9 @@ public class StartUpController implements Initializable{
                 @Override
                 public void run() {
                     if(status) {
-
                         loginPane.toFront();
                         animation.fade(otpPane, 0.5, 0, 1, 0);
                         animation.fade(loginPane, 0.5, 0.5, 0, 1);
-                        threadPoolLI = new ThreadPool(1, 1);
                         loginErrorMessage.setText("Sign up successfully");
                         loginError.setOpacity(1);
                     } else {

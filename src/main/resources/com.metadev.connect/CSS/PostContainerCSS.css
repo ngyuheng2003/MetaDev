@@ -1,3 +1,9 @@
+#container{
+    -fx-background-color: rgb(255, 255, 255);
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(two-pass-box, grey, 5, 0, 0, 0);
+}
+
 #threeDot_icon{
     -fx-background-radius: 50;
     -fx-background-color: transparent;
@@ -26,7 +32,25 @@
 
 #menu_container{
     -fx-background-color: white;
-    -fx-effect: dropshadow(two-pass-box, grey, 15, 0, 2, 2);
+    -fx-effect: dropshadow(two-pass-box, grey, 5, 0, 0, 0);
     -fx-background-radius: 10;
 
+}
+
+#actionButton{
+    -fx-background-color: transparent;
+    -fx-background-radius: 5;
+}
+
+#actionButton:hover{
+    -fx-background-color: rgb(211,211,211,0.4);
+
+}
+
+.text-area, .text-area .viewport, .text-area .content{
+    -fx-background-color: transparent;
+}
+
+#actionButton:pressed{
+    -fx-background-color: rgb(211,211,211, 0.8);
 }
