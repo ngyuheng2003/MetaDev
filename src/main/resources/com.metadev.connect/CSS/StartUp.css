@@ -33,3 +33,37 @@
 #errorMessage{
     -fx-fill: rgb(192, 64, 0);
 }
+
+/* Bottom Button */
+#leftButton{
+    -fx-background-color: rgb(93,99, 225);
+    -fx-text-fill: white;
+    -fx-background-radius: 27;
+    -fx-font-size: 18;
+    -fx-padding: 0;
+}
+
+#leftButton:hover{
+    -fx-background-color: rgb(93,99, 225, 0.8);
+}
+
+#leftButton:pressed{
+    -fx-background-color: rgb(93,99, 225);
+}
+
+
+#rightButton{
+    -fx-background-color: rgb(4,0,70);
+    -fx-text-fill: white;
+    -fx-background-radius: 27;
+    -fx-font-size: 18;
+    -fx-padding: 0;
+}
+
+#rightButton:hover{
+    -fx-background-color: rgb(4,0,70, 0.8);
+}
+
+#rightButton:pressed{
+    -fx-background-color: rgb(4,0,70);
+}

@@ -3,6 +3,7 @@ package com.metadev.connect.FXMLController;
 import com.metadev.connect.Controller.StartUp;
 import com.metadev.connect.Controller.Validation;
 import com.metadev.connect.Entity.Post;
+import com.metadev.connect.Entity.User;
 import com.metadev.connect.Entity.UserLogined;
 import com.metadev.connect.Service.PostService;
 import com.metadev.connect.Service.UserService;
@@ -10,22 +11,32 @@ import com.metadev.connect.ThreadPool.ThreadPool;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDate;
+import java.util.ResourceBundle;
 
-public class AddPostController {
+public class AddPostController implements Initializable {
     @FXML
     private AnchorPane addLocationPane, addTagsPane, emptyPane;
     @FXML private TextArea postText;
     @FXML private Text postTextCount;
+    @FXML private Button usernameButton;
     boolean locationPaneDisplay = false;
     boolean tagsPaneDisplay = false;
     private ThreadPool threadPoolAddPost;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        usernameButton.setText(UserLogined.getUsername());
+    }
 
     public void profileButtonClicked(ActionEvent event) throws IOException {
         new StartUp(event, "/ProfileView.fxml");
@@ -105,4 +116,6 @@ public class AddPostController {
     public void settingButtonClicked(ActionEvent event) throws IOException {
         new StartUp(event, "/SettingView.fxml");
     }
+
+
 }

@@ -1,6 +1,7 @@
 package com.metadev.connect.Repository;
 
 import com.metadev.connect.Entity.Post;
+import com.metadev.connect.Entity.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,6 +23,12 @@ public interface PostRepository {
     public List<Post> findByTags(String tags);
 
     public List<Post> fetchPost();
+    public int getLikeCount(Long post_id);
+
+    public boolean getUserLikeStatus(Long post_id, Long user_id);
+
+    public int addLike(Long post_id, Long user_id);
+    public int removeLike(Long post_id, Long user_id);
 
 }
 
