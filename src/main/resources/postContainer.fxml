@@ -108,12 +108,19 @@
             <Insets bottom="20.0" left="40.0" right="40.0" top="10.0" />
          </VBox.margin>
          <children>
-            <Button id="actionButton" fx:id="postLikeButton" mnemonicParsing="false" onAction="#postLikeButtonClicked" prefHeight="30.0" prefWidth="240.0" text="Like">
+            <Button id="postLikeFalse" fx:id="postLikeButton" mnemonicParsing="false" onAction="#postLikeButtonClicked" prefHeight="30.0" prefWidth="240.0" text=" Like">
                <font>
                   <Font name="Roboto" size="15.0" />
                </font>
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                     <image>
+                        <Image url="@Images/General/love_icon_resized.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
             </Button>
-            <Button id="actionButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="240.0" text="Comment">
+            <Button id="postLikeFalse" mnemonicParsing="false" prefHeight="30.0" prefWidth="240.0" text="Comment">
                <font>
                   <Font name="Roboto" size="15.0" />
                </font>
