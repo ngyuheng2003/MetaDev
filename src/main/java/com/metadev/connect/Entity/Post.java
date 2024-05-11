@@ -13,16 +13,29 @@ public class Post {
     private String[] tags;
     private String location;
     private int likeCount;
+
+
+
+    private int commentCount;
     private Date postCreatedDate;
 
-    public Post(Long postId, Long userId, String content, String[] tags, String location, int likeCount, Date postCreatedDate) {
+    public Post(Long postId, Long userId, String content, String[] tags, String location, int likeCount, int commentCount, Date postCreatedDate) {
         this.postId = postId;
         this.userId = userId;
         this.content = content;
         this.tags = tags;
         this.location = location;
         this.likeCount = likeCount;
+        this.commentCount = commentCount;
         this.postCreatedDate = postCreatedDate;
+    }
+
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
     }
 
     public Long getPostId() {

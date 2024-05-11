@@ -1,0 +1,93 @@
+#container{
+    -fx-background-color: rgb(240, 242, 245);
+}
+
+#navButton{
+    -fx-background-color: transparent;
+    -fx-background-radius: 15;
+    -fx-alignment: center_left;
+}
+
+#navButton:hover{
+    -fx-background-color: rgb(211,211,211,0.6);
+
+}
+
+#navButton:pressed{
+    -fx-background-color: rgb(211,211,211);
+}
+
+.text-area, .text-area .viewport, .text-area .content{
+    -fx-background-color: transparent;
+}
+
+.scroll-pane{
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.scroll-bar{
+    -fx-opacity: 0;
+}
+
+/* Add Tags */
+
+#addTagsButton{
+    -fx-background-color: rgb(211,211,211, 0.5);
+    -fx-background-radius: 20;
+}
+
+#addTagsButton:hover{
+    -fx-background-color: rgb(211,211,211, 0.75);
+}
+
+#addTagsButton:pressed{
+    -fx-background-color: rgb(211,211,211);
+}
+
+/* Bottom Button */
+#resetButton{
+    -fx-background-color: rgb(93,99, 225);
+    -fx-text-fill: white;
+    -fx-background-radius: 27;
+    -fx-font-size: 18;
+    -fx-padding: 0;
+}
+
+#resetButton:hover{
+    -fx-background-color: rgb(93,99, 225, 0.8);
+}
+
+#resetButton:pressed{
+    -fx-background-color: rgb(93,99, 225);
+}
+
+
+#postButton{
+    -fx-background-color: rgb(4,0,70);
+    -fx-text-fill: white;
+    -fx-background-radius: 27;
+    -fx-font-size: 18;
+    -fx-padding: 0;
+}
+
+#postButton:hover{
+    -fx-background-color: rgb(4,0,70, 0.8);
+}
+
+#postButton:pressed{
+    -fx-background-color: rgb(4,0,70);
+}
+
+#transparentButton{
+    -fx-background-color: rgb(211,211,211,0.5);
+    -fx-background-radius: 20px;
+}
+
+#transparentButton:hover{
+    -fx-background-color: rgb(211,211,211,0.75);
+}
+
+#transparentButton:pressed{
+    -fx-background-color: rgb(211,211,211);
+}

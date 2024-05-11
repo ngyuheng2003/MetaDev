@@ -1,6 +1,6 @@
 package com.metadev.connect.FXMLController;
 
-import com.metadev.connect.Controller.StartUp;
+import com.metadev.connect.Controller.StartUp.StartUp;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -17,14 +17,14 @@ public class SettingController {
 
 
     public void profileButtonClicked(ActionEvent event) throws IOException {
-        new StartUp(event, "/ProfileView.fxml");
+        new StartUp(event, "/FXMLView/ProfileView.fxml");
     }
     public void newsFeedButtonClicked(ActionEvent event) throws IOException {
-        new StartUp(event, "/NewsFeedView.fxml");
+        new StartUp(event, "/FXMLView/NewsFeedView.fxml");
     }
 
     public void addPostButtonClicked(ActionEvent event) throws IOException {
-        new StartUp(event, "/AddPostView.fxml");
+        new StartUp(event, "/FXMLView/AddPostView.fxml");
     }
 
     public void backButtonClicked(ActionEvent event) {
@@ -36,7 +36,7 @@ public class SettingController {
     }
 
     public void settingButtonClicked(ActionEvent event) throws IOException {
-        new StartUp(event, "/SettingView.fxml");
+        new StartUp(event, "/FXMLView/SettingView.fxml");
     }
 
     // Setting Main Pane
@@ -60,7 +60,7 @@ public class SettingController {
     }
 
     public void logoutButtonClicked(ActionEvent event) throws IOException {
-        new StartUp(event, "/StartUpView.fxml");
+        new StartUp(event, "/FXMLView/StartUpView.fxml");
     }
 
     // Edit Profile Pane

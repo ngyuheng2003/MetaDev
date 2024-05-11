@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxWidth="450.0" minHeight="-Infinity" minWidth="-Infinity" prefWidth="450.0" stylesheets="@../CSS/PostContainerCSS.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.metadev.connect.FXMLController.PostCommentContainerController">
+   <children>
+      <AnchorPane prefWidth="400.0">
+         <children>
+            <ImageView fitHeight="35.0" fitWidth="35.0" layoutX="15.0" layoutY="10.0" preserveRatio="true">
+               <image>
+                  <Image url="@../Images/General/defaultProfilePic_icon.png" />
+               </image>
+            </ImageView>
+            <VBox layoutX="65.0" layoutY="10.0" maxWidth="270.0">
+               <children>
+                  <HBox prefWidth="124.0">
+                     <children>
+                        <VBox fillWidth="false" style="-fx-background-color: rgb(225,225,225,0.8); -fx-background-radius: 10;">
+                           <children>
+                              <HBox maxWidth="300.0" prefHeight="20.0">
+                                 <children>
+                                    <Hyperlink id="postUsername" fx:id="commentUsername" focusTraversable="false" text="Username">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets left="-1.0" />
+                                       </padding>
+                                    </Hyperlink>
+                                 </children>
+                              </HBox>
+                              <VBox maxWidth="250.0">
+                                 <children>
+                                    <Text fx:id="commentText" strokeType="OUTSIDE" strokeWidth="0.0" text="Comment">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets left="2.0" />
+                                       </VBox.margin>
+                                    </Text>
+                                 </children>
+                              </VBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="informationBox" alignment="CENTER_LEFT" maxWidth="300.0">
+                     <children>
+                        <Text fx:id="commentDate" fill="#646464" strokeType="OUTSIDE" strokeWidth="0.0" text="Date">
+                           <font>
+                              <Font name="Roboto" size="12.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="dotText" fill="#646464" strokeType="OUTSIDE" strokeWidth="0.0" text=" • ">
+                           <font>
+                              <Font name="Roboto" size="12.0" />
+                           </font>
+                        </Text>
+                        <Hyperlink id="postUsername" fx:id="commentReply" focusTraversable="false" onAction="#commentReplyClicked" text="Reply" />
+                     </children>
+                     <VBox.margin>
+                        <Insets left="20.0" />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </AnchorPane>
+      <VBox fx:id="repliedCommentContainer" prefHeight="0.0" prefWidth="385.0">
+         <VBox.margin>
+            <Insets left="65.0" top="10.0" />
+         </VBox.margin>
+      </VBox>
+   </children>
+</VBox>

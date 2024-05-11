@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox id="container" fx:id="postContainer" maxHeight="600.0" maxWidth="565.0" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#containerMouseClicked" onMouseEntered="#mouseEnterContainer" onMouseExited="#mouseExitContainer" prefWidth="565.0" stylesheets="@../CSS/PostContainerCSS.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.metadev.connect.FXMLController.PostContainerController">
+   <children>
+      <ScrollPane hbarPolicy="NEVER" maxHeight="440.0" maxWidth="565.0">
+         <content>
+            <VBox fx:id="upperContainer" maxWidth="565.0" prefWidth="565.0">
+               <children>
+                  <AnchorPane prefHeight="90.0" prefWidth="595.0">
+                     <children>
+                        <ImageView fx:id="post_profileImage" fitHeight="50.0" fitWidth="50.0" layoutX="30.0" layoutY="20.0" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/General/defaultProfilePic_icon.png" />
+                           </image>
+                        </ImageView>
+                        <Hyperlink id="postUsername" fx:id="post_username" focusTraversable="false" layoutX="95.0" layoutY="25.0" onAction="#postUsernameHyperLinkClicked" text="username">
+                           <font>
+                              <Font name="Roboto" size="18.0" />
+                           </font>
+                        </Hyperlink>
+                        <Text fx:id="post_createdDate" fill="#505050" layoutX="101.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" text="post_date" />
+                        <Button id="threeDot_icon" fx:id="postMenuButton" layoutX="505.0" layoutY="15.0" mnemonicParsing="false" onAction="#postMenuButtonClicked" prefHeight="40.0" prefWidth="40.0">
+                           <graphic>
+                              <ImageView fitHeight="25.0" fitWidth="25.0" opacity="0.7" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Images/General/threeDot_icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <VBox layoutX="41.0" layoutY="86.0" prefHeight="16.0" prefWidth="480.0">
+                           <children>
+                              <Text fx:id="post_content" strokeType="OUTSIDE" strokeWidth="0.0" text="Content" wrappingWidth="480.0">
+                                 <font>
+                                    <Font name="Roboto" size="16.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" />
+                           </padding>
+                        </VBox>
+                        <VBox id="menu_container" fx:id="postMenuContainer" disable="true" layoutX="410.0" layoutY="60.0" opacity="0.0">
+                           <children>
+                              <HBox alignment="CENTER" prefHeight="40.0" prefWidth="130.0">
+                                 <children>
+                                    <Button id="menu_button" mnemonicParsing="false" prefHeight="40.0" prefWidth="130.0" text=" Delete" textFill="#c04000">
+                                       <graphic>
+                                          <ImageView fitHeight="30.0" fitWidth="30.0" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../Images/General/trash_icon.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+                  <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="580.0">
+                     <VBox.margin>
+                        <Insets left="40.0" right="40.0" />
+                     </VBox.margin>
+                     <children>
+                        <Text fx:id="post_like_counter" fill="#505050" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+                           <font>
+                              <Font name="Roboto" size="15.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#505050" strokeType="OUTSIDE" strokeWidth="0.0" text=" Likes">
+                           <font>
+                              <Font name="Roboto" size="12.0" />
+                           </font>
+                        </Text>
+                        <Pane prefHeight="30.0" prefWidth="8.0" />
+                        <Text fill="#505050" layoutX="19.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="·">
+                           <font>
+                              <Font name="Roboto" size="15.0" />
+                           </font>
+                        </Text>
+                        <Pane prefHeight="30.0" prefWidth="8.0" />
+                        <Text fx:id="post_comment_counter" fill="#505050" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+                           <font>
+                              <Font name="Roboto" size="15.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#505050" strokeType="OUTSIDE" strokeWidth="0.0" text=" Comments">
+                           <font>
+                              <Font name="Roboto" size="12.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" minHeight="40.0" prefHeight="40.0" prefWidth="570.0" spacing="10.0" style="-fx-border-color: rgb(128,128,128); -fx-border-width: 0.5 0 0.5 0;">
+                     <VBox.margin>
+                        <Insets bottom="20.0" left="40.0" right="40.0" top="10.0" />
+                     </VBox.margin>
+                     <children>
+                        <Button id="postLikeFalse" fx:id="postLikeButton" mnemonicParsing="false" onAction="#postLikeButtonClicked" prefHeight="30.0" prefWidth="240.0" text=" Like">
+                           <font>
+                              <Font name="Roboto" size="15.0" />
+                           </font>
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Images/General/love_icon_resized.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button id="postLikeFalse" mnemonicParsing="false" onAction="#commentButtonClicked" prefHeight="30.0" prefWidth="240.0" text=" Comment">
+                           <font>
+                              <Font name="Roboto" size="15.0" />
+                           </font>
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Images/General/comment_icon_resized.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" top="5.0" />
+                     </padding>
+                  </HBox>
+                  <VBox fx:id="postCommentContainer" prefHeight="200.0" prefWidth="565.0" spacing="10.0">
+                     <VBox.margin>
+                        <Insets bottom="20.0" left="40.0" right="40.0" />
+                     </VBox.margin>
+                     <children>
+                        <VBox fx:id="commentContainerMessageBox" alignment="CENTER" prefHeight="40.0" prefWidth="485.0">
+                           <children>
+                              <Text fx:id="commentContainerMessage" fill="GREY" strokeType="OUTSIDE" strokeWidth="0.0" text="Fetching comment ...">
+                                 <font>
+                                    <Font name="Roboto" size="18.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+      <VBox fx:id="commentInputContainer" prefHeight="50.0" prefWidth="100.0">
+         <VBox.margin>
+            <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
+         </VBox.margin>
+         <children>
+            <AnchorPane prefHeight="200.0" prefWidth="485.0">
+               <children>
+                  <VBox prefHeight="90.0" prefWidth="485.0" style="-fx-background-color: rgb(225, 225, 225, 0.5); -fx-background-radius: 20;" />
+                  <TextArea fx:id="commentTF" focusTraversable="false" layoutX="20.0" layoutY="10.0" onKeyTyped="#commentKeyTyped" prefHeight="45.0" prefWidth="440.0" promptText="Write a comment ..." wrapText="true">
+                     <font>
+                        <Font name="Roboto" size="15.0" />
+                     </font>
+                  </TextArea>
+                  <Button id="threeDot_icon" fx:id="addCommentButton" layoutX="430.0" layoutY="40.0" mnemonicParsing="false" onAction="#addCommentButtonClicked" prefHeight="45.0" prefWidth="45.0">
+                     <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/Post/send_icon_resized.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+   </children>
+</VBox>
