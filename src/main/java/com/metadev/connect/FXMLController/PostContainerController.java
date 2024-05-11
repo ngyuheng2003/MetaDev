@@ -27,6 +27,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -44,7 +45,7 @@ public class PostContainerController {
     @FXML private Text post_like_counter, post_comment_counter;
     @FXML private Hyperlink post_username;
     @FXML private TextArea commentTF;
-    private PostCommentContainerController postCommentContainerController;
+    private PostCommentContainerController postCommentContainerController, postCommentContainerControllerReplied;
     private  PostService postService = new PostService();
     private PostLikeController like;
     private Post post;
@@ -153,6 +154,8 @@ public class PostContainerController {
             System.out.println(1);
         }
         postContainer.requestFocus();
+
+        setRepliedInformation(0, null, 0, 0, null, null);
     }
 
     // Post Like
@@ -238,6 +241,7 @@ public class PostContainerController {
             postCommentContainerController.setParentController(parentController);
             postCommentContainerController.setPostCommentTree(postCommentTree);
             postCommentContainerController.getCommentInformationFromObj();
+            postCommentContainerController.setPost(post);
             postCommentContainerController.setComment_OBJ_ID(listOfComment.get(i).getCommentTopID());
             postCommentTree.setCommentID(postService.getCommentCount(post.getPostId()));
             postCommentContainerController.setPostCommentContainer(postCommentTree, 1);
@@ -252,24 +256,53 @@ public class PostContainerController {
             case 0:
                 PostCommentTree postCommentTree = new PostCommentTree(post.getPostId());
                 postCommentTree.setCommentID(0);
-                postCommentTree.addComment(-1, new CommentNode(commentInput, UserLogined.getUsername()));
+                postCommentTree.addComment(-1, new CommentNode(commentInput, String.valueOf(UserLogined.getUserId())));
                 threadPoolPostContainer = new ThreadPool(1,1);
                 threadPoolPostContainer.execute(()->{
+                    try {
+                        System.out.println("POSTC: Saving comment ...");
+                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        ObjectOutputStream objectOut = new ObjectOutputStream(byteArrayOutputStream);
+                        objectOut.writeObject(postCommentTree);
+                        postService.addComment(post.getPostId(), byteArrayOutputStream, postCommentTree.getTotalComments());
+                        objectOut.close();
+                        byteArrayOutputStream.close();
+                        System.out.println("POSTC: Comment saved");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                System.out.println("POSTC: Saving comment ...");
-                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                                ObjectOutputStream objectOut = new ObjectOutputStream(byteArrayOutputStream);
-                                objectOut.writeObject(postCommentTree);
-                                postService.addComment(post.getPostId(), byteArrayOutputStream, postCommentTree.getTotalComments());
-                                objectOut.close();
-                                byteArrayOutputStream.close();
-                                System.out.println("POSTC: Comment saved");
+                                FXMLLoader fxmlLoader = new FXMLLoader();
+                                fxmlLoader.setLocation(getClass().getResource("/FXMLContainer/PostCommentContainer.fxml"));
+                                VBox postCommentBox = fxmlLoader.load();
+                                postCommentContainerController = fxmlLoader.getController();
+                                postCommentContainerController.setParentController(parentController);
+                                postCommentContainerController.setPostCommentTree(postCommentTree);
+                                postCommentContainerController.getCommentInformationFromObj();
+                                postCommentContainerController.setPost(post);
+                                postCommentContainerController.setComment_OBJ_ID(0);
+                                postCommentTree.setCommentID(postService.getCommentCount(post.getPostId()));
+                                postCommentContainerController.setPostCommentContainer(postCommentTree, 1);
+                                postCommentContainer.getChildren().add(postCommentBox);
+                                if(commentContainerMessageBox != null){
+                                    postCommentContainer.getChildren().remove(commentContainerMessageBox);
+                                }
+                                commentTF.clear();
+                                addCommentButton.setDisable(true);
+                                post_comment_counter.setText(String.valueOf(Integer.parseInt(post_comment_counter.getText() + 1)));
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                throw new RuntimeException(e);
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            } catch (ClassNotFoundException e) {
+                                throw new RuntimeException(e);
                             }
+
                         }
                     });
                     // Terminating the thread
@@ -277,24 +310,42 @@ public class PostContainerController {
                 });
                 break;
             case 1:
-                postCommentTreeReplied.addComment(commentIdReplied, new CommentNode(commentInput, UserLogined.getUsername()));
+                postCommentTreeReplied.addComment(commentIdReplied, new CommentNode(commentInput, String.valueOf(UserLogined.getUserId())));
                 threadPoolPostContainer = new ThreadPool(1,1);
                 threadPoolPostContainer.execute(()->{
+                    try {
+                        System.out.println("POSTC: Saving comment ...");
+                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        ObjectOutputStream objectOut = new ObjectOutputStream(byteArrayOutputStream);
+                        objectOut.writeObject(postCommentTreeReplied);
+                        postService.udpateComment(post.getPostId(), byteArrayOutputStream, postCommentTreeReplied.getTotalComments(),comment_OBJ_ID);
+                        objectOut.close();
+                        byteArrayOutputStream.close();
+                        System.out.println("POSTC: Comment saved");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                System.out.println("POSTC: Saving comment ...");
-                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                                ObjectOutputStream objectOut = new ObjectOutputStream(byteArrayOutputStream);
-                                objectOut.writeObject(postCommentTreeReplied);
-                                postService.udpateComment(post.getPostId(), byteArrayOutputStream, postCommentTreeReplied.getTotalComments(),comment_OBJ_ID);
-                                objectOut.close();
-                                byteArrayOutputStream.close();
-                                System.out.println("POSTC: Comment saved");
+                                ArrayList<String[]> list = postCommentContainerControllerReplied.getCommentInformation();
+                                list.add(new String[]{commentInput, String.valueOf(UserLogined.getUserId()),
+                                        "just now", String.valueOf(commentIdReplied), String.valueOf(Integer.parseInt(postCommentContainerControllerReplied.getDepth()) + 1)});
+                                postCommentContainerControllerReplied.setCommentInformation(list);
+                                postCommentContainerControllerReplied.addRepliedComment();
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                throw new RuntimeException(e);
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            } catch (ClassNotFoundException e) {
+                                throw new RuntimeException(e);
                             }
+                            commentTF.clear();
+                            addCommentButton.setDisable(true);
+                            post_comment_counter.setText(String.valueOf(Integer.parseInt(post_comment_counter.getText()) + 1));
                         }
                     });
                     // Terminating the thread
@@ -305,13 +356,17 @@ public class PostContainerController {
 
     }
 
-    public void setRepliedInformation(int typeOfComment, PostCommentTree postCommentTree, int commentIdReplied, int comment_OBJ_ID, String username){
+    public void setRepliedInformation(int typeOfComment, PostCommentTree postCommentTree, int commentIdReplied, int comment_OBJ_ID, String username, PostCommentContainerController postCommentContainerControllerReplied){
         this.typeOfComment = typeOfComment;
         this.postCommentTreeReplied = postCommentTree;
         this.commentIdReplied = commentIdReplied;
         this.comment_OBJ_ID = comment_OBJ_ID;
-        this.commentTF.setPromptText("Replying to " + username);
-        System.out.println("Set reply successfully");
+        this.postCommentContainerControllerReplied = postCommentContainerControllerReplied;
+        if(typeOfComment != 0)
+            this.commentTF.setPromptText("Replying to " + username);
+        else
+            this.commentTF.setPromptText("Write a comment ...");
+        System.out.println("POSTC: Set reply successfully");
     }
 
     public void commentKeyTyped(KeyEvent event) {

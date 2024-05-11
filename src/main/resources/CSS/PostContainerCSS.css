@@ -85,6 +85,14 @@
 
 }
 
+#postCommentDelete{
+    -fx-text-fill: rgb(192,64,0);
+}
+
+#postCommentDelete:pressed{
+
+}
+
 /* Profile Container for New Feeds*/
 
 #profileContainerVBox{
