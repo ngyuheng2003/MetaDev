@@ -179,7 +179,7 @@
                   </TextArea>
                   <Button id="threeDot_icon" fx:id="addCommentButton" layoutX="430.0" layoutY="40.0" mnemonicParsing="false" onAction="#addCommentButtonClicked" prefHeight="45.0" prefWidth="45.0">
                      <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" preserveRatio="true">
+                        <ImageView disable="true" fitHeight="30.0" fitWidth="30.0" preserveRatio="true">
                            <image>
                               <Image url="@../Images/Post/send_icon_resized.png" />
                            </image>
