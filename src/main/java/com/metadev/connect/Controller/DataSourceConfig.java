@@ -8,9 +8,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
+import java.io.Serializable;
 
 @Component
-public class DataSourceConfig {
+public class DataSourceConfig implements Serializable {
 
     private static String url;
     private static String username;

@@ -1,0 +1,25 @@
+#profileSelectedButton{
+    -fx-background-color: rgb(211,211,211,0.5);
+    -fx-background-radius: 20px;
+}
+
+#profileSelectedButton:hover{
+    -fx-background-color: rgb(211,211,211,0.75);
+}
+
+#profileSelectedButton:pressed{
+    -fx-background-color: rgb(211,211,211);
+}
+
+#profileNotSelectedButton{
+    -fx-background-color: transparent;
+    -fx-background-radius: 20px;
+}
+
+#profileNotSelectedButton:hover{
+    -fx-background-color: rgb(211,211,211,0.75);
+}
+
+#profileNotSelectedButton:pressed{
+    -fx-background-color: rgb(211,211,211);
+}

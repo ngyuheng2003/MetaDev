@@ -1,21 +1,28 @@
 package com.metadev.connect.Service;
 
 import com.metadev.connect.Controller.DataSourceConfig;
+import com.metadev.connect.Entity.Comment;
 import com.metadev.connect.Entity.Post;
-import com.metadev.connect.Entity.User;
 import com.metadev.connect.Entity.UserLogined;
 import com.metadev.connect.Repository.PostRepository;
+import com.metadev.connect.RowMapper.CommentRowMapper;
 import com.metadev.connect.RowMapper.PostRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.Serial;
+import java.io.Serializable;
+import java.sql.Blob;
 import java.util.List;
 import java.util.Objects;
 
 @Service
-public class PostService implements PostRepository {
+public class PostService implements PostRepository, Serializable {
+    @Serial
+    private static final long serialVersionUID = 766744631710823462L;
     private final DataSourceConfig dataSourceConfig = new DataSourceConfig();
-    private final JdbcTemplate jdbc = new JdbcTemplate(dataSourceConfig.getDataSource());
+    private final  JdbcTemplate jdbc = new JdbcTemplate(dataSourceConfig.getDataSource());
 
     @Override
     public int createPost(Post post) {
@@ -95,6 +102,7 @@ public class PostService implements PostRepository {
         }
     }
 
+// Like Usage
     @Override
     public int addLike(Long post_id, Long user_id) {
         String sql = """
@@ -118,4 +126,58 @@ public class PostService implements PostRepository {
         return jdbc.update(sql, post_id, user_id);
     }
 
+    // Comment Usage
+    @Override
+    public int addComment(Long post_id, ByteArrayOutputStream byteArrayOutputStream, int totalComment) {
+        String sql = """
+                    INSERT INTO
+                    [dbo].[post_comment]
+                    ([post_id], [comment_OBJ], [total_comment])
+                    VALUES
+                    (?, ?, ?)
+                    """;
+        return jdbc.update(sql, post_id, byteArrayOutputStream.toByteArray(), totalComment);
+
+    }
+
+    @Override
+    public int udpateComment(Long post_id, ByteArrayOutputStream byteArrayOutputStream, int totalComment, int comment_OBJ_ID) {
+        String sql = """
+                    UPDATE
+                    [dbo].[post_comment]
+                    SET
+                    [comment_OBJ] = ?, [total_comment] = ?
+                    WHERE
+                    post_id = ? AND comment_OBJ_ID = ?
+                    """;
+        return jdbc.update(sql, byteArrayOutputStream.toByteArray(), totalComment, post_id, comment_OBJ_ID);
+
+    }
+
+    @Override
+    public List<Comment> getComment(Long post_id) {
+        String sql = """
+                    SELECT TOP 10
+                    *
+                    FROM 
+                    [dbo].[post_comment]
+                    WHERE
+                    post_id = ?
+                    ORDER BY comment_created_date DESC 
+                    """;
+        return jdbc.query(sql, new Object[]{post_id},new CommentRowMapper());
+    }
+
+    @Override
+    public int getCommentCount(Long post_id) {
+        String sql = """
+                    SELECT
+                    SUM(total_comment)
+                    FROM 
+                    [dbo].[post_comment]
+                    where post_id = ?
+                    """;
+        Integer like_count = jdbc.queryForObject(sql, new Object[]{post_id}, Integer.class);
+        return Objects.requireNonNullElse(like_count, 0);
+    }
 }

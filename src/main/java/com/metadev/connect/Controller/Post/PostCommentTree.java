@@ -1,4 +1,6 @@
-package com.metadev.connect.Controller;
+package com.metadev.connect.Controller.Post;
+
+import com.metadev.connect.Service.PostService;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -6,16 +8,21 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommentTree {
-    private static final long serialVersionUID = 1L;
+public class PostCommentTree implements Serializable {
+    @Serial private static final long serialVersionUID = 1L;
     private CommentNode root;
     private int totalComments; // Counter for total comments
     private List<CommentNode> topLevelComments = new ArrayList<>();
+    ArrayList<String[]> list = new ArrayList<>();
 
-    public CommentTree() {
+    public PostCommentTree(Long post_id) {
         this.root = null;
         this.totalComments = 0; // Initialize totalComments counter
 
+    }
+
+    public void setCommentID(int totalComments){
+        CommentNode.setNextMinCommentId(totalComments + 1);
     }
 
     public void addComment(int parentCommentId, CommentNode newComment) {
@@ -32,7 +39,6 @@ public class CommentTree {
             }
         }
         incrementTotalComments(); // Increment totalComments counter
-        saveCommentTreeToFile();
     }
 
     private void incrementTotalComments() {
@@ -69,7 +75,7 @@ public class CommentTree {
     }
 
     public void displayAllCommentsFromFile() {
-        CommentTree deserializedTree = deserializeCommentTreeFromFile();
+        PostCommentTree deserializedTree = deserializeCommentTreeFromFile();
         if (deserializedTree != null) {
             deserializedTree.displayAllComments();
         } else {
@@ -92,36 +98,36 @@ public class CommentTree {
         return count;
     }
 
-    public static CommentTree deserializeCommentTreeFromFile() {
+    public static PostCommentTree deserializeCommentTreeFromFile() {
         try {
-            FileInputStream fileIn = new FileInputStream("/comment.ser");
+            FileInputStream fileIn = new FileInputStream("comment.ser");
             ObjectInputStream objectIn = new ObjectInputStream(fileIn);
-            CommentTree commentTree = (CommentTree) objectIn.readObject();
+            PostCommentTree postCommentTree = (PostCommentTree) objectIn.readObject();
             objectIn.close();
             fileIn.close();
 
             // Update nextCommentId from the deserialized CommentTree
-            CommentNode.updateNextCommentId(commentTree.totalComments + 1);
+            CommentNode.updateNextCommentId(postCommentTree.totalComments + 1);
 
-            return commentTree;
+            return postCommentTree;
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public void displayAllComments() {
+    public ArrayList<String[]> displayAllComments() {
         if (topLevelComments.isEmpty()) {
-            System.out.println("No comments.");
+            return null;
         } else {
-            for (CommentNode topLevelComment : topLevelComments) {
-                displayCommentsRecursive(topLevelComment, 0);
-                System.out.println();
-            }
+                return displayCommentsRecursive(topLevelComments.getFirst(), 0);
+
         }
     }
 
-    public void displayCommentsRecursive(CommentNode node, int depth) {
+
+    public ArrayList<String[]> displayCommentsRecursive(CommentNode node, int depth) {
+        String[] commentInformation = new String[5];
         StringBuilder indent = new StringBuilder();
         for (int i = 0; i < depth; i++) {
             indent.append("\t");
@@ -142,16 +148,26 @@ public class CommentTree {
             System.out.println(indent + "\tTimeStamp: " + formattedTimestamp);
             System.out.println(indent + "\tComment ID: " + commentId);
             System.out.println(indent + "\tAuthor: " + author);
+            System.out.println(indent + "\tAuthor: " + depth);
+            commentInformation[0] = commentText;
+            commentInformation[1] = author;
+            commentInformation[2] = formattedTimestamp;
+            commentInformation[3] = String.valueOf(commentId);
+            commentInformation[4] = String.valueOf(depth);
+            list.add(commentInformation);
+
         }
 
         List<CommentNode> childComments = node.getChildComment();
         if (!childComments.isEmpty()) {
-            System.out.println("");
+            System.out.println("POSTC: Checking replies");
             System.out.println(indent + "\tReplies:");
             for (CommentNode child : childComments) {
                 displayCommentsRecursive(child, depth + 1);
             }
         }
+        System.out.println(1);
+        return list;
     }
 
     public void deleteComment(int commentId) {
@@ -179,7 +195,6 @@ public class CommentTree {
 
             System.out.println("Comment " + commentId + " deleted successfully.");
             // Save the updated comment tree to the file
-            saveCommentTreeToFile();
         } else {
             System.out.println("Comment not found!");
         }
@@ -211,15 +226,18 @@ public class CommentTree {
         return null;
     }
 
-    public void saveCommentTreeToFile() {
-        try {
-            FileOutputStream fileOut = new FileOutputStream("/comment.ser");
-            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
-            objectOut.writeObject(this);
-            objectOut.close();
-            fileOut.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public void saveCommentTreeToFile() {
+//        try {
+//            System.out.println("POSTC: Saving comment ...");
+//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//            ObjectOutputStream objectOut = new ObjectOutputStream(byteArrayOutputStream);
+//            objectOut.writeObject(this);
+//            postService.addComment(post_id, byteArrayOutputStream);
+//            objectOut.close();
+//            byteArrayOutputStream.close();
+//            System.out.println("POSTC: Comment saved");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

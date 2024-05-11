@@ -1,12 +1,9 @@
 package com.metadev.connect.FXMLController;
 
-import com.metadev.connect.Controller.StartUp;
-import com.metadev.connect.Controller.Validation;
+import com.metadev.connect.Controller.StartUp.StartUp;
 import com.metadev.connect.Entity.Post;
-import com.metadev.connect.Entity.User;
 import com.metadev.connect.Entity.UserLogined;
 import com.metadev.connect.Service.PostService;
-import com.metadev.connect.Service.UserService;
 import com.metadev.connect.ThreadPool.ThreadPool;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -20,7 +17,6 @@ import javafx.scene.text.Text;
 
 import java.io.IOException;
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class AddPostController implements Initializable {
@@ -39,11 +35,11 @@ public class AddPostController implements Initializable {
     }
 
     public void profileButtonClicked(ActionEvent event) throws IOException {
-        new StartUp(event, "/ProfileView.fxml");
+        new StartUp(event, "/FXMLView/ProfileView.fxml");
     }
     public void postNextButtonClicked(ActionEvent event) throws Exception {
         threadPoolAddPost = new ThreadPool(1,1);
-        Post newPost = new Post(null,UserLogined.getUserId(),postText.getText(),null, null,0, null);
+        Post newPost = new Post(null,UserLogined.getUserId(),postText.getText(),null, null,0,  0,null);
         threadPoolAddPost.execute(()-> {
             System.out.println("Creating post ...");
             PostService postService = new PostService();
@@ -55,7 +51,7 @@ public class AddPostController implements Initializable {
                     @Override
                     public void run() {
                         try {
-                            new StartUp(event, "/NewsFeedView.fxml");
+                            new StartUp(event, "/FXMLView/NewsFeedView.fxml");
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -68,11 +64,11 @@ public class AddPostController implements Initializable {
     }
 
     public void resetButtonClicked(ActionEvent event) throws IOException {
-        new StartUp(event, "/AddPostView.fxml");
+        new StartUp(event, "/FXMLView/AddPostView.fxml");
     }
 
     public void newsFeedButtonClicked(ActionEvent event) throws IOException {
-        new StartUp(event, "/NewsFeedView.fxml");
+        new StartUp(event, "/FXMLView/NewsFeedView.fxml");
     }
 
     public void addLocationButtonClicked(ActionEvent event) {
@@ -114,7 +110,7 @@ public class AddPostController implements Initializable {
     }
 
     public void settingButtonClicked(ActionEvent event) throws IOException {
-        new StartUp(event, "/SettingView.fxml");
+        new StartUp(event, "/FXMLView/SettingView.fxml");
     }
 
 

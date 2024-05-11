@@ -1,9 +1,12 @@
 package com.metadev.connect.Repository;
 
+import com.metadev.connect.Entity.Comment;
 import com.metadev.connect.Entity.Post;
 import com.metadev.connect.Entity.User;
 import org.springframework.stereotype.Repository;
 
+import java.io.ByteArrayOutputStream;
+import java.sql.Blob;
 import java.util.List;
 
 @Repository
@@ -27,8 +30,17 @@ public interface PostRepository {
 
     public boolean getUserLikeStatus(Long post_id, Long user_id);
 
+    // Like Usage
     public int addLike(Long post_id, Long user_id);
     public int removeLike(Long post_id, Long user_id);
+
+    // Comment Usage
+    public int addComment(Long post_id, ByteArrayOutputStream byteArrayOutputStream, int totalComment);
+
+    public int udpateComment(Long post_id, ByteArrayOutputStream byteArrayOutputStream, int totalComment, int comment_OBJ_ID);
+
+    public List<Comment> getComment(Long post_id);
+    public int getCommentCount(Long post_id);
 
 }
 

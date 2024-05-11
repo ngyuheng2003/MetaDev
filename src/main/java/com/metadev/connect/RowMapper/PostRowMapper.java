@@ -15,6 +15,7 @@ public class PostRowMapper implements RowMapper<Post> {
                 null,
                 null,
                 resultSet.getInt("like_count"),
+                0,
                 resultSet.getDate("post_created_date"));
     }
 }

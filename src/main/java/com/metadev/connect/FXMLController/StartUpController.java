@@ -1,9 +1,8 @@
 package com.metadev.connect.FXMLController;
 
 import com.metadev.connect.Controller.*;
-import com.metadev.connect.Entity.User;
+import com.metadev.connect.Controller.StartUp.StartUp;
 import com.metadev.connect.Entity.UserLogined;
-import com.metadev.connect.Repository.UserRepository;
 import com.metadev.connect.Service.UserService;
 import com.metadev.connect.ThreadPool.ThreadPool;
 import javafx.application.Platform;
@@ -103,7 +102,7 @@ public class StartUpController implements Initializable{
                         @Override
                         public void run() {
                             try {
-                                new StartUp(event, "/NewsFeedView.fxml");
+                                new StartUp(event, "/FXMLView/NewsFeedView.fxml");
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
