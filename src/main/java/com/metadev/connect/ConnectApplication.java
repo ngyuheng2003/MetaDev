@@ -1,7 +1,6 @@
 package com.metadev.connect;
 
-import com.metadev.connect.Controller.StartUp.StartApplication;
-import com.metadev.connect.Controller.StartUp.StartApplication;
+import com.metadev.connect.Controller.StartUpController.StartApplication;
 import javafx.application.Application;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

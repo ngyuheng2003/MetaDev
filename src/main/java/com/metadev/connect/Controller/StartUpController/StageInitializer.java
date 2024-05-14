@@ -1,4 +1,4 @@
-package com.metadev.connect.Controller.StartUp;
+package com.metadev.connect.Controller.StartUpController;
 
 import com.metadev.connect.Controller.DataSourceConfig;
 import javafx.fxml.FXMLLoader;
