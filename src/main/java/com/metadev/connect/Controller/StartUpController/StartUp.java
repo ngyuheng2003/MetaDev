@@ -1,4 +1,4 @@
-package com.metadev.connect.Controller;
+package com.metadev.connect.Controller.StartUpController;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;

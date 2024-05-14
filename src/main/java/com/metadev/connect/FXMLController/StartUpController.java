@@ -1,7 +1,7 @@
 package com.metadev.connect.FXMLController;
 
 import com.metadev.connect.Controller.*;
-import com.metadev.connect.Controller.StartUp.StartUp;
+import com.metadev.connect.Controller.StartUpController.StartUp;
 import com.metadev.connect.Entity.UserLogined;
 import com.metadev.connect.Service.UserService;
 import com.metadev.connect.ThreadPool.ThreadPool;

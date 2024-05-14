@@ -170,7 +170,7 @@ public class PostCommentTree implements Serializable {
         return list;
     }
 
-    public void deleteComment(int commentId) {
+    public void deleteComment(int commentId, String message) {
         CommentNode commentToDelete = findComment(commentId); // Find the comment to delete
 
         if (commentToDelete != null) {
@@ -178,7 +178,7 @@ public class PostCommentTree implements Serializable {
             if (topLevelComments.contains(commentToDelete)) {
                 // Mark the top-level comment as deleted
                 commentToDelete.markDeleted();
-                commentToDelete.setText("Comment Deleted");
+                commentToDelete.setText(message);
             } else {
                 // Find the parent comment of the comment to delete
                 CommentNode parent = findParent(commentToDelete);
@@ -186,7 +186,7 @@ public class PostCommentTree implements Serializable {
                 if (parent != null) {
                     // Mark the child comment as deleted
                     commentToDelete.markDeleted();
-                    commentToDelete.setText("Comment Deleted");
+                    commentToDelete.setText(message);
                 } else {
                     System.out.println("Comment not found!");
                     return;

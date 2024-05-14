@@ -1,6 +1,6 @@
 package com.metadev.connect.FXMLController;
 
-import com.metadev.connect.Controller.StartUp.StartUp;
+import com.metadev.connect.Controller.StartUpController.StartUp;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

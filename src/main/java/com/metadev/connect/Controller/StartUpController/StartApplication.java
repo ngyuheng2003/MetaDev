@@ -1,4 +1,4 @@
-package com.metadev.connect.Controller;
+package com.metadev.connect.Controller.StartUpController;
 
 import com.metadev.connect.ConnectApplication;
 import javafx.application.Application;
