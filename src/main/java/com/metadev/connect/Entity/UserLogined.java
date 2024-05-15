@@ -11,6 +11,7 @@ public class UserLogined {
     private static Date date_created_account;
     private static String password;
 
+    // Constructor to initializes a UserLogined object with a User object's information
     public UserLogined(User user) {
         userId = user.getUserId();
         username = user.getUsername();
@@ -20,6 +21,7 @@ public class UserLogined {
         password = user.getPassword();
     }
 
+    // Method to log out the user by setting all fields to null
     public void logout(){
         userId = null;
         username = null;
@@ -29,6 +31,7 @@ public class UserLogined {
         password = null;
     }
 
+    // Getter and Setter methods for each static field
     public static Long getUserId() {
         return userId;
     }
