@@ -16,12 +16,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService implements UserRepository {
     private static final int SALT_LENGTH = 16; // Length of the salt in bytes
+
+    // Create an instance of DataSourceConfig to configure the data source
     private final DataSourceConfig dataSourceConfig = new DataSourceConfig();
+
+    // Create a JdbcTemplate object to interact with the database
     private final JdbcTemplate jdbc = new JdbcTemplate(dataSourceConfig.getDataSource());
 
 
     @Override
     public int registerNewUser(String username, String email, String password) {
+        // SQL query to insert a new user into the table
         String sql = """
                     INSERT INTO 
                     [dbo].[user] 
@@ -29,11 +34,13 @@ public class UserService implements UserRepository {
                     VALUES 
                     (?, ?, ?)
                     """;
+        // Execute the query using JdbcTemplate and return the result
         return jdbc.update(sql, username, email, hashPassword(password));
     }
 
     @Override
     public List<String> findUserByUsername(String username) throws InterruptedException {
+        // SQL query to find a user by their username
         String sql = """
                     SELECT 
                     username 
@@ -42,11 +49,13 @@ public class UserService implements UserRepository {
                     WHERE 
                     username = ?
                     """;
+        // Execute the query and return the list of matching username
         return jdbc.queryForList(sql, new Object[]{username}, String.class);
     }
 
     @Override
     public List<String> findUserUsernameById(Long user_id) throws InterruptedException {
+        // SQL query to find a username by user ID
         String sql = """
                     SELECT 
                     username 
@@ -55,11 +64,13 @@ public class UserService implements UserRepository {
                     WHERE 
                     user_id = ?
                     """;
+        // Execute the query and return the list of matching usernames
         return jdbc.queryForList(sql, new Object[]{user_id}, String.class);
     }
 
     @Override
     public List<String> findUserByEmail(String email) {
+        // SQL query to find a user by their email
         String sql = """
                     SELECT 
                     email 
@@ -68,11 +79,13 @@ public class UserService implements UserRepository {
                     WHERE 
                     email = ?
                     """;
+        // Execute the query and return the list of matching emails
         return jdbc.queryForList(sql, new Object[]{email}, String.class);
     }
 
     @Override
     public List<User> findUserInfoByUsername(String username) {
+        // SQl query to find all user information by username
         String sql = """
                     SELECT 
                     *
@@ -81,12 +94,14 @@ public class UserService implements UserRepository {
                     WHERE 
                     username = ?
                     """;
+        // Execute the query and return the list of matching User objects
         return jdbc.query(sql, new UserRowMapper(), username);
 
     }
 
     @Override
     public boolean loginUserByEmail(String email, String password) {
+        // SQL query to authenticate a user by email and password
         String sql = """
                     SELECT 
                     * 
@@ -95,6 +110,7 @@ public class UserService implements UserRepository {
                     WHERE 
                     email = ? AND password = ?
                     """;
+        // Execute the query and return whether a matching user record is found
         List<String> lists = jdbc.queryForList(sql, new Object[]{email, hashPassword(password)}, String.class);
 
         return lists.isEmpty();
@@ -102,6 +118,7 @@ public class UserService implements UserRepository {
 
     @Override
     public boolean loginUserByUsername(String username, String inputPassword) {
+        // SQL qeury to find the stored password by username
         String sql = """
                     SELECT 
                     password 
@@ -112,12 +129,14 @@ public class UserService implements UserRepository {
                     """;
         String userPassword;
         try{
+            // Execute the query and get the stored password
             userPassword = jdbc.queryForObject(sql, new Object[]{username}, String.class);
         }
         catch(Exception e){
             System.out.println(e);
             return false;
         }
+        // Verify the input password against the stored password
         return verifyPassword(inputPassword, userPassword);
     }
 

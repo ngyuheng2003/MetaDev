@@ -2,6 +2,7 @@ package com.metadev.connect.Entity;
 
 import java.util.Date;
 
+// Private fields to store user information
 public class User {
     private Long userId;
     private String username;
@@ -10,6 +11,7 @@ public class User {
     private Date date_created_account;
     private String password;
 
+    // Constructor to initialize a User object with all fields
     public User(Long userId, String username, String email, String bio, Date date_created_account, String password) {
         this.userId = userId;
         this.username = username;
@@ -19,6 +21,7 @@ public class User {
         this.password = password;
     }
 
+    // Default constructor to initialize a User object with null values
     public User() {
         this.userId = null;
         this.username = null;
@@ -28,6 +31,7 @@ public class User {
         this.password = null;
     }
 
+    // Getter and Setter methods for each field
     public Long getUserId() {
         return userId;
     }
