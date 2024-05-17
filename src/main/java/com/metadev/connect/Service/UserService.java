@@ -39,6 +39,18 @@ public class UserService implements UserRepository {
     }
 
     @Override
+    public List<User> findUser() {
+        String sql = """
+                    SELECT 
+                    *
+                    FROM 
+                    [dbo].[user] 
+                    """;
+        return jdbc.query(sql, new UserRowMapper());
+
+    }
+
+    @Override
     public List<String> findUserByUsername(String username) throws InterruptedException {
         // SQL query to find a user by their username
         String sql = """
@@ -96,6 +108,20 @@ public class UserService implements UserRepository {
                     """;
         // Execute the query and return the list of matching User objects
         return jdbc.query(sql, new UserRowMapper(), username);
+
+    }
+
+    @Override
+    public List<User> findUserInfoById(Long userId) {
+        String sql = """
+                    SELECT 
+                    *
+                    FROM 
+                    [dbo].[user] 
+                    WHERE 
+                    user_id = ?
+                    """;
+        return jdbc.query(sql, new UserRowMapper(), userId);
 
     }
 

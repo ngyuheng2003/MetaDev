@@ -10,6 +10,7 @@ public class UserLogined {
     private static String bio;
     private static Date date_created_account;
     private static String password;
+    private static User userLogined;
 
     // Constructor to initializes a UserLogined object with a User object's information
     public UserLogined(User user) {
@@ -19,6 +20,7 @@ public class UserLogined {
         bio = user.getBio();
         date_created_account = user.getDate_created_account();
         password = user.getPassword();
+        userLogined = user;
     }
 
     // Method to log out the user by setting all fields to null
@@ -79,4 +81,8 @@ public class UserLogined {
     public static void setPassword(String password) {
         UserLogined.password = password;
     }
+    public static User getUserLogined(){
+        return userLogined;
+    }
+
 }
