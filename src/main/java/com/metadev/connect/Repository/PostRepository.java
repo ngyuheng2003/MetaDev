@@ -26,6 +26,10 @@ public interface PostRepository {
     public List<Post> findByTags(String tags);
 
     public List<Post> fetchPost();
+
+
+    List<Post> fetchPostByUserId(Long userId);
+
     public int getLikeCount(Long post_id);
 
     public boolean getUserLikeStatus(Long post_id, Long user_id);

@@ -3,6 +3,7 @@ package com.metadev.connect.FXMLController;
 import com.metadev.connect.Controller.Post.CommentNode;
 import com.metadev.connect.Controller.Post.PostCommentTree;
 import com.metadev.connect.Controller.Post.PostLikeController;
+import com.metadev.connect.Controller.Post.SearchPosts;
 import com.metadev.connect.Entity.Comment;
 import com.metadev.connect.Entity.Post;
 import com.metadev.connect.Entity.UserLogined;
@@ -51,7 +52,9 @@ public class PostContainerController {
     private Post post;
     private ThreadPool threadPoolPostContainer;
     private NewsFeedController newsFeedController;
+    private SearchController searchController;
     private PostContainerController parentController;
+    private ProfileController profileController;
     private int typeOfPost;
     private int typeOfComment = 0;
     private PostCommentTree postCommentTreeReplied;
@@ -85,6 +88,14 @@ public class PostContainerController {
 
     public void setParentController(NewsFeedController newsFeedController){
         this.newsFeedController = newsFeedController;
+    }
+
+    public void setSearchController(SearchController searchController){
+        this.searchController = searchController;
+    }
+
+    public void setProfileController(ProfileController profileController){
+        this.profileController = profileController;
     }
 
     public void setPostContainer(Post post, int type) throws InterruptedException {
@@ -200,13 +211,31 @@ public class PostContainerController {
 
     // Post Comment
     public void commentButtonClicked(ActionEvent event) throws IOException, SQLException, InterruptedException, ClassNotFoundException {
-        if(!isCommentSection) {
-            newsFeedController.showCommentSection(post);
+        if(newsFeedController != null) {
+            if (!isCommentSection) {
+                newsFeedController.showCommentSection(post);
 
+            } else {
+                newsFeedController.closeCommentSection();
+                setCommentSection(false);
+            }
         }
-        else{
-            newsFeedController.closeCommentSection();
-            setCommentSection(false);
+        else if(searchController != null){
+            if (!isCommentSection) {
+                searchController.showCommentSection(post);
+
+            } else {
+                searchController.closeCommentSection();
+                setCommentSection(false);
+            }
+        }else{
+            if (!isCommentSection) {
+                profileController.showCommentSection(post);
+
+            } else {
+                profileController.closeCommentSection();
+                setCommentSection(false);
+            }
         }
     }
 

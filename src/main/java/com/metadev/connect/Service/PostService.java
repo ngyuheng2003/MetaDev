@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.List;
 import java.util.Objects;
 
@@ -59,7 +58,7 @@ public class PostService implements PostRepository, Serializable {
     @Override
     public List<Post> fetchPost() {
         String sql = """
-                    SELECT TOP 10
+                    SELECT
                     *
                     FROM 
                     [dbo].[post]
@@ -67,6 +66,20 @@ public class PostService implements PostRepository, Serializable {
                     """;
         return jdbc.query(sql, new PostRowMapper());
     }
+
+    @Override
+    public List<Post> fetchPostByUserId(Long userId) {
+        String sql = """
+                    SELECT
+                    *
+                    FROM 
+                    [dbo].[post]
+                    WHERE user_id = ?
+                    ORDER BY post_created_date DESC 
+                    """;
+        return jdbc.query(sql, new PostRowMapper(), userId);
+    }
+
 
 
     // Like function

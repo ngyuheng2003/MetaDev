@@ -12,11 +12,16 @@ public interface UserRepository {
 
     public int registerNewUser(String username, String email, String password);
 
+
+    List<User> findUser();
+
     public List<String> findUserByUsername(String username) throws InterruptedException;
     public List<String> findUserUsernameById(Long user_id) throws InterruptedException;
 
     public List<String> findUserByEmail(String email);
     public List<User> findUserInfoByUsername(String username);
+
+    List<User> findUserInfoById(Long userId);
 
     public boolean loginUserByEmail(String email, String password);
 
