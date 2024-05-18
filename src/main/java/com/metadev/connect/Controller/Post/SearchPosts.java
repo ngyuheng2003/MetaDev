@@ -123,27 +123,35 @@ public class SearchPosts {
 
 
     //3. search post by using tag
-    private void searchPostByTag(String tag) throws SQLException {
-        String query = "SELECT * FROM [dbo].[post_tags]";
-        Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery(query);
-
-        boolean found = false; // Flag to track if any matching post is found
+    public List<Post> searchPostByTag(String tag) throws SQLException {
+        List<Post> list = postService.fetchPost();
+        List<Post> searchList = new ArrayList<>();
 
         // Process the result set
-        while (rs.next()) {
-            String dbTag = rs.getString("tag");
-            if (dbTag.contains(tag) || StringUtils.getLevenshteinDistance(tag.toLowerCase(), dbTag.toLowerCase())<=4) {
-                int postId = rs.getInt("post_id");
-                // Fetch post information using postId
-                getPostsByPostId(postId);
-                found = true; // Set the flag to true since a matching post is found
+        for(int i = 0; i < list.size(); i++) {
+            String tagging = list.get(i).getTagsByString();
+            if(tagging != null) {
+                String[] dbTags = tagging.toLowerCase().split(",");
+                String tags = tag.toLowerCase();
+                for(int j = 0; j < dbTags.length; j++){
+                    // Check if the username exactly matches or if Levenshtein distance is within the threshold
+                    if (dbTags[j].contains(tags) || StringUtils.getLevenshteinDistance(dbTags[j], tags) <= 3) { // Adjust the threshold as needed
+                        searchList.add(list.get(i));
+                        break;
+                    }
+                }
             }
+            // Check if the username exactly matches or if Levenshtein distance is within the threshold
+
         }
 
-        // If no matching post is found, print a message
-        if (!found) {
+        // If no matching user is found, print a message
+        if (searchList.size() != 0) {
+            return searchList;
+
+        }else{
             System.out.println("No matching post found with tag: " + tag);
+            return null;
         }
     }
 

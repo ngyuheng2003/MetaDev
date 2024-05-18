@@ -12,10 +12,19 @@ public class PostRowMapper implements RowMapper<Post> {
         return new Post(resultSet.getLong("post_id"),
                 resultSet.getLong("user_id"),
                 resultSet.getString("content"),
-                null,
+                getTags(resultSet.getString("tagging")),
                 null,
                 resultSet.getInt("like_count"),
                 0,
                 resultSet.getDate("post_created_date"));
+    }
+
+    public String[] getTags(String string){
+        if(string != null){
+            return string.split(",");
+        }
+        else{
+            return null;
+        }
     }
 }

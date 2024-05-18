@@ -28,11 +28,11 @@ public class PostService implements PostRepository, Serializable {
         String sql = """
                     INSERT INTO 
                     [dbo].[post] 
-                    ([user_id], [content], [location]) 
+                    ([user_id], [content], [location], [tagging]) 
                     VALUES 
-                    (?, ?, ?);
+                    (?, ?, ?, ?);
                     """;
-        return jdbc.update(sql, UserLogined.getUserId(), post.getContent(), post.getLocation());
+        return jdbc.update(sql, UserLogined.getUserId(), post.getContent(), post.getLocation(), post.getTagsByString());
     }
 
     @Override

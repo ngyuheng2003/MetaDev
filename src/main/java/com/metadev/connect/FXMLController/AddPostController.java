@@ -17,6 +17,7 @@ import javafx.scene.text.Text;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class AddPostController implements Initializable {
@@ -39,7 +40,17 @@ public class AddPostController implements Initializable {
     }
     public void postNextButtonClicked(ActionEvent event) throws Exception {
         threadPoolAddPost = new ThreadPool(1,1);
-        Post newPost = new Post(null,UserLogined.getUserId(),postText.getText(),null, null,0,  0,null);
+        String[] word = postText.getText().split(" ");
+        ArrayList<String> tags = new ArrayList();
+        for(int i = 0; i < word.length; i++){
+            if(word[i].charAt(0) == '#')
+                tags.add(word[i].substring(1));
+        }
+        String[] tagging = new String[tags.size()];
+        for(int i = 0; i < tags.size(); i++){
+            tagging[i] = tags.get(i);
+        }
+        Post newPost = new Post(null,UserLogined.getUserId(),postText.getText(),tagging, null,0,  0,null);
         threadPoolAddPost.execute(()-> {
             System.out.println("Creating post ...");
             PostService postService = new PostService();

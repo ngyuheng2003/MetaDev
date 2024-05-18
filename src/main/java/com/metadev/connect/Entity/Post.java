@@ -93,6 +93,25 @@ public class Post {
     public void setPostCreatedDate(Date postCreatedDate) {
         this.postCreatedDate = postCreatedDate;
     }
+
+    public String getTagsByString(){
+        String tagging = "";
+        if(tags != null) {
+            for (int i = 0; i < tags.length; i++) {
+                if (i == tags.length - 1) {
+                    tagging += tags[i];
+                } else {
+                    tagging += tags[i] + ",";
+                }
+
+            }
+            return tagging;
+        }
+        else{
+            return null;
+        }
+
+    }
 }
 
 
