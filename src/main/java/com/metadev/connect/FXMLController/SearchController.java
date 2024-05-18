@@ -155,6 +155,10 @@ public class SearchController {
                             }
                         }catch (IOException | InterruptedException e) {
                             throw new RuntimeException(e);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        } catch (ClassNotFoundException e) {
+                            throw new RuntimeException(e);
                         }
                     }
                 });

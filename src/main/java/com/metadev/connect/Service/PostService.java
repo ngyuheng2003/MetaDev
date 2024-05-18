@@ -80,6 +80,19 @@ public class PostService implements PostRepository, Serializable {
         return jdbc.query(sql, new PostRowMapper(), userId);
     }
 
+    @Override
+    public List<Post> fetchPostByPostId(Long postId) {
+        String sql = """
+                    SELECT
+                    *
+                    FROM 
+                    [dbo].[post]
+                    WHERE post_id = ?
+                    ORDER BY post_created_date DESC 
+                    """;
+        return jdbc.query(sql, new PostRowMapper(), postId);
+    }
+
 
 
     // Like function
@@ -141,15 +154,15 @@ public class PostService implements PostRepository, Serializable {
 
     // Comment Usage
     @Override
-    public int addComment(Long post_id, ByteArrayOutputStream byteArrayOutputStream, int totalComment) {
+    public int addComment(Long post_id, ByteArrayOutputStream byteArrayOutputStream, int totalComment, Long user_id) {
         String sql = """
                     INSERT INTO
                     [dbo].[post_comment]
-                    ([post_id], [comment_OBJ], [total_comment])
+                    ([post_id], [comment_OBJ], [total_comment], [top_comment_user_id])
                     VALUES
-                    (?, ?, ?)
+                    (?, ?, ?, ?)
                     """;
-        return jdbc.update(sql, post_id, byteArrayOutputStream.toByteArray(), totalComment);
+        return jdbc.update(sql, post_id, byteArrayOutputStream.toByteArray(), totalComment, user_id);
 
     }
 
@@ -170,7 +183,7 @@ public class PostService implements PostRepository, Serializable {
     @Override
     public List<Comment> getComment(Long post_id) {
         String sql = """
-                    SELECT TOP 10
+                    SELECT
                     *
                     FROM 
                     [dbo].[post_comment]
@@ -179,6 +192,33 @@ public class PostService implements PostRepository, Serializable {
                     ORDER BY comment_created_date DESC 
                     """;
         return jdbc.query(sql, new Object[]{post_id},new CommentRowMapper());
+    }
+    @Override
+    public List<Comment> getCommentByUserID(Long user_id) {
+        String sql = """
+                    SELECT
+                    *
+                    FROM 
+                    [dbo].[post_comment]
+                    WHERE
+                    top_comment_user_id = ?
+                    ORDER BY comment_created_date DESC 
+                    """;
+        return jdbc.query(sql, new Object[]{user_id},new CommentRowMapper());
+    }
+
+    @Override
+    public List<Comment> getCommentByUserID(Long post_id, Long user_id) {
+        String sql = """
+                    SELECT
+                    *
+                    FROM 
+                    [dbo].[post_comment]
+                    WHERE
+                    post_id = ? AND top_comment_user_id = ?
+                    ORDER BY comment_created_date DESC 
+                    """;
+        return jdbc.query(sql, new Object[]{post_id, user_id},new CommentRowMapper());
     }
 
     @Override
