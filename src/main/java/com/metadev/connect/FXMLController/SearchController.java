@@ -81,12 +81,17 @@ public class SearchController {
         searchUserContainer.getChildren().clear();
         searchPostContainer.getChildren().clear();
         if(!searchTF.getText().isBlank()) {
-            List<User> listUser = search.searchUserByUserName(searchTF.getText());
-            List<Post> listPost = search.searchPostByContent(searchTF.getText());
-            if(listUser != null)
-                displayUser(listUser);
-            if(listPost != null) {
+            if (searchTF.getText().charAt(0) == '#') {
+                List<Post> listPost = search.searchPostByTag(searchTF.getText().substring(1));
                 displayPost(listPost);
+            } else {
+                List<User> listUser = search.searchUserByUserName(searchTF.getText());
+                List<Post> listPost = search.searchPostByContent(searchTF.getText());
+                if (listUser != null)
+                    displayUser(listUser);
+                if (listPost != null) {
+                    displayPost(listPost);
+                }
             }
         }else{
             messageText.setText("Search for user or post");
