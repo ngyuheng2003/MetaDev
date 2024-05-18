@@ -30,6 +30,8 @@ public interface PostRepository {
 
     List<Post> fetchPostByUserId(Long userId);
 
+    List<Post> fetchPostByPostId(Long postId);
+
     public int getLikeCount(Long post_id);
 
     public boolean getUserLikeStatus(Long post_id, Long user_id);
@@ -38,12 +40,18 @@ public interface PostRepository {
     public int addLike(Long post_id, Long user_id);
     public int removeLike(Long post_id, Long user_id);
 
+
     // Comment Usage
-    public int addComment(Long post_id, ByteArrayOutputStream byteArrayOutputStream, int totalComment);
+    int addComment(Long post_id, ByteArrayOutputStream byteArrayOutputStream, int totalComment, Long user_id);
 
     public int udpateComment(Long post_id, ByteArrayOutputStream byteArrayOutputStream, int totalComment, int comment_OBJ_ID);
 
     public List<Comment> getComment(Long post_id);
+
+    List<Comment> getCommentByUserID(Long user_id);
+
+    List<Comment> getCommentByUserID(Long post_id, Long user_id);
+
     public int getCommentCount(Long post_id);
 
 }

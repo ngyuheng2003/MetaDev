@@ -19,6 +19,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -98,7 +99,7 @@ public class PostContainerController {
         this.profileController = profileController;
     }
 
-    public void setPostContainer(Post post, int type) throws InterruptedException {
+    public void setPostContainer(Post post, int type) throws InterruptedException, SQLException, IOException, ClassNotFoundException {
         this.post = post;
         // Setting profile image
         Image image = new Image("Images/General/defaultProfilePic_icon.png");
@@ -134,6 +135,10 @@ public class PostContainerController {
         if(typeOfPost == 1){
             postContainer.getChildren().remove(commentInputContainer);
             upperContainer.getChildren().remove(postCommentContainer);
+        }else if(typeOfPost == 2){
+            postContainer.getChildren().remove(commentInputContainer);
+            postCommentContainer.setPrefHeight(Region.USE_COMPUTED_SIZE);
+            displayComment();
         }
 
         post_comment_counter.setText(String.valueOf(postService.getCommentCount(post.getPostId())));
@@ -254,8 +259,13 @@ public class PostContainerController {
     public void displayComment() throws IOException, InterruptedException, SQLException, ClassNotFoundException {
         // Setting parent controller (PostContainerController)
         parentController = this;
+        List<Comment> listOfComment;
         // Getting list of comment from database
-        List<Comment> listOfComment = postService.getComment(post.getPostId());
+        if(typeOfPost == 2){
+            listOfComment = postService.getCommentByUserID(post.getPostId(), UserLogined.getUserId());
+        }else{
+            listOfComment = postService.getComment(post.getPostId());
+        }
         // Loading the comment into the post
         for(int i = 0; i < listOfComment.size(); i++) {
             // Convert blob to object
@@ -293,7 +303,7 @@ public class PostContainerController {
                         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                         ObjectOutputStream objectOut = new ObjectOutputStream(byteArrayOutputStream);
                         objectOut.writeObject(postCommentTree);
-                        postService.addComment(post.getPostId(), byteArrayOutputStream, postCommentTree.getTotalComments());
+                        postService.addComment(post.getPostId(), byteArrayOutputStream, postCommentTree.getTotalComments(), UserLogined.getUserId());
                         objectOut.close();
                         byteArrayOutputStream.close();
                         System.out.println("POSTC: Comment saved");
