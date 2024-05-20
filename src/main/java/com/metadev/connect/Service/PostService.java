@@ -3,9 +3,11 @@ package com.metadev.connect.Service;
 import com.metadev.connect.Controller.DataSourceConfig;
 import com.metadev.connect.Entity.Comment;
 import com.metadev.connect.Entity.Post;
+import com.metadev.connect.Entity.PostLiked;
 import com.metadev.connect.Entity.UserLogined;
 import com.metadev.connect.Repository.PostRepository;
 import com.metadev.connect.RowMapper.CommentRowMapper;
+import com.metadev.connect.RowMapper.PostLikedRowMapper;
 import com.metadev.connect.RowMapper.PostRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -65,6 +67,17 @@ public class PostService implements PostRepository, Serializable {
                     ORDER BY post_created_date DESC 
                     """;
         return jdbc.query(sql, new PostRowMapper());
+    }
+
+    public List<PostLiked> fetchPostLikedByUserId(Long userId) {
+        String sql = """
+                    SELECT
+                    *
+                    FROM 
+                    [dbo].[post_like]
+                    WHERE user_id = ?
+                    """;
+        return jdbc.query(sql, new PostLikedRowMapper(), userId);
     }
 
     @Override
