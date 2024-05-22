@@ -3,13 +3,12 @@ package com.metadev.connect.Controller;
 import com.metadev.connect.Entity.Post;
 import com.metadev.connect.Entity.PostLiked;
 import com.metadev.connect.Entity.User;
+import com.metadev.connect.Entity.UserPreferredTopic;
 import com.metadev.connect.Service.PostService;
 import com.metadev.connect.Service.UserService;
 import org.apache.commons.text.similarity.JaroWinklerSimilarity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 //import org.apache.commons.text.similarity.LevenshteinDistance;
 //import org.apache.commons.text.similarity.JaccardSimilarity;
 //import java.util.Locale;
@@ -90,9 +89,9 @@ public class ContentRecommendationSystem {
         return tagList;
     }
 
-    //Calculate weight of preferred topic of an user
-    public HashMap<String, Double> preferedTopic(ArrayList<String> tagList){
-        HashMap<String,Double> map = new HashMap<>();
+    //Calculate weight of preferred topic of a user
+    public ArrayList<UserPreferredTopic> preferedTopic(Long userId,ArrayList<String> tagList){
+        ArrayList<UserPreferredTopic> list = new ArrayList<>();
         for(String tag : tagList)
         {
             double weight = 0;
@@ -100,12 +99,48 @@ public class ContentRecommendationSystem {
             {
                 weight += computeJaroWinklerSimilarity(tag,otherTag);
             }
-            map.put(tag,weight);
+            list.add(new UserPreferredTopic(userId,tag,weight));
         }
-        return map;
+        return list;
     }
 
-    public static void main(String[] args) {
+    //Insert top 5 preferred topic for each a user
+    public void insertTable(ArrayList<UserPreferredTopic> list){
+        if(!list.isEmpty())
+        {
+            System.out.println("Inserting data...");
+            if(list.size() >= 5)
+            {
+                for(int i=0;i<5;i++)
+                {
+                    userService.insertUserPreferredTopic(list.get(i));
+                }
+            }
+            else
+            {
+                for(int i=0;i<list.size();i++)
+                {
+                    userService.insertUserPreferredTopic(list.get(i));
+                }
+            }
+        }
+    }
+
+    //Clear preferred topic for a user
+    public void clearTable(ArrayList<UserPreferredTopic> list){
+        if(!list.isEmpty())
+        {
+            userService.removeUserPreferredTopic(list.get(0));
+            System.out.println("Clearing user preferred topic data...");
+        }
+    }
+
+    //Check whether to use insert or update method
+    public boolean checkInsertOrUpdateTable(Long userId) throws InterruptedException {
+        return userService.checkUserPreferredTopicExistById(userId);
+    }
+
+    public static void main(String[] args) throws InterruptedException {
         String url = "jdbc:sqlserver://localhost\\\\SQLEXPRESS:1433;databaseName=Connect_DB;Trusted_Connection=True;trustServerCertificate=True;encrypt=true;";
         String username = "sa";
         String password = "metaDev2024";
@@ -114,9 +149,15 @@ public class ContentRecommendationSystem {
 
         ContentRecommendationSystem sys = new ContentRecommendationSystem();
         ArrayList<Long> allUserId = sys.getAllUserId();
-        ArrayList<Long> allLikedPostId = sys.getLikedPostId(30L);
-        ArrayList<String> allTags = sys.getTags(allLikedPostId);
-        HashMap<String,Double> map = sys.preferedTopic(allTags);
-        System.out.println(map);
+        for (Long userId : allUserId)
+        {
+            ArrayList<Long> allLikedPostId = sys.getLikedPostId(userId);
+            ArrayList<String> allTags = sys.getTags(allLikedPostId);
+            ArrayList<UserPreferredTopic> list = sys.preferedTopic(userId,allTags);
+            Collections.sort(list,Collections.reverseOrder());
+            if(sys.checkInsertOrUpdateTable(userId))
+                sys.clearTable(list);
+            sys.insertTable(list);
+        }
     }
 }

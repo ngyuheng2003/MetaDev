@@ -1,6 +1,5 @@
 package com.metadev.connect.RowMapper;
 
-import com.metadev.connect.Entity.Post;
 import com.metadev.connect.Entity.PostLiked;
 import org.springframework.jdbc.core.RowMapper;
 
