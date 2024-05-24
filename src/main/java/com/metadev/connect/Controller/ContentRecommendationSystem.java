@@ -1,9 +1,6 @@
 package com.metadev.connect.Controller;
 
-import com.metadev.connect.Entity.Post;
-import com.metadev.connect.Entity.PostLiked;
-import com.metadev.connect.Entity.User;
-import com.metadev.connect.Entity.UserPreferredTopic;
+import com.metadev.connect.Entity.*;
 import com.metadev.connect.Service.PostService;
 import com.metadev.connect.Service.UserService;
 import org.apache.commons.text.similarity.JaroWinklerSimilarity;
@@ -138,6 +135,59 @@ public class ContentRecommendationSystem {
     //Check whether to use insert or update method
     public boolean checkInsertOrUpdateTable(Long userId) throws InterruptedException {
         return userService.checkUserPreferredTopicExistById(userId);
+    }
+
+    //Recommend Post
+    public List<Post> recommendPost(List<Post> listOfPost,Long userId){
+        List<Post> recommendedPost = new ArrayList<>();
+        List<PostWithWeight> postOrder = new ArrayList<>();
+        Set<String> preferredTopics = new HashSet<>(userService.findUserPreferredTopic(userId));
+
+        //Remove user post
+        Iterator<Post> iterator = listOfPost.iterator();
+        while (iterator.hasNext()) {
+            Post post = iterator.next();
+            if (post.getUserId().equals(userId)) {
+                iterator.remove();
+            }
+        }
+
+        // Iterate all posts
+        for (Post post : listOfPost)
+        {
+            // Get tag list of post
+            String[] tagList = post.getTags();
+            if(tagList == null){
+                postOrder.add(new PostWithWeight(post,0));
+                continue;
+            }
+
+            // Iterate every tag in tagList to get the highest weight
+            double weight = 0;
+            for (String tag : tagList)
+            {
+                for (String preferredTag : preferredTopics)
+                {
+                    double score = computeJaroWinklerSimilarity(tag, preferredTag);
+                    if (score > weight)
+                    {
+                        weight = score;
+                    }
+                }
+            }
+            postOrder.add(new PostWithWeight(post,weight));
+        }
+
+        // Sort posts by weight in descending order
+        Collections.sort(postOrder);
+
+        // Extract sorted posts
+        for (PostWithWeight postWithWeight : postOrder)
+        {
+            recommendedPost.add(postWithWeight.getPost());
+        }
+
+        return recommendedPost;
     }
 
     public static void main(String[] args) throws InterruptedException {
