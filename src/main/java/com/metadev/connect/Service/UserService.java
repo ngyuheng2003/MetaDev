@@ -6,12 +6,14 @@ import java.util.Base64;
 import java.util.List;
 
 import com.metadev.connect.Controller.DataSourceConfig;
+import com.metadev.connect.Entity.UserPreferredTopic;
 import com.metadev.connect.RowMapper.UserRowMapper;
 import com.metadev.connect.Entity.User;
 import com.metadev.connect.Repository.UserRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 @Service
 public class UserService implements UserRepository {
@@ -36,6 +38,70 @@ public class UserService implements UserRepository {
                     """;
         // Execute the query using JdbcTemplate and return the result
         return jdbc.update(sql, username, email, hashPassword(password));
+    }
+
+    public int insertUserPreferredTopic(UserPreferredTopic userPreferredTopic){
+        // SQL query to insert user preffered topic into the table
+        String sql = """
+                INSERT INTO
+                [dbo].[user_preferred_topic]
+                ([user_id], [preferred_topic], [weight])
+                VALUES
+                (?, ?, ?)
+                """;
+        // Execute the query using JdbcTemplate and return the result
+        return jdbc.update(sql, userPreferredTopic.getUserId(), userPreferredTopic.getTopic(), userPreferredTopic.getWeight());
+    }
+
+    public int removeUserPreferredTopic(UserPreferredTopic userPreferredTopic){
+        // SQL query to insert user preffered topic into the table
+        String sql = """
+                DELETE FROM
+                [dbo].[user_preferred_topic]
+                WHERE
+                user_id = ?
+                """;
+        // Execute the query using JdbcTemplate and return the result
+        return jdbc.update(sql, userPreferredTopic.getUserId());
+    }
+
+    public boolean checkUserPreferredTopicExistById(Long user_id) throws InterruptedException {
+        // SQL query to count the number of preferred topics for the given user ID
+        String sql = """
+                SELECT 
+                COUNT(*) 
+                FROM 
+                [dbo].[user_preferred_topic] 
+                WHERE 
+                user_id = ?
+                """;
+        // Execute the query and retrieve the count
+        int count = jdbc.queryForObject(sql, new Object[]{user_id}, Integer.class);
+        // Return true if count is greater than 0, otherwise return false
+        return count > 0;
+    }
+
+    public List<String> findUserPreferredTopic(Long user_id){
+        // SQL query to find a username by user ID
+        String sql = """
+                    SELECT 
+                    preferred_topic
+                    FROM 
+                    [dbo].[user_preferred_topic] 
+                    WHERE 
+                    user_id = ?
+                    """;
+        // Execute the query and return the list of matching usernames
+        try {
+            // Execute the query and return the list of matching preferred topics
+            return jdbc.queryForList(sql, new Object[]{user_id}, String.class);
+        } catch (EmptyResultDataAccessException e) {
+            // Return an empty list if no preferred topics are found for the user
+            return List.of();
+        } catch (Exception e) {
+            // Handle other potential exceptions (e.g., SQL exceptions)
+            throw new RuntimeException("Error querying user preferred topics", e);
+        }
     }
 
     @Override

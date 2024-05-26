@@ -1,5 +1,6 @@
 package com.metadev.connect.FXMLController;
 
+import com.metadev.connect.Controller.ContentRecommendationSystem;
 import com.metadev.connect.Controller.Post.UserProfile;
 import com.metadev.connect.Controller.StartUpController.StartUp;
 import com.metadev.connect.Entity.Post;
@@ -46,12 +47,13 @@ public class NewsFeedController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ThreadPool threadPoolFetchPost = new ThreadPool(1, 1);
         PostService postService = new PostService();
+        ContentRecommendationSystem contentRecommendationSystem = new ContentRecommendationSystem();
         usernameButton.setText(UserLogined.getUsername());
         parentController = this;
         try {
             threadPoolFetchPost.execute(()->{
                 System.out.println("NEWFD: Fetching New Feeds ...");
-                listOfPost = postService.fetchPost();
+                listOfPost = contentRecommendationSystem.recommendPost(postService.fetchPost(),UserLogined.getUserId());
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
