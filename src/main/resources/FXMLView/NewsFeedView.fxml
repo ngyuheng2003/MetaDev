@@ -46,6 +46,23 @@
          <children>
             <AnchorPane VBox.vgrow="ALWAYS">
                <children>
+                  <VBox fx:id="loadingPane" alignment="CENTER" style="-fx-background-color: rgb(240, 242, 245);" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <VBox fx:id="middleContainer1" alignment="CENTER" prefHeight="245.0" prefWidth="600.0">
+                           <children>
+                              <VBox fx:id="loadingContainer1" alignment="CENTER" prefHeight="50.0" prefWidth="595.0">
+                                 <children>
+                                    <Text fill="GREY" strokeType="OUTSIDE" strokeWidth="0.0" text="Loading ...">
+                                       <font>
+                                          <Font size="25.0" />
+                                       </font>
+                                    </Text>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
                   <VBox fx:id="commentPane" alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <VBox fx:id="commentContainer" alignment="CENTER" minHeight="640.0" onMouseClicked="#commentOuterAreaClicked" prefWidth="1280.0" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS" />

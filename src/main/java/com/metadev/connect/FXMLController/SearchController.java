@@ -153,7 +153,6 @@ public class SearchController {
                                 postContainerController.setSearchController(parentController);
                                 postContainerController.setPostContainer(list.get(i), 1);
                                 searchPostContainer.getChildren().add(newFeedPostBox);
-                                postContainerController.checkTypeOfPost();
 
                                 searchPostContainerMiddle.setDisable(false);
                                 searchPostContainerMiddle.setVisible(true);

@@ -177,8 +177,9 @@ public class PostService implements PostRepository, Serializable {
                     UPDATE [dbo].[post] 
                     SET [dbo].[post].like_count 
                     = (SELECT COUNT(?) from [dbo].[post_like] WHERE [dbo].[post_like].post_id = [dbo].[post].post_id);
+                    WHERE [dbo].[post].post_id = ?;
                     """;
-        return jdbc.update(sql, post_id);
+        return jdbc.update(sql, post_id, post_id);
     }
 
     // Comment Usage
@@ -260,5 +261,16 @@ public class PostService implements PostRepository, Serializable {
                     """;
         Integer like_count = jdbc.queryForObject(sql, new Object[]{post_id}, Integer.class);
         return Objects.requireNonNullElse(like_count, 0);
+    }
+
+    @Override
+    public int updateCommentCount(Long post_id){
+        String sql = """
+                    UPDATE [dbo].[post] 
+                    SET [dbo].[post].comment_count 
+                    = (SELECT COUNT(total_comment) from [dbo].[post_comment] WHERE [dbo].[post_comment].post_id = [dbo].[post].post_id)
+                    WHERE [dbo].[post].post_id = ?;
+                    """;
+        return jdbc.update(sql, post_id);
     }
 }

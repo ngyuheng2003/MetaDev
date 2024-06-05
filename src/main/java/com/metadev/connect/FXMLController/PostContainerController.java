@@ -181,6 +181,7 @@ public class PostContainerController {
     // Post Like
 
     public void postLikeButtonClicked(ActionEvent event) throws Exception {
+        updateCountGUI();
         // Creating a thread for like function
         threadPoolPostContainer = new ThreadPool(1, 1);
         // Using the thread for like function to database
@@ -197,29 +198,15 @@ public class PostContainerController {
                 UserLogined.refreshUserLoginedLikeStatus(); // Set liked to true to indicate that the user has liked the post
                 System.out.println("POSTL: Post like remove successfully.");
             }
-            postService.updateLikeCount(post.getPostId());
+            int sqlStatus = postService.updateLikeCount(post.getPostId());
             post.updateInfo();
-            // Update the like count
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    if(UserLogined.getUserLoginedLikeStatus(post.getPostId())){
-                        post_like_counter.setText(String.valueOf(Integer.parseInt(post_like_counter.getText())+ 1));
-                        postLikeButton.setId("postLikeTrue");
-                        ImageView icon = new ImageView("Images/General/love_icon_resized_red.png");
-                        icon.setFitHeight(20);
-                        icon.setFitWidth(20);
-                        postLikeButton.setGraphic(icon);
+                    if(sqlStatus == 0) {
+                        updateCountGUI();
+                        System.out.println("POSTL: Post like add/remove failed.");
                     }
-                    else{
-                        post_like_counter.setText(String.valueOf(Integer.parseInt(post_like_counter.getText()) - 1));
-                        postLikeButton.setId("postLikeFalse");
-                        ImageView icon = new ImageView("Images/General/love_icon_resized.png");
-                        icon.setFitHeight(20);
-                        icon.setFitWidth(20);
-                        postLikeButton.setGraphic(icon);
-                    }
-
                 }
             });
             // Terminating the thread
@@ -227,11 +214,49 @@ public class PostContainerController {
         });
     }
 
-    public void postUsernameHyperLinkClicked(ActionEvent event) throws InterruptedException, IOException {
-        UserService userService = new UserService();
+    // Update GUI for Like count and Comment count
+    public void updateCountGUI(){
+        if(!UserLogined.getUserLoginedLikeStatus(post.getPostId())){
+            post_like_counter.setText(String.valueOf(Integer.parseInt(post_like_counter.getText())+ 1));
+            postLikeButton.setId("postLikeTrue");
+            ImageView icon = new ImageView("Images/General/love_icon_resized_red.png");
+            icon.setFitHeight(20);
+            icon.setFitWidth(20);
+            postLikeButton.setGraphic(icon);
+        }
+        else{
+            post_like_counter.setText(String.valueOf(Integer.parseInt(post_like_counter.getText()) - 1));
+            postLikeButton.setId("postLikeFalse");
+            ImageView icon = new ImageView("Images/General/love_icon_resized.png");
+            icon.setFitHeight(20);
+            icon.setFitWidth(20);
+            postLikeButton.setGraphic(icon);
+        }
+    }
+
+    // Show profile page of the post owner
+    public void postUsernameHyperLinkClicked(ActionEvent event) throws Exception {
         post_username.setVisited(false);
-        UserProfile.setUser(userService.findUserInfoById(post.getUserId()).getFirst());
-        new StartUp(event, "/FXMLView/ProfileView.fxml");
+        newsFeedController.showLoadingPane();
+        ThreadPool threadPoolUsername = new ThreadPool(1, 1);
+        // Using the thread for like function to database
+        threadPoolUsername.execute(()->{
+            UserService userService = new UserService();
+            UserProfile.setUser(userService.findUserInfoById(post.getUserId()).getFirst());
+            // Update the like count
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        new StartUp(event, "/FXMLView/ProfileView.fxml");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+            // Terminating the thread
+            threadPoolUsername.stop();
+        });
     }
 
     // Post Comment
@@ -239,7 +264,6 @@ public class PostContainerController {
         if(newsFeedController != null) {
             if (!isCommentSection) {
                 newsFeedController.showCommentSection(post, this);
-
             } else {
                 newsFeedController.closeCommentSection();
                 setCommentSection(false);
@@ -248,7 +272,6 @@ public class PostContainerController {
         else if(searchController != null){
             if (!isCommentSection) {
                 searchController.showCommentSection(post, this);
-
             } else {
                 searchController.closeCommentSection();
                 setCommentSection(false);
@@ -256,7 +279,6 @@ public class PostContainerController {
         }else{
             if (!isCommentSection) {
                 profileController.showCommentSection(post, this);
-
             } else {
                 profileController.closeCommentSection();
                 setCommentSection(false);
@@ -270,10 +292,6 @@ public class PostContainerController {
 
     public void mouseExitContainer(MouseEvent mouseEvent) {
         isMouseInContainer = false;
-    }
-
-    public void checkTypeOfPost() {
-
     }
 
     public void displayComment() throws IOException, InterruptedException, SQLException, ClassNotFoundException {
@@ -305,7 +323,6 @@ public class PostContainerController {
             postCommentTree.setCommentID(postService.getCommentCount(post.getPostId()));
             postCommentContainerController.setPostCommentContainer(postCommentTree, 1);
             postCommentContainer.getChildren().add(postCommentBox);
-            System.out.println(2);
         }
     }
 
@@ -327,6 +344,8 @@ public class PostContainerController {
                         objectOut.close();
                         byteArrayOutputStream.close();
                         System.out.println("POSTC: Comment saved");
+                        post.updateInfo();
+                        postService.updateCommentCount(post.getPostId());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -351,17 +370,10 @@ public class PostContainerController {
                                 }
                                 commentTF.clear();
                                 addCommentButton.setDisable(true);
-                                post_comment_counter.setText(String.valueOf(Integer.parseInt(post_comment_counter.getText() + 1)));
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            } catch (SQLException e) {
-                                throw new RuntimeException(e);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            } catch (ClassNotFoundException e) {
+                                post_comment_counter.setText(String.valueOf(Integer.parseInt(post_comment_counter.getText()) + 1));
+                            } catch (IOException | SQLException | InterruptedException | ClassNotFoundException e) {
                                 throw new RuntimeException(e);
                             }
-
                         }
                     });
                     // Terminating the thread
@@ -381,6 +393,8 @@ public class PostContainerController {
                         objectOut.close();
                         byteArrayOutputStream.close();
                         System.out.println("POSTC: Comment saved");
+                        post.updateInfo();
+                        postService.updateCommentCount(post.getPostId());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -393,13 +407,7 @@ public class PostContainerController {
                                         "just now", String.valueOf(commentIdReplied), String.valueOf(Integer.parseInt(postCommentContainerControllerReplied.getDepth()) + 1)});
                                 postCommentContainerControllerReplied.setCommentInformation(list);
                                 postCommentContainerControllerReplied.addRepliedComment();
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            } catch (SQLException e) {
-                                throw new RuntimeException(e);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            } catch (ClassNotFoundException e) {
+                            } catch (IOException | SQLException | InterruptedException | ClassNotFoundException e) {
                                 throw new RuntimeException(e);
                             }
                             commentTF.clear();
@@ -411,8 +419,6 @@ public class PostContainerController {
                     threadPoolPostContainer.stop();
                 });
         }
-
-
     }
 
     public void setRepliedInformation(int typeOfComment, PostCommentTree postCommentTree, int commentIdReplied, int comment_OBJ_ID, String username, PostCommentContainerController postCommentContainerControllerReplied){
@@ -437,9 +443,10 @@ public class PostContainerController {
         }
     }
 
+    // Update post info after exiting comment section
     public void updateParentPostContainer(){
         if(external != null) {
-            System.out.println("Updating...");
+            System.out.println("POSTS: Updating post info ...");
             if (UserLogined.getUserLoginedLikeStatus(post.getPostId())) {
                 external.postLikeButton.setId("postLikeTrue");
                 ImageView icon = new ImageView("Images/General/love_icon_resized_red.png");
@@ -458,11 +465,12 @@ public class PostContainerController {
         }
     }
 
+    // Delete post function
     public void postDeleteButtonClicked(ActionEvent event) throws Exception {
         ThreadPool threadPoolDeletePost = new ThreadPool(1,1);
         postDeleteButton.setDisable(true);
         threadPoolDeletePost.execute(()->{
-            System.out.println("POSTD: Deleting post ...");
+            System.out.println("POSTS: Deleting post ...");
             postService.deletePost(post.getPostId());
             post.setStatus(2);
             Platform.runLater(new Runnable() {
@@ -473,7 +481,7 @@ public class PostContainerController {
                     post_content.setStyle("-fx-font-style: italic");
                 }
             });
-            System.out.println("POSTD: Delete successfully");
+            System.out.println("POSTS: Delete successfully");
             threadPoolDeletePost.stop();
         });
     }
