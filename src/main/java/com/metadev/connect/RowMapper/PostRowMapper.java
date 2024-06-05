@@ -12,6 +12,7 @@ public class PostRowMapper implements RowMapper<Post> {
         return new Post(resultSet.getLong("post_id"),
                 resultSet.getLong("user_id"),
                 resultSet.getString("username"),
+                resultSet.getInt("post_status"),
                 resultSet.getString("content"),
                 getTags(resultSet.getString("tagging")),
                 null,

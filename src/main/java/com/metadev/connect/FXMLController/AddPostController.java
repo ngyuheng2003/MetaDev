@@ -50,7 +50,7 @@ public class AddPostController implements Initializable {
         for(int i = 0; i < tags.size(); i++){
             tagging[i] = tags.get(i);
         }
-        Post newPost = new Post(null,UserLogined.getUserId(), UserLogined.getUsername(), postText.getText(), tagging, null,0,  0,null);
+        Post newPost = new Post(null,UserLogined.getUserId(), UserLogined.getUsername(), 0,postText.getText(), tagging, null,0,  0,null);
         UserLogined.setNewPostFlag(true);
         UserLogined.setNewPost(newPost);
         threadPoolAddPost.execute(()-> {

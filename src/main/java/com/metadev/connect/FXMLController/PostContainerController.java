@@ -2,10 +2,13 @@ package com.metadev.connect.FXMLController;
 
 import com.metadev.connect.Controller.Post.CommentNode;
 import com.metadev.connect.Controller.Post.PostCommentTree;
+import com.metadev.connect.Controller.Post.UserProfile;
+import com.metadev.connect.Controller.StartUpController.StartUp;
 import com.metadev.connect.Entity.Comment;
 import com.metadev.connect.Entity.Post;
 import com.metadev.connect.Entity.UserLogined;
 import com.metadev.connect.Service.PostService;
+import com.metadev.connect.Service.UserService;
 import com.metadev.connect.ThreadPool.ThreadPool;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -30,7 +33,7 @@ import java.util.List;
 
 
 public class PostContainerController {
-    @FXML private Button postMenuButton, postLikeButton, addCommentButton;
+    @FXML private Button postMenuButton, postLikeButton, addCommentButton, postDeleteButton;
 
     @FXML private VBox postContainer,postMenuContainer, commentInputContainer, postCommentContainer, commentContainerMessageBox,upperContainer;
 
@@ -44,7 +47,7 @@ public class PostContainerController {
     @FXML private Hyperlink post_username;
     @FXML private TextArea commentTF;
     private PostCommentContainerController postCommentContainerController, postCommentContainerControllerReplied;
-    private  PostService postService = new PostService();
+    private final PostService postService = new PostService();
     private Post post;
     private ThreadPool threadPoolPostContainer;
     private NewsFeedController newsFeedController;
@@ -54,12 +57,7 @@ public class PostContainerController {
     private int typeOfPost;
     private int typeOfComment = 0;
     private PostCommentTree postCommentTreeReplied;
-    private int commentIdReplied;
-
-
-
-    private int comment_OBJ_ID;
-
+    private int commentIdReplied, comment_OBJ_ID;
     public void setComment_OBJ_ID(int comment_OBJ_ID) {
         this.comment_OBJ_ID = comment_OBJ_ID;
     }
@@ -119,9 +117,17 @@ public class PostContainerController {
             icon.setFitWidth(20);
             postLikeButton.setGraphic(icon);
         }
+        if(post.getStatus() == 2) {
+            post.setContent("Post deleted by author");
+            this.post_content.setText(post.getContent());
+            post_content.setStyle("-fx-font-style: italic");
+        }
+        else{
+            this.post_content.setText(post.getContent());
+        }
         post_like_counter.setText(String.valueOf(post.getLikeCount()));
         this.post_createdDate.setText(String.valueOf(post.getPostCreatedDate()));
-        this.post_content.setText(post.getContent());
+
 
         this.typeOfPost = type;
         if(typeOfPost == 1){
@@ -142,6 +148,9 @@ public class PostContainerController {
             postCommentContainer.getChildren().remove(commentContainerMessageBox);
         }
         addCommentButton.setDisable(true);
+        if(post.getUserId() != UserLogined.getUserId())
+            postDeleteButton.setDisable(true);
+
     }
 
 
@@ -149,9 +158,12 @@ public class PostContainerController {
         if(postMenuContainer.getOpacity() == 0){
             postMenuContainer.setOpacity(1);
             postMenuContainer.setDisable(false);
+            if(post.getUserId() == UserLogined.getUserId() && post.getStatus() != 2)
+                postDeleteButton.setDisable(false);
         }else{
             postMenuContainer.setOpacity(0);
             postMenuContainer.setDisable(true);
+            postDeleteButton.setDisable(true);
         }
     }
 
@@ -215,12 +227,15 @@ public class PostContainerController {
         });
     }
 
-    public void postUsernameHyperLinkClicked(ActionEvent event){
+    public void postUsernameHyperLinkClicked(ActionEvent event) throws InterruptedException, IOException {
+        UserService userService = new UserService();
         post_username.setVisited(false);
+        UserProfile.setUser(userService.findUserInfoById(post.getUserId()).getFirst());
+        new StartUp(event, "/FXMLView/ProfileView.fxml");
     }
 
     // Post Comment
-    public void commentButtonClicked(ActionEvent event) throws IOException, SQLException, InterruptedException, ClassNotFoundException {
+    public void commentButtonClicked(ActionEvent event) throws Exception {
         if(newsFeedController != null) {
             if (!isCommentSection) {
                 newsFeedController.showCommentSection(post, this);
@@ -267,7 +282,7 @@ public class PostContainerController {
         List<Comment> listOfComment;
         // Getting list of comment from database
         if(typeOfPost == 2){
-            listOfComment = postService.getCommentByUserID(post.getPostId(), UserLogined.getUserId());
+            listOfComment = postService.getCommentByUserID(post.getPostId(), UserProfile.getUserId());
         }else{
             listOfComment = postService.getComment(post.getPostId());
         }
@@ -441,5 +456,25 @@ public class PostContainerController {
             external.post_like_counter.setText(String.valueOf(post.getLikeCount()));
             external.post_comment_counter.setText(String.valueOf(post.getCommentCount()));
         }
+    }
+
+    public void postDeleteButtonClicked(ActionEvent event) throws Exception {
+        ThreadPool threadPoolDeletePost = new ThreadPool(1,1);
+        postDeleteButton.setDisable(true);
+        threadPoolDeletePost.execute(()->{
+            System.out.println("POSTD: Deleting post ...");
+            postService.deletePost(post.getPostId());
+            post.setStatus(2);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    post.setContent("Post deleted by author");
+                    post_content.setText("Post deleted by author");
+                    post_content.setStyle("-fx-font-style: italic");
+                }
+            });
+            System.out.println("POSTD: Delete successfully");
+            threadPoolDeletePost.stop();
+        });
     }
 }
