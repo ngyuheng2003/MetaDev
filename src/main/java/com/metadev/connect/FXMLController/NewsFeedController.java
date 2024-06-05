@@ -66,6 +66,8 @@ public class NewsFeedController implements Initializable {
                         middleContainer.getChildren().remove(loadingContainer);
                         try {
                             for(int i = 0; i < listOfPost.size(); i++) {
+                                if(listOfPost.get(i).getStatus() == 2)
+                                    continue;
                                 FXMLLoader fxmlLoader = new FXMLLoader();
                                 fxmlLoader.setLocation(getClass().getResource("/FXMLContainer/PostContainer.fxml"));
                                 VBox newFeedPostBox = fxmlLoader.load();
@@ -124,39 +126,41 @@ public class NewsFeedController implements Initializable {
         }
     }
 
-    public void showCommentSection(Post post, PostContainerController external){
-        System.out.println("NEWFD: Opening comment section ...");
+    public void showCommentSection(Post post, PostContainerController external) throws Exception {
         commentPane.toFront();
         commentPane.setDisable(false);
         mainPane.setDisable(true);
-        post.updateInfo();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    FXMLLoader fxmlLoader = new FXMLLoader();
-                    fxmlLoader.setLocation(getClass().getResource("/FXMLContainer/PostContainer.fxml"));
-                    newFeedPostBox = fxmlLoader.load();
-                    PostContainerController postContainerController = fxmlLoader.getController();
-                    internal = postContainerController;
-                    postContainerControllerComment = postContainerController;
-                    postContainerController.setPostContainer(post, 0);
-                    postContainerController.setCommentSection(true);
-                    postContainerController.setParentController(parentController);
-                    postContainerController.setExternalPostController(external);
-                    commentContainer.getChildren().add(newFeedPostBox);
-                    commentContainer.setStyle("-fx-background-color:  rgb(255,255,255,0.5)");
-                    System.out.println("NEWFD: Comment section opened");
-                    postContainerController.displayComment();
-                }catch (IOException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
+        ThreadPool threadPoolShowComment = new ThreadPool(1,1);
+        threadPoolShowComment.execute(()->{
+            System.out.println("NEWFD: Opening comment section ...");
+            post.updateInfo();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        FXMLLoader fxmlLoader = new FXMLLoader();
+                        fxmlLoader.setLocation(getClass().getResource("/FXMLContainer/PostContainer.fxml"));
+                        newFeedPostBox = fxmlLoader.load();
+                        PostContainerController postContainerController = fxmlLoader.getController();
+                        internal = postContainerController;
+                        postContainerControllerComment = postContainerController;
+                        postContainerController.setPostContainer(post, 0);
+                        postContainerController.setCommentSection(true);
+                        postContainerController.setParentController(parentController);
+                        postContainerController.setExternalPostController(external);
+                        commentContainer.getChildren().add(newFeedPostBox);
+                        commentContainer.setStyle("-fx-background-color:  rgb(255,255,255,0.5)");
+                        System.out.println("NEWFD: Comment section opened");
+                        postContainerController.displayComment();
+                    }catch (IOException | InterruptedException | SQLException | ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
-            }
+            });
+            threadPoolShowComment.stop();
         });
+
+
     }
 
     public void closeCommentSection(){

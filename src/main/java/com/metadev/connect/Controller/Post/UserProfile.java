@@ -18,4 +18,8 @@ public class UserProfile {
     public static User getUser(){
         return user;
     }
+
+    public static Long getUserId(){
+        return user.getUserId();
+    }
 }

@@ -12,6 +12,8 @@ public class Post {
     private Long userId;
 
     private String username;
+
+    private int status;
     private String content;
     private String[] tags;
     private String location;
@@ -19,10 +21,11 @@ public class Post {
     private int commentCount;
     private String postCreatedDate;
 
-    public Post(Long postId, Long userId, String username, String content, String[] tags, String location, int likeCount, int commentCount, Date postCreatedDate) {
+    public Post(Long postId, Long userId, String username, int status, String content, String[] tags, String location, int likeCount, int commentCount, Date postCreatedDate) {
         this.postId = postId;
         this.userId = userId;
         this.username = username;
+        this.status = status;
         this.content = content;
         this.tags = tags;
         this.location = location;
@@ -100,6 +103,13 @@ public class Post {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public void updateInfo(){

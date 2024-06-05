@@ -32,6 +32,8 @@ public interface PostRepository {
 
     List<Post> fetchPostByPostId(Long postId);
 
+    int deletePost(Long post_id);
+
     public int getLikeCount(Long post_id);
 
 

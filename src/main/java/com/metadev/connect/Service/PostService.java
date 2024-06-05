@@ -103,6 +103,20 @@ public class PostService implements PostRepository, Serializable {
         return jdbc.query(sql, new PostRowMapper(), postId);
     }
 
+    @Override
+    public int deletePost(Long post_id) {
+        String sql = """
+                    UPDATE
+                    [dbo].[post]
+                    SET
+                    [post_status] = 2
+                    WHERE
+                    post_id = ?
+                    """;
+        return jdbc.update(sql, post_id);
+
+    }
+
 
 
     // Like function
@@ -192,7 +206,6 @@ public class PostService implements PostRepository, Serializable {
                     post_id = ? AND comment_OBJ_ID = ?
                     """;
         return jdbc.update(sql, byteArrayOutputStream.toByteArray(), totalComment, post_id, comment_OBJ_ID);
-
     }
 
     @Override

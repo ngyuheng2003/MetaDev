@@ -46,7 +46,7 @@
                            <children>
                               <Text fx:id="post_content" strokeType="OUTSIDE" strokeWidth="0.0" text="Content" wrappingWidth="480.0">
                                  <font>
-                                    <Font name="Roboto" size="16.0" />
+                                    <Font size="16.0" />
                                  </font>
                               </Text>
                            </children>
@@ -58,7 +58,7 @@
                            <children>
                               <HBox alignment="CENTER" prefHeight="40.0" prefWidth="130.0">
                                  <children>
-                                    <Button id="menu_button" mnemonicParsing="false" prefHeight="40.0" prefWidth="130.0" text=" Delete" textFill="#c04000">
+                                    <Button id="menu_button" fx:id="postDeleteButton" disable="true" mnemonicParsing="false" onAction="#postDeleteButtonClicked" prefHeight="40.0" prefWidth="130.0" text=" Delete" textFill="#c04000">
                                        <graphic>
                                           <ImageView fitHeight="30.0" fitWidth="30.0" preserveRatio="true">
                                              <image>
