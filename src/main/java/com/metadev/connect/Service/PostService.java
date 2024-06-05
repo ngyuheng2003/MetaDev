@@ -268,7 +268,7 @@ public class PostService implements PostRepository, Serializable {
         String sql = """
                     UPDATE [dbo].[post] 
                     SET [dbo].[post].comment_count 
-                    = (SELECT COUNT(total_comment) from [dbo].[post_comment] WHERE [dbo].[post_comment].post_id = [dbo].[post].post_id)
+                    = (SELECT SUM(total_comment) from [dbo].[post_comment] WHERE [dbo].[post_comment].post_id = [dbo].[post].post_id)
                     WHERE [dbo].[post].post_id = ?;
                     """;
         return jdbc.update(sql, post_id);
