@@ -1,10 +1,7 @@
 package com.metadev.connect.Service;
 
 import com.metadev.connect.Controller.DataSourceConfig;
-import com.metadev.connect.Entity.Comment;
-import com.metadev.connect.Entity.Post;
-import com.metadev.connect.Entity.PostLiked;
-import com.metadev.connect.Entity.UserLogined;
+import com.metadev.connect.Entity.*;
 import com.metadev.connect.Repository.PostRepository;
 import com.metadev.connect.RowMapper.CommentRowMapper;
 import com.metadev.connect.RowMapper.PostLikedRowMapper;
@@ -30,11 +27,11 @@ public class PostService implements PostRepository, Serializable {
         String sql = """
                     INSERT INTO 
                     [dbo].[post] 
-                    ([user_id], [content], [location], [tagging]) 
+                    ([user_id], [username], [content], [location], [tagging]) 
                     VALUES 
-                    (?, ?, ?, ?);
+                    (?, ?, ?, ?, ?);
                     """;
-        return jdbc.update(sql, UserLogined.getUserId(), post.getContent(), post.getLocation(), post.getTagsByString());
+        return jdbc.update(sql, UserLogined.getUserId(), UserLogined.getUsername(), post.getContent(), post.getLocation(), post.getTagsByString());
     }
 
     @Override
@@ -124,21 +121,16 @@ public class PostService implements PostRepository, Serializable {
     }
 
     @Override
-    public boolean getUserLikeStatus(Long post_id, Long user_id){
+    public List<Long> getUserLikeStatus(Long user_id){
         String sql = """
                     SELECT
-                    COUNT(post_id)
+                    post_id
                     FROM 
                     [dbo].[post_like]
-                    where post_id = ? AND user_id = ?
+                    where user_id = ?
                     """;
-        Integer like_status = jdbc.queryForObject(sql, new Object[]{post_id, user_id}, Integer.class);
-        if(like_status == null){
-            return false;
-        }
-        else {
-            return like_status == 1;
-        }
+        return jdbc.queryForList(sql, new Object[]{user_id}, Long.class);
+
     }
 
 // Like Usage
@@ -163,6 +155,16 @@ public class PostService implements PostRepository, Serializable {
                     post_id = ? AND user_id = ?
                     """;
         return jdbc.update(sql, post_id, user_id);
+    }
+
+    @Override
+    public int updateLikeCount(Long post_id){
+        String sql = """
+                    UPDATE [dbo].[post] 
+                    SET [dbo].[post].like_count 
+                    = (SELECT COUNT(?) from [dbo].[post_like] WHERE [dbo].[post_like].post_id = [dbo].[post].post_id);
+                    """;
+        return jdbc.update(sql, post_id);
     }
 
     // Comment Usage

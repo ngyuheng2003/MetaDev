@@ -1,7 +1,6 @@
 package com.metadev.connect.FXMLController;
 
 import com.metadev.connect.Controller.Post.PostCommentTree;
-import com.metadev.connect.Controller.Post.PostLikeController;
 import com.metadev.connect.Entity.Post;
 import com.metadev.connect.Entity.UserLogined;
 import com.metadev.connect.Service.PostService;
@@ -13,8 +12,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -22,12 +19,10 @@ import javafx.scene.text.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class PostCommentContainerController {
     @FXML

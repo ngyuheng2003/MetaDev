@@ -40,7 +40,7 @@ public class NewsFeedController implements Initializable {
     @FXML PostContainerController postContainerController;
 
     private VBox newFeedPostBox;
-    private PostContainerController postContainerControllerComment;
+    private PostContainerController postContainerControllerComment, internal;
     private NewsFeedController parentController;
 
     @Override
@@ -54,6 +54,12 @@ public class NewsFeedController implements Initializable {
             threadPoolFetchPost.execute(()->{
                 System.out.println("NEWFD: Fetching New Feeds ...");
                 listOfPost = contentRecommendationSystem.recommendPost(postService.fetchPost(),UserLogined.getUserId());
+                if(UserLogined.getNewPost() != null) {
+                    Post post = UserLogined.getNewPost();
+                    post.setPostCreatedDate("just now");
+                    listOfPost.addFirst(UserLogined.getNewPost());
+                    UserLogined.setNewPost(null);
+                }
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -118,11 +124,12 @@ public class NewsFeedController implements Initializable {
         }
     }
 
-    public void showCommentSection(Post post){
+    public void showCommentSection(Post post, PostContainerController external){
         System.out.println("NEWFD: Opening comment section ...");
         commentPane.toFront();
         commentPane.setDisable(false);
         mainPane.setDisable(true);
+        post.updateInfo();
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -131,10 +138,12 @@ public class NewsFeedController implements Initializable {
                     fxmlLoader.setLocation(getClass().getResource("/FXMLContainer/PostContainer.fxml"));
                     newFeedPostBox = fxmlLoader.load();
                     PostContainerController postContainerController = fxmlLoader.getController();
+                    internal = postContainerController;
                     postContainerControllerComment = postContainerController;
                     postContainerController.setPostContainer(post, 0);
                     postContainerController.setCommentSection(true);
                     postContainerController.setParentController(parentController);
+                    postContainerController.setExternalPostController(external);
                     commentContainer.getChildren().add(newFeedPostBox);
                     commentContainer.setStyle("-fx-background-color:  rgb(255,255,255,0.5)");
                     System.out.println("NEWFD: Comment section opened");
@@ -167,8 +176,10 @@ public class NewsFeedController implements Initializable {
 
 
     public void commentOuterAreaClicked(MouseEvent mouseEvent) {
-        if(!postContainerControllerComment.isMouseInContainer())
+        if(!postContainerControllerComment.isMouseInContainer()) {
+            internal.updateParentPostContainer();
             closeCommentSection();
+        }
     }
 
     public void searchTFClicked(MouseEvent mouseEvent) throws IOException {

@@ -34,12 +34,15 @@ public interface PostRepository {
 
     public int getLikeCount(Long post_id);
 
-    public boolean getUserLikeStatus(Long post_id, Long user_id);
+
+    public List<Long> getUserLikeStatus(Long user_id);
 
     // Like Usage
     public int addLike(Long post_id, Long user_id);
     public int removeLike(Long post_id, Long user_id);
 
+
+    int updateLikeCount(Long post_id);
 
     // Comment Usage
     int addComment(Long post_id, ByteArrayOutputStream byteArrayOutputStream, int totalComment, Long user_id);

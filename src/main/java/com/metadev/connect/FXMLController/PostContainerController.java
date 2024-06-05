@@ -2,13 +2,10 @@ package com.metadev.connect.FXMLController;
 
 import com.metadev.connect.Controller.Post.CommentNode;
 import com.metadev.connect.Controller.Post.PostCommentTree;
-import com.metadev.connect.Controller.Post.PostLikeController;
-import com.metadev.connect.Controller.Post.SearchPosts;
 import com.metadev.connect.Entity.Comment;
 import com.metadev.connect.Entity.Post;
 import com.metadev.connect.Entity.UserLogined;
 import com.metadev.connect.Service.PostService;
-import com.metadev.connect.Service.UserService;
 import com.metadev.connect.ThreadPool.ThreadPool;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -27,7 +24,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,12 +45,11 @@ public class PostContainerController {
     @FXML private TextArea commentTF;
     private PostCommentContainerController postCommentContainerController, postCommentContainerControllerReplied;
     private  PostService postService = new PostService();
-    private PostLikeController like;
     private Post post;
     private ThreadPool threadPoolPostContainer;
     private NewsFeedController newsFeedController;
     private SearchController searchController;
-    private PostContainerController parentController;
+    private PostContainerController parentController, external;
     private ProfileController profileController;
     private int typeOfPost;
     private int typeOfComment = 0;
@@ -94,6 +89,9 @@ public class PostContainerController {
     public void setSearchController(SearchController searchController){
         this.searchController = searchController;
     }
+    public void setExternalPostController(PostContainerController postContainerController){
+        this.external = postContainerController;
+    }
 
     public void setProfileController(ProfileController profileController){
         this.profileController = profileController;
@@ -105,15 +103,9 @@ public class PostContainerController {
         Image image = new Image("Images/General/defaultProfilePic_icon.png");
         this.post_profileImage.setImage(image);
         // Setting username
-        UserService userService = new UserService();
-        this.post_username.setText(userService.findUserUsernameById(post.getUserId()).getFirst());
+        this.post_username.setText(post.getUsername());
         // Setting like count
-        PostService postService = new PostService();
-        like = new PostLikeController(
-                postService.getLikeCount(post.getPostId()),
-                postService.getUserLikeStatus(post.getPostId(), UserLogined.getUserId()
-                ));
-        if(like.getUserLikeStatus()){
+        if(UserLogined.getUserLoginedLikeStatus(post.getPostId())){
             postLikeButton.setId("postLikeTrue");
             ImageView icon = new ImageView("Images/General/love_icon_resized_red.png");
             icon.setFitHeight(20);
@@ -127,7 +119,7 @@ public class PostContainerController {
             icon.setFitWidth(20);
             postLikeButton.setGraphic(icon);
         }
-        post_like_counter.setText(String.valueOf(like.getTotalNumOfLikes()));
+        post_like_counter.setText(String.valueOf(post.getLikeCount()));
         this.post_createdDate.setText(String.valueOf(post.getPostCreatedDate()));
         this.post_content.setText(post.getContent());
 
@@ -141,7 +133,7 @@ public class PostContainerController {
             displayComment();
         }
 
-        post_comment_counter.setText(String.valueOf(postService.getCommentCount(post.getPostId())));
+        post_comment_counter.setText(String.valueOf(post.getCommentCount()));
 
         if(Integer.parseInt(post_comment_counter.getText()) == 0){
             commentContainerMessage.setText("Be the first to comment on this post");
@@ -183,13 +175,24 @@ public class PostContainerController {
         threadPoolPostContainer.execute(()->{
             System.out.println("NEWFD: Adding/Removing like ...");
             // Checking and change status for user's like
-            like.setUserLikeStatus(post.getPostId(), UserLogined.getUserId());
+            PostService postService = new PostService();
+            if (!UserLogined.getUserLoginedLikeStatus(post.getPostId())) {
+                postService.addLike(post.getPostId(), UserLogined.getUserId());
+                UserLogined.refreshUserLoginedLikeStatus(); // Set liked to true to indicate that the user has liked the post
+                System.out.println("POSTL: Post like added successfully.");
+            } else {
+                postService.removeLike(post.getPostId(), UserLogined.getUserId());
+                UserLogined.refreshUserLoginedLikeStatus(); // Set liked to true to indicate that the user has liked the post
+                System.out.println("POSTL: Post like remove successfully.");
+            }
+            postService.updateLikeCount(post.getPostId());
+            post.updateInfo();
             // Update the like count
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    post_like_counter.setText(String.valueOf(like.getTotalNumOfLikes()));
-                    if(like.getUserLikeStatus()){
+                    if(UserLogined.getUserLoginedLikeStatus(post.getPostId())){
+                        post_like_counter.setText(String.valueOf(Integer.parseInt(post_like_counter.getText())+ 1));
                         postLikeButton.setId("postLikeTrue");
                         ImageView icon = new ImageView("Images/General/love_icon_resized_red.png");
                         icon.setFitHeight(20);
@@ -197,12 +200,14 @@ public class PostContainerController {
                         postLikeButton.setGraphic(icon);
                     }
                     else{
+                        post_like_counter.setText(String.valueOf(Integer.parseInt(post_like_counter.getText()) - 1));
                         postLikeButton.setId("postLikeFalse");
                         ImageView icon = new ImageView("Images/General/love_icon_resized.png");
                         icon.setFitHeight(20);
                         icon.setFitWidth(20);
                         postLikeButton.setGraphic(icon);
                     }
+
                 }
             });
             // Terminating the thread
@@ -218,7 +223,7 @@ public class PostContainerController {
     public void commentButtonClicked(ActionEvent event) throws IOException, SQLException, InterruptedException, ClassNotFoundException {
         if(newsFeedController != null) {
             if (!isCommentSection) {
-                newsFeedController.showCommentSection(post);
+                newsFeedController.showCommentSection(post, this);
 
             } else {
                 newsFeedController.closeCommentSection();
@@ -227,7 +232,7 @@ public class PostContainerController {
         }
         else if(searchController != null){
             if (!isCommentSection) {
-                searchController.showCommentSection(post);
+                searchController.showCommentSection(post, this);
 
             } else {
                 searchController.closeCommentSection();
@@ -235,7 +240,7 @@ public class PostContainerController {
             }
         }else{
             if (!isCommentSection) {
-                profileController.showCommentSection(post);
+                profileController.showCommentSection(post, this);
 
             } else {
                 profileController.closeCommentSection();
@@ -414,6 +419,27 @@ public class PostContainerController {
         }
         else{
             addCommentButton.setDisable(false);
+        }
+    }
+
+    public void updateParentPostContainer(){
+        if(external != null) {
+            System.out.println("Updating...");
+            if (UserLogined.getUserLoginedLikeStatus(post.getPostId())) {
+                external.postLikeButton.setId("postLikeTrue");
+                ImageView icon = new ImageView("Images/General/love_icon_resized_red.png");
+                icon.setFitHeight(20);
+                icon.setFitWidth(20);
+                external.postLikeButton.setGraphic(icon);
+            } else {
+                external.postLikeButton.setId("postLikeFalse");
+                ImageView icon = new ImageView("Images/General/love_icon_resized.png");
+                icon.setFitHeight(20);
+                icon.setFitWidth(20);
+                external.postLikeButton.setGraphic(icon);
+            }
+            external.post_like_counter.setText(String.valueOf(post.getLikeCount()));
+            external.post_comment_counter.setText(String.valueOf(post.getCommentCount()));
         }
     }
 }
