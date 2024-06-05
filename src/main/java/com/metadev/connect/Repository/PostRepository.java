@@ -59,5 +59,6 @@ public interface PostRepository {
 
     public int getCommentCount(Long post_id);
 
+    int updateCommentCount(Long post_id);
 }
 

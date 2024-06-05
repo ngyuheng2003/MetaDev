@@ -121,7 +121,6 @@ public class ProfileController implements Initializable {
                                 }
 
                                 profile_postContainer.getChildren().add(newFeedPostBox);
-                                postContainerController.checkTypeOfPost();
                             }
                         }catch (IOException | InterruptedException e) {
                             throw new RuntimeException(e);

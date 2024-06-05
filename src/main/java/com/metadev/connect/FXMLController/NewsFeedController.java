@@ -33,7 +33,7 @@ public class NewsFeedController implements Initializable {
 
 
     @FXML private VBox newsFeedPane, searchPane, newFeedPostContainer,loadingContainer, middleContainer;
-    @FXML private VBox rightContainer, commentContainer, commentPane, mainPane;
+    @FXML private VBox rightContainer, commentContainer, commentPane, mainPane, loadingPane;
     @FXML private TextField searchTF;
     @FXML private Button usernameButton;
     @FXML private List<Post> listOfPost;
@@ -75,7 +75,6 @@ public class NewsFeedController implements Initializable {
                                 postContainerController.setParentController(parentController);
                                 postContainerController.setPostContainer(listOfPost.get(i), 1);
                                 newFeedPostContainer.getChildren().add(newFeedPostBox);
-                                postContainerController.checkTypeOfPost();
                             }
                         }catch (IOException | InterruptedException e) {
                             throw new RuntimeException(e);
@@ -189,5 +188,10 @@ public class NewsFeedController implements Initializable {
     public void searchTFClicked(MouseEvent mouseEvent) throws IOException {
         ActionEvent event = new ActionEvent(mouseEvent.getSource(), mouseEvent.getTarget());
         new StartUp(event, "/FXMLView/SearchView.fxml");
+    }
+
+    public void showLoadingPane(){
+        loadingPane.setVisible(true);
+        loadingPane.toFront();
     }
 }
