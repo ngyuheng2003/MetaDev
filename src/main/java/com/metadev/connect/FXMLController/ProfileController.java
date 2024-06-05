@@ -40,7 +40,7 @@ public class ProfileController implements Initializable {
 
     private User user = UserProfile.getUser();
     private ProfileController parentController;
-    private PostContainerController postContainerController;
+    private PostContainerController postContainerController, internal;
     private PostContainerController postContainerControllerComment;
     private List<Post> listOfPost;
     private VBox newFeedPostBox;
@@ -141,11 +141,12 @@ public class ProfileController implements Initializable {
     }
 
 
-    public void showCommentSection(Post post){
+    public void showCommentSection(Post post, PostContainerController external){
         System.out.println("NEWFD: Opening comment section ...");
         commentPane.toFront();
         commentPane.setDisable(false);
         mainPane.setDisable(true);
+        post.updateInfo();
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -154,9 +155,11 @@ public class ProfileController implements Initializable {
                     fxmlLoader.setLocation(getClass().getResource("/FXMLContainer/PostContainer.fxml"));
                     newFeedPostBox = fxmlLoader.load();
                     PostContainerController postContainerController = fxmlLoader.getController();
+                    internal = postContainerController;
                     postContainerControllerComment = postContainerController;
                     postContainerController.setPostContainer(post, 0);
                     postContainerController.setCommentSection(true);
+                    postContainerController.setExternalPostController(external);
                     postContainerController.setProfileController(parentController);
                     commentContainer.getChildren().add(newFeedPostBox);
                     commentContainer.setStyle("-fx-background-color:  rgb(255,255,255,0.5)");
@@ -190,7 +193,9 @@ public class ProfileController implements Initializable {
 
 
     public void commentOuterAreaClicked(MouseEvent mouseEvent) {
-        if(!postContainerControllerComment.isMouseInContainer())
+        if(!postContainerControllerComment.isMouseInContainer()) {
+            internal.updateParentPostContainer();
             closeCommentSection();
+        }
     }
 }

@@ -11,11 +11,12 @@ public class PostRowMapper implements RowMapper<Post> {
     public Post mapRow(ResultSet resultSet, int i) throws SQLException {
         return new Post(resultSet.getLong("post_id"),
                 resultSet.getLong("user_id"),
+                resultSet.getString("username"),
                 resultSet.getString("content"),
                 getTags(resultSet.getString("tagging")),
                 null,
                 resultSet.getInt("like_count"),
-                0,
+                resultSet.getInt("comment_count"),
                 resultSet.getDate("post_created_date"));
     }
 

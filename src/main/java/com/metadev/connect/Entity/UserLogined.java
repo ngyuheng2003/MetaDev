@@ -1,6 +1,9 @@
 package com.metadev.connect.Entity;
 
+import com.metadev.connect.Service.PostService;
+
 import java.util.Date;
+import java.util.List;
 
 public class UserLogined {
 
@@ -11,6 +14,14 @@ public class UserLogined {
     private static Date date_created_account;
     private static String password;
     private static User userLogined;
+    private static List<Long> userLikedPost;
+
+    static PostService postService = new PostService();
+
+    private static boolean newPostFlag = false;
+    private static Post newPost;
+
+
 
     // Constructor to initializes a UserLogined object with a User object's information
     public UserLogined(User user) {
@@ -21,6 +32,7 @@ public class UserLogined {
         date_created_account = user.getDate_created_account();
         password = user.getPassword();
         userLogined = user;
+        userLikedPost = postService.getUserLikeStatus(user.getUserId());
     }
 
     // Method to log out the user by setting all fields to null
@@ -83,6 +95,30 @@ public class UserLogined {
     }
     public static User getUserLogined(){
         return userLogined;
+    }
+
+    public static boolean isNewPostFlag() {
+        return newPostFlag;
+    }
+
+    public static void setNewPostFlag(boolean newPostFlag) {
+        UserLogined.newPostFlag = newPostFlag;
+    }
+
+    public static Post getNewPost() {
+        return newPost;
+    }
+
+    public static void setNewPost(Post newPost) {
+        UserLogined.newPost = newPost;
+    }
+
+    public static boolean getUserLoginedLikeStatus(Long post_id){
+        return userLikedPost.contains(post_id);
+    }
+
+    public static void refreshUserLoginedLikeStatus(){
+        userLikedPost = postService.getUserLikeStatus(userId);
     }
 
 }

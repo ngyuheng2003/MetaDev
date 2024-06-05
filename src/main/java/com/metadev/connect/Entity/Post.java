@@ -1,5 +1,6 @@
 package com.metadev.connect.Entity;
 
+import com.metadev.connect.Service.PostService;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -9,25 +10,25 @@ public class Post {
 
     private Long postId;
     private Long userId;
+
+    private String username;
     private String content;
     private String[] tags;
     private String location;
     private int likeCount;
-
-
-
     private int commentCount;
-    private Date postCreatedDate;
+    private String postCreatedDate;
 
-    public Post(Long postId, Long userId, String content, String[] tags, String location, int likeCount, int commentCount, Date postCreatedDate) {
+    public Post(Long postId, Long userId, String username, String content, String[] tags, String location, int likeCount, int commentCount, Date postCreatedDate) {
         this.postId = postId;
         this.userId = userId;
+        this.username = username;
         this.content = content;
         this.tags = tags;
         this.location = location;
         this.likeCount = likeCount;
         this.commentCount = commentCount;
-        this.postCreatedDate = postCreatedDate;
+        this.postCreatedDate = String.valueOf(postCreatedDate);
     }
 
     public int getCommentCount() {
@@ -86,12 +87,26 @@ public class Post {
         this.likeCount = likeCount;
     }
 
-    public Date getPostCreatedDate() {
+    public String getPostCreatedDate() {
         return postCreatedDate;
     }
 
-    public void setPostCreatedDate(Date postCreatedDate) {
+    public void setPostCreatedDate(String postCreatedDate) {
         this.postCreatedDate = postCreatedDate;
+    }
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void updateInfo(){
+        PostService postService = new PostService();
+        likeCount = postService.getLikeCount(postId);
+        commentCount = postService.getCommentCount(postId);
+
     }
 
     public String getTagsByString(){

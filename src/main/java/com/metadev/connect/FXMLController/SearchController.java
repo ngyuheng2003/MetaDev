@@ -61,7 +61,7 @@ public class SearchController {
     private PostContainerController postContainerController;
     private SearchPosts search = new SearchPosts();
     private SearchUserButtonController searchUserButtonController;
-    private PostContainerController postContainerControllerComment;
+    private PostContainerController postContainerControllerComment, internal;
     private SearchController parentController;
 
 
@@ -175,11 +175,12 @@ public class SearchController {
         }
     }
 
-    public void showCommentSection(Post post){
+    public void showCommentSection(Post post, PostContainerController external){
         System.out.println("NEWFD: Opening comment section ...");
         commentPane.toFront();
         commentPane.setDisable(false);
         mainPane.setDisable(true);
+        post.updateInfo();
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -188,8 +189,10 @@ public class SearchController {
                     fxmlLoader.setLocation(getClass().getResource("/FXMLContainer/PostContainer.fxml"));
                     newFeedPostBox = fxmlLoader.load();
                     PostContainerController postContainerController = fxmlLoader.getController();
+                    internal = postContainerController;
                     postContainerControllerComment = postContainerController;
                     postContainerController.setPostContainer(post, 0);
+                    postContainerController.setExternalPostController(external);
                     postContainerController.setCommentSection(true);
                     postContainerController.setSearchController(parentController);
                     commentContainer.getChildren().add(newFeedPostBox);
@@ -223,7 +226,9 @@ public class SearchController {
     }
 
     public void commentOuterAreaClicked(MouseEvent mouseEvent) {
-        if(!postContainerControllerComment.isMouseInContainer())
+        if(!postContainerControllerComment.isMouseInContainer()) {
+            internal.updateParentPostContainer();
             closeCommentSection();
+        }
     }
 }
