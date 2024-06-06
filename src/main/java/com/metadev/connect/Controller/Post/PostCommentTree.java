@@ -1,7 +1,5 @@
 package com.metadev.connect.Controller.Post;
 
-import com.metadev.connect.Service.PostService;
-
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -127,7 +125,7 @@ public class PostCommentTree implements Serializable {
 
 
     public ArrayList<String[]> displayCommentsRecursive(CommentNode node, int depth) {
-        String[] commentInformation = new String[5];
+        String[] commentInformation = new String[6];
         StringBuilder indent = new StringBuilder();
         for (int i = 0; i < depth; i++) {
             indent.append("\t");
@@ -135,6 +133,7 @@ public class PostCommentTree implements Serializable {
 
         String commentText = node.getText();
         int commentId = node.getCommentId();
+        String authorId = node.getAuthorId();
         String author = node.getAuthor();
         LocalDateTime timestamp = node.getTimestamp();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -147,13 +146,14 @@ public class PostCommentTree implements Serializable {
             System.out.println(indent + "\tText: " + commentText);
             System.out.println(indent + "\tTimeStamp: " + formattedTimestamp);
             System.out.println(indent + "\tComment ID: " + commentId);
-            System.out.println(indent + "\tAuthor: " + author);
-            System.out.println(indent + "\tAuthor: " + depth);
+            System.out.println(indent + "\tAuthor Id: " + authorId);
+            System.out.println(indent + "\tDepth: " + depth);
             commentInformation[0] = commentText;
-            commentInformation[1] = author;
+            commentInformation[1] = authorId;
             commentInformation[2] = formattedTimestamp;
             commentInformation[3] = String.valueOf(commentId);
             commentInformation[4] = String.valueOf(depth);
+            commentInformation[5] = author;
             list.add(commentInformation);
 
         }

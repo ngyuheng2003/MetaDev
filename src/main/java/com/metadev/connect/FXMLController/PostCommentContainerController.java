@@ -129,9 +129,8 @@ public class PostCommentContainerController {
     
 
     public void setPostCommentContainer(PostCommentTree postCommentTree, int type) throws InterruptedException, IOException, ClassNotFoundException, SQLException {
-        UserService userService = new UserService();
-        username = userService.findUserUsernameById(Long.parseLong(commentInformation.get(0)[1])).getFirst();
         content = commentInformation.get(0)[0];
+        username = commentInformation.get(0)[5];
         date = commentInformation.get(0)[2];
         commentId = commentInformation.get(0)[3];
         depth = commentInformation.get(0)[4];
