@@ -14,14 +14,19 @@ public class CommentNode implements Serializable {
 
     private int commentId;
     private String text;
+    private String authorId;
+
+
+
     private String author;
     private boolean deleted;
     private LocalDateTime timestamp;
     private List<CommentNode> children;
 
-    public CommentNode(String text, String author) {
+    public CommentNode(String text, String authorId, String author) {
         this.commentId = nextCommentId++;
         this.text = text;
+        this.authorId = authorId;
         this.author = author;
         this.deleted = false;
         this.timestamp = LocalDateTime.now();
@@ -62,6 +67,14 @@ public class CommentNode implements Serializable {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
     }
 
     public String getAuthor() {

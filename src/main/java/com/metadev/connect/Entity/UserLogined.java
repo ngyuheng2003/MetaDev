@@ -17,8 +17,6 @@ public class UserLogined {
     private static List<Long> userLikedPost;
 
     static PostService postService = new PostService();
-
-    private static boolean newPostFlag = false;
     private static Post newPost;
 
 
@@ -33,6 +31,14 @@ public class UserLogined {
         password = user.getPassword();
         userLogined = user;
         userLikedPost = postService.getUserLikeStatus(user.getUserId());
+    }
+
+    public static List<Long> getUserLikedPost() {
+        return userLikedPost;
+    }
+
+    public static void setUserLikedPost(List<Long> userLikedPost) {
+        UserLogined.userLikedPost = userLikedPost;
     }
 
     // Method to log out the user by setting all fields to null
@@ -97,14 +103,6 @@ public class UserLogined {
         return userLogined;
     }
 
-    public static boolean isNewPostFlag() {
-        return newPostFlag;
-    }
-
-    public static void setNewPostFlag(boolean newPostFlag) {
-        UserLogined.newPostFlag = newPostFlag;
-    }
-
     public static Post getNewPost() {
         return newPost;
     }
@@ -113,12 +111,8 @@ public class UserLogined {
         UserLogined.newPost = newPost;
     }
 
-    public static boolean getUserLoginedLikeStatus(Long post_id){
-        return userLikedPost.contains(post_id);
-    }
 
-    public static void refreshUserLoginedLikeStatus(){
-        userLikedPost = postService.getUserLikeStatus(userId);
-    }
+
+
 
 }

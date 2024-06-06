@@ -13,6 +13,7 @@ public class CommentRowMapper implements RowMapper<Comment> {
         return new Comment(resultSet.getBlob("comment_OBJ"),
                 resultSet.getInt("comment_OBJ_ID"),
                 resultSet.getLong("top_comment_user_id"),
-                resultSet.getLong("post_id"));
+                resultSet.getLong("post_id"),
+                resultSet.getInt("total_comment"));
     }
 }

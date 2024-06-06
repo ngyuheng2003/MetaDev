@@ -2,10 +2,12 @@ package com.metadev.connect.FXMLController;
 
 import com.metadev.connect.Controller.Post.CommentNode;
 import com.metadev.connect.Controller.Post.PostCommentTree;
+import com.metadev.connect.Controller.Post.PostLikeController;
 import com.metadev.connect.Controller.Post.UserProfile;
 import com.metadev.connect.Controller.StartUpController.StartUp;
 import com.metadev.connect.Entity.Comment;
 import com.metadev.connect.Entity.Post;
+import com.metadev.connect.Entity.User;
 import com.metadev.connect.Entity.UserLogined;
 import com.metadev.connect.Service.PostService;
 import com.metadev.connect.Service.UserService;
@@ -54,6 +56,7 @@ public class PostContainerController {
     private SearchController searchController;
     private PostContainerController parentController, external;
     private ProfileController profileController;
+    private PostLikeController like = new PostLikeController();
     private int typeOfPost;
     private int typeOfComment = 0;
     private PostCommentTree postCommentTreeReplied;
@@ -103,7 +106,7 @@ public class PostContainerController {
         // Setting username
         this.post_username.setText(post.getUsername());
         // Setting like count
-        if(UserLogined.getUserLoginedLikeStatus(post.getPostId())){
+        if(like.getUserLoginedLikeStatus(post.getPostId())){
             postLikeButton.setId("postLikeTrue");
             ImageView icon = new ImageView("Images/General/love_icon_resized_red.png");
             icon.setFitHeight(20);
@@ -187,23 +190,24 @@ public class PostContainerController {
         // Using the thread for like function to database
         threadPoolPostContainer.execute(()->{
             System.out.println("NEWFD: Adding/Removing like ...");
+            int sqlStatus = 0;
             // Checking and change status for user's like
-            PostService postService = new PostService();
-            if (!UserLogined.getUserLoginedLikeStatus(post.getPostId())) {
-                postService.addLike(post.getPostId(), UserLogined.getUserId());
-                UserLogined.refreshUserLoginedLikeStatus(); // Set liked to true to indicate that the user has liked the post
+            if (!like.getUserLoginedLikeStatus(post.getPostId())) {
+                sqlStatus = like.addLike(post.getPostId(), UserLogined.getUserId());
+                like.refreshUserLoginedLikeStatus(UserLogined.getUserId()); // Set liked to true to indicate that the user has liked the post
                 System.out.println("POSTL: Post like added successfully.");
             } else {
-                postService.removeLike(post.getPostId(), UserLogined.getUserId());
-                UserLogined.refreshUserLoginedLikeStatus(); // Set liked to true to indicate that the user has liked the post
+                sqlStatus = like.removeLike(post.getPostId(), UserLogined.getUserId());
+                like.refreshUserLoginedLikeStatus(UserLogined.getUserId()); // Set liked to true to indicate that the user has liked the post
                 System.out.println("POSTL: Post like remove successfully.");
             }
-            int sqlStatus = postService.updateLikeCount(post.getPostId());
+            like.updateLikeCount(post.getPostId());
             post.updateInfo();
+            int finalSqlStatus = sqlStatus;
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    if(sqlStatus == 0) {
+                    if(finalSqlStatus == 0) {
                         updateCountGUI();
                         System.out.println("POSTL: Post like add/remove failed.");
                     }
@@ -216,7 +220,7 @@ public class PostContainerController {
 
     // Update GUI for Like count and Comment count
     public void updateCountGUI(){
-        if(!UserLogined.getUserLoginedLikeStatus(post.getPostId())){
+        if(!like.getUserLoginedLikeStatus(post.getPostId())){
             post_like_counter.setText(String.valueOf(Integer.parseInt(post_like_counter.getText())+ 1));
             postLikeButton.setId("postLikeTrue");
             ImageView icon = new ImageView("Images/General/love_icon_resized_red.png");
@@ -320,7 +324,7 @@ public class PostContainerController {
             postCommentContainerController.getCommentInformationFromObj();
             postCommentContainerController.setPost(post);
             postCommentContainerController.setComment_OBJ_ID(listOfComment.get(i).getCommentTopID());
-            postCommentTree.setCommentID(postService.getCommentCount(post.getPostId()));
+            postCommentTree.setCommentID(listOfComment.get(i).getTotalComment());
             postCommentContainerController.setPostCommentContainer(postCommentTree, 1);
             postCommentContainer.getChildren().add(postCommentBox);
         }
@@ -328,11 +332,13 @@ public class PostContainerController {
 
     public void addCommentButtonClicked(ActionEvent event) throws Exception {
         String commentInput = commentTF.getText();
+        commentTF.setDisable(true);
+        addCommentButton.setDisable(true);
         switch(typeOfComment){
             case 0:
                 PostCommentTree postCommentTree = new PostCommentTree(post.getPostId());
                 postCommentTree.setCommentID(0);
-                postCommentTree.addComment(-1, new CommentNode(commentInput, String.valueOf(UserLogined.getUserId())));
+                postCommentTree.addComment(-1, new CommentNode(commentInput, String.valueOf(UserLogined.getUserId()), UserLogined.getUsername()));
                 threadPoolPostContainer = new ThreadPool(1,1);
                 threadPoolPostContainer.execute(()->{
                     try {
@@ -370,6 +376,7 @@ public class PostContainerController {
                                 }
                                 commentTF.clear();
                                 addCommentButton.setDisable(true);
+                                commentTF.setDisable(false);
                                 post_comment_counter.setText(String.valueOf(Integer.parseInt(post_comment_counter.getText()) + 1));
                             } catch (IOException | SQLException | InterruptedException | ClassNotFoundException e) {
                                 throw new RuntimeException(e);
@@ -381,7 +388,7 @@ public class PostContainerController {
                 });
                 break;
             case 1:
-                postCommentTreeReplied.addComment(commentIdReplied, new CommentNode(commentInput, String.valueOf(UserLogined.getUserId())));
+                postCommentTreeReplied.addComment(commentIdReplied, new CommentNode(commentInput, String.valueOf(UserLogined.getUserId()), UserLogined.getUsername()));
                 threadPoolPostContainer = new ThreadPool(1,1);
                 threadPoolPostContainer.execute(()->{
                     try {
@@ -403,8 +410,8 @@ public class PostContainerController {
                         public void run() {
                             try {
                                 ArrayList<String[]> list = postCommentContainerControllerReplied.getCommentInformation();
-                                list.add(new String[]{commentInput, String.valueOf(UserLogined.getUserId()),
-                                        "just now", String.valueOf(commentIdReplied), String.valueOf(Integer.parseInt(postCommentContainerControllerReplied.getDepth()) + 1)});
+                                list.add(new String[]{commentInput, String.valueOf(UserLogined.getUserId()), "just now",
+                                        String.valueOf(commentIdReplied), String.valueOf(Integer.parseInt(postCommentContainerControllerReplied.getDepth()) + 1), UserLogined.getUsername()});
                                 postCommentContainerControllerReplied.setCommentInformation(list);
                                 postCommentContainerControllerReplied.addRepliedComment();
                             } catch (IOException | SQLException | InterruptedException | ClassNotFoundException e) {
@@ -412,6 +419,7 @@ public class PostContainerController {
                             }
                             commentTF.clear();
                             addCommentButton.setDisable(true);
+                            commentTF.setDisable(false);
                             post_comment_counter.setText(String.valueOf(Integer.parseInt(post_comment_counter.getText()) + 1));
                         }
                     });
@@ -447,7 +455,7 @@ public class PostContainerController {
     public void updateParentPostContainer(){
         if(external != null) {
             System.out.println("POSTS: Updating post info ...");
-            if (UserLogined.getUserLoginedLikeStatus(post.getPostId())) {
+            if (like.getUserLoginedLikeStatus(post.getPostId())) {
                 external.postLikeButton.setId("postLikeTrue");
                 ImageView icon = new ImageView("Images/General/love_icon_resized_red.png");
                 icon.setFitHeight(20);

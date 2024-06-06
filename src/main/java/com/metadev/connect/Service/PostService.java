@@ -176,7 +176,7 @@ public class PostService implements PostRepository, Serializable {
         String sql = """
                     UPDATE [dbo].[post] 
                     SET [dbo].[post].like_count 
-                    = (SELECT COUNT(?) from [dbo].[post_like] WHERE [dbo].[post_like].post_id = [dbo].[post].post_id);
+                    = (SELECT COUNT(?) from [dbo].[post_like] WHERE [dbo].[post_like].post_id = [dbo].[post].post_id)
                     WHERE [dbo].[post].post_id = ?;
                     """;
         return jdbc.update(sql, post_id, post_id);

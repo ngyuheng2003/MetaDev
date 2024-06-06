@@ -16,11 +16,16 @@ public class Comment {
     private Long postId;
     private Long topCommentUserId;
 
-    public Comment(Blob blob, int commentTopID, Long userId, Long postId){
+
+
+    private int totalComment;
+
+    public Comment(Blob blob, int commentTopID, Long userId, Long postId, int totalComment){
         this.blob = blob;
         this.commentTopID = commentTopID;
         this.topCommentUserId = userId;
         this.postId = postId;
+        this.totalComment = totalComment;
     }
 
     public Long getPostId() {
@@ -53,5 +58,13 @@ public class Comment {
 
     public void setTopCommentUserId(Long topCommentUserId) {
         this.topCommentUserId = topCommentUserId;
+    }
+
+    public int getTotalComment() {
+        return totalComment;
+    }
+
+    public void setTotalComment(int totalComment) {
+        this.totalComment = totalComment;
     }
 }

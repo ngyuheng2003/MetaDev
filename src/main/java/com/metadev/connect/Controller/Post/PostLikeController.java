@@ -1,40 +1,30 @@
 package com.metadev.connect.Controller.Post;
 
+import com.metadev.connect.Entity.UserLogined;
 import com.metadev.connect.Service.PostService;
 
 public class PostLikeController {
-    private int totalNumOfLikes;
-    private boolean userLikeStatus; // Added boolean variable to track whether the post has been liked
 
-    public PostLikeController(int totalNumOfLikes, boolean userLikeStatus) {
-        this.totalNumOfLikes = totalNumOfLikes;
-        this.userLikeStatus = userLikeStatus; // Initialize liked to false
+    PostService postService = new PostService();
+
+    public int addLike(Long postId, Long userId) {
+        return postService.addLike(postId, userId);
     }
 
-    public int getTotalNumOfLikes() {
-        return totalNumOfLikes;
+
+    public int removeLike(Long postId, Long userId) {
+        return postService.removeLike(postId, userId);
     }
 
-    public void setTotalNumOfLikes(int totalNumOfLikes) {
-        this.totalNumOfLikes = totalNumOfLikes;
+    public boolean getUserLoginedLikeStatus(Long post_id){
+        return UserLogined.getUserLikedPost().contains(post_id);
     }
 
-    public boolean getUserLikeStatus() {
-        return userLikeStatus;
+    public void refreshUserLoginedLikeStatus(Long userId){
+        UserLogined.setUserLikedPost(postService.getUserLikeStatus(userId));
     }
 
-    public void setUserLikeStatus(Long post_id, Long user_id){
-        PostService postService = new PostService();
-        if (!userLikeStatus) {
-            postService.addLike(post_id, user_id);
-            userLikeStatus = true; // Set liked to true to indicate that the user has liked the post
-            System.out.println("POSTL: Post like added successfully.");
-            totalNumOfLikes = postService.getLikeCount(post_id);
-        } else {
-            postService.removeLike(post_id, user_id);
-            userLikeStatus = false; // Set liked to true to indicate that the user has liked the post
-            System.out.println("POSTL: Post like remove successfully.");
-            totalNumOfLikes = postService.getLikeCount(post_id);
-        }
+    public void updateLikeCount(Long postId) {
+        postService.updateLikeCount(postId);
     }
 }
