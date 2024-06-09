@@ -24,7 +24,7 @@ public class AddPostController implements Initializable {
     @FXML private AnchorPane addLocationPane, addTagsPane, emptyPane;
     @FXML private TextArea postText;
     @FXML private Text postTextCount;
-    @FXML private Button usernameButton;
+    @FXML private Button usernameButton, createPostButton;
     private boolean locationPaneDisplay = false;
     private boolean tagsPaneDisplay = false;
 
@@ -36,6 +36,7 @@ public class AddPostController implements Initializable {
 
     // Publish post
     public void postNextButtonClicked(ActionEvent event) throws Exception {
+        createPostButton.setDisable(true);
         // Creating a thread for post creation
         ThreadPool threadPoolAddPost = new ThreadPool(1,1);
         PostCreating create = new PostCreating();
@@ -47,20 +48,18 @@ public class AddPostController implements Initializable {
             boolean status = create.publishPost();
             if(status) {
                 System.out.println("Post created successfully");
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Change page to newsfeed view
-                        try {
-                            new StartUp(event, "/FXMLView/NewsFeedView.fxml");
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                Platform.runLater(() -> {
+                    // Change page to newsfeed view
+                    try {
+                        new StartUp(event, "/FXMLView/NewsFeedView.fxml");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
                 });
             }
+            threadPoolAddPost.stop();
         });
-        threadPoolAddPost.stop();
+
     }
 
     // Reset the page
