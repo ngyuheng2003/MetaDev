@@ -201,7 +201,7 @@
                                  </font>
                               </Button>
                               <Pane prefHeight="35.0" prefWidth="45.0" />
-                              <Button id="postButton" mnemonicParsing="false" onAction="#postNextButtonClicked" prefHeight="35.0" prefWidth="135.0" text="Create">
+                              <Button id="postButton" fx:id="createPostButton" mnemonicParsing="false" onAction="#postNextButtonClicked" prefHeight="35.0" prefWidth="135.0" text="Create">
                                  <font>
                                     <Font name="Roboto" size="12.0" />
                                  </font>
