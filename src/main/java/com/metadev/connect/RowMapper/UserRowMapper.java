@@ -16,7 +16,23 @@ public class UserRowMapper implements RowMapper<User> {
                 resultSet.getString("email"),
                 resultSet.getString("bio"),
                 resultSet.getDate("date_created_account"),
-                resultSet.getString("password"));
+                resultSet.getString("password"),
+                resultSet.getString("name"),
+                resultSet.getInt("status"),
+                getSuggestedPreferredTopic(resultSet.getString("suggested_preferred_topic")));
+    }
+    public int[] getSuggestedPreferredTopic(String string){
+        if(string != null){
+            int[] list = new int[9];
+            String[] str = string.split(",");
+            for(int i = 0; i < str.length; i++){
+                list[i] = Integer.parseInt(str[i]);
+            }
+            return list;
+        }
+        else{
+            return null;
+        }
     }
 
 }

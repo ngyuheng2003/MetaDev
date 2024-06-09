@@ -1,9 +1,9 @@
 package com.metadev.connect.FXMLController;
 
+import com.metadev.connect.Controller.Post.PostCreating;
+import com.metadev.connect.Controller.Post.UserProfile;
 import com.metadev.connect.Controller.StartUpController.StartUp;
-import com.metadev.connect.Entity.Post;
 import com.metadev.connect.Entity.UserLogined;
-import com.metadev.connect.Service.PostService;
 import com.metadev.connect.ThreadPool.ThreadPool;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -17,72 +17,58 @@ import javafx.scene.text.Text;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class AddPostController implements Initializable {
-    @FXML
-    private AnchorPane addLocationPane, addTagsPane, emptyPane;
+
+    @FXML private AnchorPane addLocationPane, addTagsPane, emptyPane;
     @FXML private TextArea postText;
     @FXML private Text postTextCount;
     @FXML private Button usernameButton;
-    boolean locationPaneDisplay = false;
-    boolean tagsPaneDisplay = false;
-    private ThreadPool threadPoolAddPost;
+    private boolean locationPaneDisplay = false;
+    private boolean tagsPaneDisplay = false;
 
+    // Initializing the page
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         usernameButton.setText(UserLogined.getUsername());
     }
 
-    public void profileButtonClicked(ActionEvent event) throws IOException {
-        new StartUp(event, "/FXMLView/ProfileView.fxml");
-    }
+    // Publish post
     public void postNextButtonClicked(ActionEvent event) throws Exception {
-        threadPoolAddPost = new ThreadPool(1,1);
-        String[] word = postText.getText().split(" ");
-        ArrayList<String> tags = new ArrayList();
-        for(int i = 0; i < word.length; i++){
-            if(word[i].charAt(0) == '#')
-                tags.add(word[i].substring(1));
-        }
-        String[] tagging = new String[tags.size()];
-        for(int i = 0; i < tags.size(); i++){
-            tagging[i] = tags.get(i);
-        }
-        Post newPost = new Post(null,UserLogined.getUserId(), UserLogined.getUsername(), 0,postText.getText(), tagging, null,0,  0,null);
-        UserLogined.setNewPost(newPost);
+        // Creating a thread for post creation
+        ThreadPool threadPoolAddPost = new ThreadPool(1,1);
+        PostCreating create = new PostCreating();
+        // Convert user inputs into a post object
+        create.convertPost(postText.getText());
         threadPoolAddPost.execute(()-> {
             System.out.println("Creating post ...");
-            PostService postService = new PostService();
-            boolean status = postService.createPost(newPost) == 1;
+            // Upload post to database
+            boolean status = create.publishPost();
             if(status) {
                 System.out.println("Post created successfully");
-                threadPoolAddPost.stop();
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        // Change page to newsfeed view
                         try {
                             new StartUp(event, "/FXMLView/NewsFeedView.fxml");
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
                     }
-
                 });
             }
-
         });
+        threadPoolAddPost.stop();
     }
 
+    // Reset the page
     public void resetButtonClicked(ActionEvent event) throws IOException {
         new StartUp(event, "/FXMLView/AddPostView.fxml");
     }
 
-    public void newsFeedButtonClicked(ActionEvent event) throws IOException {
-        new StartUp(event, "/FXMLView/NewsFeedView.fxml");
-    }
-
+    // Open/Close addLocation section
     public void addLocationButtonClicked(ActionEvent event) {
         if(!locationPaneDisplay){
             addLocationPane.toFront();
@@ -98,6 +84,7 @@ public class AddPostController implements Initializable {
         }
     }
 
+    // Open/Close addTags section
     public void addTagsButtonClicked(ActionEvent event) {
         if(!tagsPaneDisplay){
             addTagsPane.toFront();
@@ -113,6 +100,7 @@ public class AddPostController implements Initializable {
         }
     }
 
+    // Limiting the content in 300 words
     public void postTextKeyTyped(KeyEvent event) {
         if(postText.getText().length() > 300){
             postText.setText(postText.getText().substring(0, 300));
@@ -121,9 +109,17 @@ public class AddPostController implements Initializable {
         postTextCount.setText(String.valueOf(300 - postText.getText().length()));
     }
 
+    // Navigation pane
+    public void profileButtonClicked(ActionEvent event) throws IOException {
+        UserProfile.setUser(UserLogined.getUserLogined());
+        new StartUp(event, "/FXMLView/ProfileView.fxml");
+    }
+
+    public void newsFeedButtonClicked(ActionEvent event) throws IOException {
+        new StartUp(event, "/FXMLView/NewsFeedView.fxml");
+    }
+
     public void settingButtonClicked(ActionEvent event) throws IOException {
         new StartUp(event, "/FXMLView/SettingView.fxml");
     }
-
-
 }

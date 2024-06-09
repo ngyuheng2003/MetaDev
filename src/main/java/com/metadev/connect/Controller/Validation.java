@@ -1,5 +1,6 @@
 package com.metadev.connect.Controller;
 
+import com.metadev.connect.Entity.UserLogined;
 import com.metadev.connect.Service.UserService;
 
 public class Validation {
@@ -89,5 +90,11 @@ public class Validation {
 
     public static boolean loginUsingUsername(String username, String password){
         return userService.loginUserByUsername(username, password);
+    }
+
+    // Update password
+
+    public static int updateNewPassword(String password){
+        return userService.updatePassword(UserLogined.getUserId(), password);
     }
 }

@@ -1,5 +1,6 @@
 package com.metadev.connect.FXMLController;
 
+import com.metadev.connect.Controller.Post.PostDisplaying;
 import com.metadev.connect.Controller.Post.SearchPosts;
 import com.metadev.connect.Controller.StartUpController.StartUp;
 import com.metadev.connect.Entity.Post;
@@ -57,12 +58,12 @@ public class SearchController {
 
     @FXML
     private VBox searchUserContainer;
-    private VBox newFeedPostBox;
-    private PostContainerController postContainerController;
+    public VBox newFeedPostBox;
     private SearchPosts search = new SearchPosts();
     private SearchUserButtonController searchUserButtonController;
     private PostContainerController postContainerControllerComment, internal;
     private SearchController parentController;
+    private final PostDisplaying<SearchController> display = new PostDisplaying<>();
 
 
     @FXML
@@ -146,22 +147,15 @@ public class SearchController {
                         messageText.setText("");
                         try {
                             for(int i = 0; i < list.size(); i++) {
-                                FXMLLoader fxmlLoader = new FXMLLoader();
-                                fxmlLoader.setLocation(getClass().getResource("/FXMLContainer/PostContainer.fxml"));
-                                VBox newFeedPostBox = fxmlLoader.load();
-                                postContainerController = fxmlLoader.getController();
-                                postContainerController.setSearchController(parentController);
-                                postContainerController.setPostContainer(list.get(i), 1);
-                                searchPostContainer.getChildren().add(newFeedPostBox);
-
+                                // Skip if post is deleted
+                                if(list.get(i).getStatus() == 2)
+                                    continue;
+                                // Display post
+                                display.displayPost(parentController, list.get(i), searchPostContainer, 1);
                                 searchPostContainerMiddle.setDisable(false);
                                 searchPostContainerMiddle.setVisible(true);
                             }
-                        }catch (IOException | InterruptedException e) {
-                            throw new RuntimeException(e);
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        } catch (ClassNotFoundException e) {
+                        }catch (IOException | InterruptedException | SQLException | ClassNotFoundException e) {
                             throw new RuntimeException(e);
                         }
                     }
@@ -174,37 +168,20 @@ public class SearchController {
         }
     }
 
-    public void showCommentSection(Post post, PostContainerController external){
+    public void showCommentSection(Post post, PostContainerController<SearchController> external){
         System.out.println("NEWFD: Opening comment section ...");
         commentPane.toFront();
         commentPane.setDisable(false);
         mainPane.setDisable(true);
         post.updateInfo();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    FXMLLoader fxmlLoader = new FXMLLoader();
-                    fxmlLoader.setLocation(getClass().getResource("/FXMLContainer/PostContainer.fxml"));
-                    newFeedPostBox = fxmlLoader.load();
-                    PostContainerController postContainerController = fxmlLoader.getController();
-                    internal = postContainerController;
-                    postContainerControllerComment = postContainerController;
-                    postContainerController.setPostContainer(post, 0);
-                    postContainerController.setExternalPostController(external);
-                    postContainerController.setCommentSection(true);
-                    postContainerController.setSearchController(parentController);
-                    commentContainer.getChildren().add(newFeedPostBox);
-                    commentContainer.setStyle("-fx-background-color:  rgb(255,255,255,0.5)");
-                    System.out.println("NEWFD: Comment section opened");
-                    postContainerController.displayComment();
-                }catch (IOException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
+        Platform.runLater(() -> {
+            try {
+                PostContainerController<SearchController> postContainerController = display.displayComment(parentController, post, commentContainer, external, 0);
+                internal = postContainerController;
+                postContainerControllerComment = postContainerController;
+                System.out.println("NEWFD: Comment section opened");
+            }catch (IOException | InterruptedException | SQLException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         });
     }

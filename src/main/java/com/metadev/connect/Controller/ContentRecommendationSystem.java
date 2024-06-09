@@ -139,9 +139,17 @@ public class ContentRecommendationSystem {
 
     //Recommend Post
     public List<Post> recommendPost(List<Post> listOfPost,Long userId){
+        List<String> list = userService.findUserPreferredTopic(userId);
+        String[] suggested = {"sport", "education", "kpop", "health", "travel", "news", "movie", "cooking", "finance"};
+        int[] user = UserLogined.getSuggested_preferred_topic();
+        for(int i = 0; i < 9; i++){
+            if(user[i] == 1){
+                list.add(suggested[i]);
+            }
+        }
         List<Post> recommendedPost = new ArrayList<>();
         List<PostWithWeight> postOrder = new ArrayList<>();
-        Set<String> preferredTopics = new HashSet<>(userService.findUserPreferredTopic(userId));
+        Set<String> preferredTopics = new HashSet<>(list);
 
         //Remove user post
         Iterator<Post> iterator = listOfPost.iterator();
@@ -188,6 +196,16 @@ public class ContentRecommendationSystem {
         }
 
         return recommendedPost;
+    }
+
+    public void updatePreferred() throws InterruptedException {
+        ArrayList<Long> allLikedPostId = getLikedPostId(UserLogined.getUserId());
+        ArrayList<String> allTags = getTags(allLikedPostId);
+        ArrayList<UserPreferredTopic> list = preferedTopic(UserLogined.getUserId(),allTags);
+        Collections.sort(list,Collections.reverseOrder());
+        if(checkInsertOrUpdateTable(UserLogined.getUserId()))
+            clearTable(list);
+        insertTable(list);
     }
 
     public static void main(String[] args) throws InterruptedException {

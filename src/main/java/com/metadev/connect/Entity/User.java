@@ -6,19 +6,26 @@ import java.util.Date;
 public class User {
     private Long userId;
     private String username;
+
+    private String name;
     private String email;
     private String bio;
     private Date date_created_account;
     private String password;
+    private int[] suggested_preferred_topic;
+    private int status;
 
     // Constructor to initialize a User object with all fields
-    public User(Long userId, String username, String email, String bio, Date date_created_account, String password) {
+    public User(Long userId, String username, String email, String bio, Date date_created_account, String password, String name, int status, int[] suggested_preferred_topic) {
         this.userId = userId;
         this.username = username;
         this.email = email;
         this.bio = bio;
         this.date_created_account = date_created_account;
         this.password = password;
+        this.name = name;
+        this.status = status;
+        this.suggested_preferred_topic = suggested_preferred_topic;
     }
 
     // Default constructor to initialize a User object with null values
@@ -78,6 +85,30 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public int[] getSuggested_preferred_topic() {
+        return suggested_preferred_topic;
+    }
+
+    public void setSuggested_preferred_topic(int[] suggested_preferred_topic) {
+        this.suggested_preferred_topic = suggested_preferred_topic;
     }
 }
 

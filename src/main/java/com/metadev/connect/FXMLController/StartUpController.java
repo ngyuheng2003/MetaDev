@@ -98,14 +98,16 @@ public class StartUpController implements Initializable{
                     System.out.println("LOGIN: Login successful");
                     new UserLogined(userService.findUserInfoByUsername(usernameLI.getText()).getFirst());
                     // Switching to the next scene
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                new StartUp(event, "/FXMLView/NewsFeedView.fxml");
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
+                    Platform.runLater(() -> {
+                        try {
+                            if(UserLogined.getStatus() == 0){
+                                new StartUp(event, "/FXMLView/SettingView.fxml");
                             }
+                            else {
+                                new StartUp(event, "/FXMLView/NewsFeedView.fxml");
+                            }
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
                         }
                     });
                 } else {

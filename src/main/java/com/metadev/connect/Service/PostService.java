@@ -117,6 +117,19 @@ public class PostService implements PostRepository, Serializable {
 
     }
 
+    @Override
+    public int getPostCount(Long user_id) {
+        String sql = """
+                    SELECT
+                    COUNT(user_id)
+                    FROM 
+                    [dbo].[post]
+                    where user_id = ? AND post_status = 0
+                    """;
+        Integer like_count = jdbc.queryForObject(sql, new Object[]{user_id}, Integer.class);
+        return Objects.requireNonNullElse(like_count, 0);
+    }
+
 
 
     // Like function

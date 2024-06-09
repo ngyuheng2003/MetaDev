@@ -1,13 +1,9 @@
 package com.metadev.connect.FXMLController;
 
-import com.metadev.connect.Controller.Post.CommentNode;
-import com.metadev.connect.Controller.Post.PostCommentTree;
-import com.metadev.connect.Controller.Post.PostLikeController;
-import com.metadev.connect.Controller.Post.UserProfile;
+import com.metadev.connect.Controller.Post.*;
 import com.metadev.connect.Controller.StartUpController.StartUp;
 import com.metadev.connect.Entity.Comment;
 import com.metadev.connect.Entity.Post;
-import com.metadev.connect.Entity.User;
 import com.metadev.connect.Entity.UserLogined;
 import com.metadev.connect.Service.PostService;
 import com.metadev.connect.Service.UserService;
@@ -34,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class PostContainerController {
+public class PostContainerController<T> {
     @FXML private Button postMenuButton, postLikeButton, addCommentButton, postDeleteButton;
 
     @FXML private VBox postContainer,postMenuContainer, commentInputContainer, postCommentContainer, commentContainerMessageBox,upperContainer;
@@ -52,11 +48,9 @@ public class PostContainerController {
     private final PostService postService = new PostService();
     private Post post;
     private ThreadPool threadPoolPostContainer;
-    private NewsFeedController newsFeedController;
-    private SearchController searchController;
-    private PostContainerController parentController, external;
-    private ProfileController profileController;
-    private PostLikeController like = new PostLikeController();
+    private T postDisplayingController;
+    private PostContainerController<T> parentController, external;
+    private final PostLikeController like = new PostLikeController();
     private int typeOfPost;
     private int typeOfComment = 0;
     private PostCommentTree postCommentTreeReplied;
@@ -83,19 +77,12 @@ public class PostContainerController {
         isMouseInContainer = mouseInContainer;
     }
 
-    public void setParentController(NewsFeedController newsFeedController){
-        this.newsFeedController = newsFeedController;
+    public void setParentController(T postDisplayingController){
+        this.postDisplayingController = postDisplayingController;
     }
 
-    public void setSearchController(SearchController searchController){
-        this.searchController = searchController;
-    }
-    public void setExternalPostController(PostContainerController postContainerController){
+    public void setExternalPostController(PostContainerController<T> postContainerController){
         this.external = postContainerController;
-    }
-
-    public void setProfileController(ProfileController profileController){
-        this.profileController = profileController;
     }
 
     public void setPostContainer(Post post, int type) throws InterruptedException, SQLException, IOException, ClassNotFoundException {
@@ -241,7 +228,9 @@ public class PostContainerController {
     // Show profile page of the post owner
     public void postUsernameHyperLinkClicked(ActionEvent event) throws Exception {
         post_username.setVisited(false);
-        newsFeedController.showLoadingPane();
+        if(postDisplayingController instanceof NewsFeedController newsFeedController) {
+            newsFeedController.showLoadingPane();
+        }
         ThreadPool threadPoolUsername = new ThreadPool(1, 1);
         // Using the thread for like function to database
         threadPoolUsername.execute(()->{
@@ -265,27 +254,28 @@ public class PostContainerController {
 
     // Post Comment
     public void commentButtonClicked(ActionEvent event) throws Exception {
-        if(newsFeedController != null) {
-            if (!isCommentSection) {
-                newsFeedController.showCommentSection(post, this);
-            } else {
-                newsFeedController.closeCommentSection();
-                setCommentSection(false);
-            }
-        }
-        else if(searchController != null){
-            if (!isCommentSection) {
-                searchController.showCommentSection(post, this);
-            } else {
-                searchController.closeCommentSection();
-                setCommentSection(false);
-            }
-        }else{
-            if (!isCommentSection) {
-                profileController.showCommentSection(post, this);
-            } else {
-                profileController.closeCommentSection();
-                setCommentSection(false);
+        if(postDisplayingController != null) {
+            if (postDisplayingController instanceof NewsFeedController newsFeedController) {
+                if (!isCommentSection) {
+                    newsFeedController.showCommentSection(post, (PostContainerController<NewsFeedController>) this);
+                } else {
+                    newsFeedController.closeCommentSection();
+                    setCommentSection(false);
+                }
+            } else if (postDisplayingController instanceof SearchController searchController) {
+                if (!isCommentSection) {
+                    searchController.showCommentSection(post, (PostContainerController<SearchController>) this);
+                } else {
+                    searchController.closeCommentSection();
+                    setCommentSection(false);
+                }
+            } else if(postDisplayingController instanceof ProfileController profileController) {
+                if (!isCommentSection) {
+                    profileController.showCommentSection(post, (PostContainerController<ProfileController>) this);
+                } else {
+                    profileController.closeCommentSection();
+                    setCommentSection(false);
+                }
             }
         }
     }
@@ -405,23 +395,20 @@ public class PostContainerController {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                ArrayList<String[]> list = postCommentContainerControllerReplied.getCommentInformation();
-                                list.add(new String[]{commentInput, String.valueOf(UserLogined.getUserId()), "just now",
-                                        String.valueOf(commentIdReplied), String.valueOf(Integer.parseInt(postCommentContainerControllerReplied.getDepth()) + 1), UserLogined.getUsername()});
-                                postCommentContainerControllerReplied.setCommentInformation(list);
-                                postCommentContainerControllerReplied.addRepliedComment();
-                            } catch (IOException | SQLException | InterruptedException | ClassNotFoundException e) {
-                                throw new RuntimeException(e);
-                            }
-                            commentTF.clear();
-                            addCommentButton.setDisable(true);
-                            commentTF.setDisable(false);
-                            post_comment_counter.setText(String.valueOf(Integer.parseInt(post_comment_counter.getText()) + 1));
+                    Platform.runLater(() -> {
+                        try {
+                            ArrayList<String[]> list = postCommentContainerControllerReplied.getCommentInformation();
+                            list.add(new String[]{commentInput, String.valueOf(UserLogined.getUserId()), "just now",
+                                    String.valueOf(commentIdReplied), String.valueOf(Integer.parseInt(postCommentContainerControllerReplied.getDepth()) + 1), UserLogined.getUsername()});
+                            postCommentContainerControllerReplied.setCommentInformation(list);
+                            postCommentContainerControllerReplied.addRepliedComment();
+                        } catch (IOException | SQLException | InterruptedException | ClassNotFoundException e) {
+                            throw new RuntimeException(e);
                         }
+                        commentTF.clear();
+                        addCommentButton.setDisable(true);
+                        commentTF.setDisable(false);
+                        post_comment_counter.setText(String.valueOf(Integer.parseInt(post_comment_counter.getText()) + 1));
                     });
                     // Terminating the thread
                     threadPoolPostContainer.stop();
@@ -476,18 +463,15 @@ public class PostContainerController {
     // Delete post function
     public void postDeleteButtonClicked(ActionEvent event) throws Exception {
         ThreadPool threadPoolDeletePost = new ThreadPool(1,1);
+        PostCreating delete = new PostCreating();
         postDeleteButton.setDisable(true);
         threadPoolDeletePost.execute(()->{
             System.out.println("POSTS: Deleting post ...");
-            postService.deletePost(post.getPostId());
-            post.setStatus(2);
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    post.setContent("Post deleted by author");
-                    post_content.setText("Post deleted by author");
-                    post_content.setStyle("-fx-font-style: italic");
-                }
+            delete.deletePost(post);
+            Platform.runLater(() -> {
+                post.setContent("Post deleted by author");
+                post_content.setText("Post deleted by author");
+                post_content.setStyle("-fx-font-style: italic");
             });
             System.out.println("POSTS: Delete successfully");
             threadPoolDeletePost.stop();
