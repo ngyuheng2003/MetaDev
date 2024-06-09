@@ -646,7 +646,7 @@
                                                 </VBox>
                                                 <VBox fx:id="changePasswordError" alignment="CENTER_LEFT" opacity="0.0" prefHeight="40.0" prefWidth="380.0" style="-fx-background-radius: 10; -fx-background-color: rgb(4,0,70);">
                                                    <children>
-                                                      <Text fx:id="changePasswordErrorMessage" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Changing new password ..." wrappingWidth="325.0">
+                                                      <Text fx:id="changePasswordErrorMessage" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Changing new password ..." wrappingWidth="499.0000915527344">
                                                          <font>
                                                             <Font name="Roboto" size="16.0" />
                                                          </font>

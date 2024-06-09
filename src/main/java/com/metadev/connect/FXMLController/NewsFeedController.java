@@ -52,7 +52,7 @@ public class NewsFeedController implements Initializable {
         try {
             threadPoolFetchPost.execute(()->{
                 System.out.println("NEWFD: Fetching New Feeds ...");
-                listOfPost = display.fetchPostByUserId();
+                listOfPost = display.fetchPost();
                 // Check whether a new post is created by the user
                 if(UserLogined.getNewPost() != null) {
                     Post post = UserLogined.getNewPost();

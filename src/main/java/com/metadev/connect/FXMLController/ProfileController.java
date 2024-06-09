@@ -54,7 +54,6 @@ public class ProfileController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         SimpleDateFormat dateF = new SimpleDateFormat("dd MMMM yyyy");
-        PostService postService = new PostService();
         profile_username.setText(user.getUsername());
         profile_date.setText(dateF.format(user.getDate_created_account()));
         if(user.getName() != null){
@@ -69,7 +68,7 @@ public class ProfileController implements Initializable {
         else{
             profile_info_container.getChildren().remove(profile_bio);
         }
-        profile_post_count.setText(String.valueOf(postService.getPostCount(user.getUserId())));
+
         loadProfilePost(0);
         parentController = this;
     }
@@ -91,13 +90,14 @@ public class ProfileController implements Initializable {
 
     // Display user post/reply
     public void loadProfilePost(int type){
+        PostService postService = new PostService();
         profile_postContainer.getChildren().clear();
         usernameButton.setText(UserLogined.getUsername());
         ThreadPool threadPoolFetchPost = new ThreadPool(1, 1);
-        PostService postService = new PostService();
         parentController = this;
         try {
             threadPoolFetchPost.execute(()->{
+                int post_count = postService.getPostCount(user.getUserId());
                 System.out.println("NEWFD: Fetching New Feeds ...");
                 switch(type){
                     case 0:
@@ -112,6 +112,7 @@ public class ProfileController implements Initializable {
                 }
                 Platform.runLater(() -> {
                     try {
+                        profile_post_count.setText(String.valueOf(post_count));
                         if(!listOfPost.isEmpty()) {
                             for (int i = 0; i < listOfPost.size(); i++) {
                                 if (type == 0 && listOfPost.get(i).getStatus() == 2)
@@ -145,21 +146,26 @@ public class ProfileController implements Initializable {
     }
 
     // Display comment to user
-    public void showCommentSection(Post post, PostContainerController<ProfileController> external){
+    public void showCommentSection(Post post, PostContainerController<ProfileController> external) throws Exception {
         System.out.println("NEWFD: Opening comment section ...");
         commentPane.toFront();
         commentPane.setDisable(false);
         mainPane.setDisable(true);
-        post.updateInfo();
-        Platform.runLater(() -> {
-            try {
-                PostContainerController<ProfileController> postContainerController = display.displayComment(parentController, post, commentContainer, external, 0);
-                internal = postContainerController;
-                postContainerControllerComment = postContainerController;
-                System.out.println("NEWFD: Comment section opened");
-            }catch (IOException | InterruptedException | SQLException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+        ThreadPool threadPoolShowComment = new ThreadPool(1,1);
+        // Show the comments of the post
+        threadPoolShowComment.execute(()->{
+            post.updateInfo();
+            Platform.runLater(() -> {
+                try {
+                    PostContainerController<ProfileController> postContainerController = display.displayComment(parentController, post, commentContainer, external, 0);
+                    internal = postContainerController;
+                    postContainerControllerComment = postContainerController;
+                    System.out.println("NEWFD: Comment section opened");
+                }catch (IOException | InterruptedException | SQLException | ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+                threadPoolShowComment.stop();
         });
     }
 

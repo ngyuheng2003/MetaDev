@@ -17,8 +17,11 @@ public class PostCreating {
         String[] word = content.split(" ");
         ArrayList<String> tags = new ArrayList<>();
         for (String string : word) {
-            if (string.charAt(0) == '#')
-                tags.add(string.substring(1));
+            if (string.charAt(0) == '#') {
+                String[] str = string.split("#");
+                for(String a : str)
+                    tags.add(a);
+            }
         }
         String[] tagging = new String[tags.size()];
         for(int i = 0; i < tags.size(); i++){

@@ -22,7 +22,6 @@ public class LoadingController {
     }
 
     public void profileButtonClicked(ActionEvent event) throws IOException {
-        new UserProfile(UserLogined.getUserLogined());
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(getClass().getResource("/FXMLView/ProfileView.fxml"));
         Parent root = fxmlLoader.load();

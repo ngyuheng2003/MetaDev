@@ -167,7 +167,7 @@
                                                             <Image url="@../Images/General/defaultProfilePic_icon.png" />
                                                          </image>
                                                       </ImageView>
-                                                      <Text fx:id="profile_post_count" layoutX="224.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" textAlignment="CENTER" wrappingWidth="50.0">
+                                                      <Text fx:id="profile_post_count" layoutX="224.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="-" textAlignment="CENTER" wrappingWidth="50.0">
                                                          <font>
                                                             <Font name="Calibri Bold" size="25.0" />
                                                          </font>

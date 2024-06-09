@@ -7,6 +7,7 @@ import com.metadev.connect.Entity.User;
 import com.metadev.connect.Entity.UserLogined;
 import com.metadev.connect.Service.UserService;
 import com.metadev.connect.ThreadPool.ThreadPool;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -167,23 +168,41 @@ public class SettingController implements Initializable {
 
     // Edit Profile Pane
 
-    public void updateProfileButtonClicked(ActionEvent event) throws IOException {
+    public void updateProfileButtonClicked(ActionEvent event) throws Exception {
         updateProfileButton.setDisable(true);
         UserService userService = new UserService();
         String str  = "";
         for(int a : suggested_preferred_topic){
             str += a + ",";
         }
-        if(userService.updateProfile(UserLogined.getUserId(), usernameEditTF.getText(), nameEditTF.getText(), bioEditTF.getText(), 1, str.substring(0, str.length()-1)) == 1){
-            new UserLogined(userService.findUserInfoById(UserLogined.getUserId()).getFirst());
-            System.out.println("SETTS: Update profile complete");
-            if(UserLogined.getStatus() == 0){
-                new StartUp(event, "/FXMLView/NewsFeedView.fxml");
+        ThreadPool threadPoolSetting = new ThreadPool(1,1);
+        String finalStr = str;
+        threadPoolSetting.execute(()->{
+            if(userService.updateProfile(UserLogined.getUserId(), usernameEditTF.getText(), nameEditTF.getText(), bioEditTF.getText(), 1, finalStr.substring(0, finalStr.length()-1)) == 1){
+                new UserLogined(userService.findUserInfoById(UserLogined.getUserId()).getFirst());
+                System.out.println("SETTS: Update profile complete");
+                if(UserLogined.getStatus() == 0){
+                    Platform.runLater(() -> {
+                        try {
+                            new StartUp(event, "/FXMLView/NewsFeedView.fxml");
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                }
+                else{
+                    Platform.runLater(() -> {
+                        try {
+                            new StartUp(event, "/FXMLView/SettingView.fxml");
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+
+                }
             }
-            else{
-                new StartUp(event, "/FXMLView/SettingView.fxml");
-            }
-        }
+            threadPoolSetting.stop();
+        });
     }
 
     public void topic1Clicked(ActionEvent event) {
@@ -353,18 +372,34 @@ public class SettingController implements Initializable {
 
 
 
-    public void updatePasswordButtonClicked(ActionEvent event) throws IOException {
+    public void updatePasswordButtonClicked(ActionEvent event) throws Exception {
+        updatePasswordButton.setDisable(true);
         changePasswordError.setOpacity(1);
-        if(oldPasswordCTF.getText().equals(passwordCTF.getText())){
-            changePasswordErrorMessage.setText("New password cannot be same as old password");
-        }
-        else if(Validation.loginUsingUsername(UserLogined.getUsername(), oldPasswordCTF.getText())){
-            Validation.updateNewPassword(passwordCTF.getText());
-            new StartUp(event, "/FXMLView/SettingView.fxml");
-        }
-        else{
-            changePasswordErrorMessage.setText("Invalid old password");
-        }
+        changePasswordErrorMessage.setText("Changing password ...");
+        ThreadPool threadPoolSetting = new ThreadPool(1,1);
+        threadPoolSetting.execute(()-> {
+            if (oldPasswordCTF.getText().equals(passwordCTF.getText())) {
+                Platform.runLater(() -> {
+                    changePasswordErrorMessage.setText("New password cannot be same as old password");
+                    updatePasswordButton.setDisable(true);
+                });
+            } else if (Validation.loginUsingUsername(UserLogined.getUsername(), oldPasswordCTF.getText())) {
+                Validation.updateNewPassword(passwordCTF.getText());
+                    Platform.runLater(() -> {
+                        try {
+                            new StartUp(event, "/FXMLView/SettingView.fxml");
+                            updatePasswordButton.setDisable(true);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+            } else {
+                Platform.runLater(() -> {
+                    changePasswordErrorMessage.setText("Invalid old password");
+                    updatePasswordButton.setDisable(true);
+                });
+            threadPoolSetting.stop();
+            }});
     }
 
 

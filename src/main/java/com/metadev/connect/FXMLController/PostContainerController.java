@@ -50,7 +50,7 @@ public class PostContainerController<T> {
     private ThreadPool threadPoolPostContainer;
     private T postDisplayingController;
     private PostContainerController<T> parentController, external;
-    private final PostLikeController like = new PostLikeController();
+    private final PostLiking like = new PostLiking();
     private int typeOfPost;
     private int typeOfComment = 0;
     private PostCommentTree postCommentTreeReplied;

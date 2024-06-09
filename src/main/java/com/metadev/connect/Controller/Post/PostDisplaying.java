@@ -19,7 +19,7 @@ import java.util.List;
 public class PostDisplaying<T> {
     PostService postService = new PostService();
     ContentRecommendationSystem contentRecommendationSystem = new ContentRecommendationSystem();
-    public List<Post> fetchPostByUserId(){
+    public List<Post> fetchPost(){
         return contentRecommendationSystem.recommendPost(postService.fetchPost(), UserLogined.getUserId());
     }
 
