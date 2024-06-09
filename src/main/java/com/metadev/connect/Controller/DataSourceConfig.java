@@ -20,9 +20,9 @@ public class DataSourceConfig implements Serializable {
     /* Constructor to initialize DataSourceConfig with database connection details
      Values are injected from the Spring application properties */
     public DataSourceConfig(@Value("${spring.datasource.url}") String url, @Value("${spring.datasource.username}") String username, @Value("${spring.datasource.password}")String password) {
-        this.url = url;
-        this.username = username;
-        this.password = password;
+        DataSourceConfig.url = url;
+        DataSourceConfig.username = username;
+        DataSourceConfig.password = password;
 
     }
 

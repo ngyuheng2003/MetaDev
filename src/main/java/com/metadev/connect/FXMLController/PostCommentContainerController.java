@@ -74,6 +74,7 @@ public class PostCommentContainerController {
     private ArrayList<PostCommentContainerController> postCommentContainerControllerList = new ArrayList<>();
     private String content;
     private String username;
+    private String userId;
     private String date;
     private ThreadPool threadPoolPostCommentContainer;
 
@@ -130,6 +131,7 @@ public class PostCommentContainerController {
 
     public void setPostCommentContainer(PostCommentTree postCommentTree, int type) throws InterruptedException, IOException, ClassNotFoundException, SQLException {
         content = commentInformation.get(0)[0];
+        userId = commentInformation.get(0)[1];
         username = commentInformation.get(0)[5];
         date = commentInformation.get(0)[2];
         commentId = commentInformation.get(0)[3];
@@ -154,7 +156,7 @@ public class PostCommentContainerController {
             informationBox.getChildren().remove(commentReply);
             informationBox.getChildren().remove(dotText);
         }
-        if(Integer.parseInt(commentInformation.get(0)[1]) != UserLogined.getUserId() && post.getUserId() != UserLogined.getUserId()
+        if(Integer.parseInt(userId) != UserLogined.getUserId() && post.getUserId() != UserLogined.getUserId()
                 || commentText.getText().equals("Comment deleted") || commentText.getText().equals("Comment deleted by owner")){
             informationBox.getChildren().remove(postCommentDelete);
             informationBox.getChildren().remove(dotText1);

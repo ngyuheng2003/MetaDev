@@ -37,165 +37,238 @@
             </AnchorPane>
          </children>
       </HBox>
-      <VBox>
+      <HBox alignment="TOP_CENTER">
          <children>
-            <AnchorPane>
+            <VBox>
                <children>
-                  <VBox fx:id="commentPane" alignment="TOP_CENTER">
+                  <AnchorPane>
                      <children>
-                        <VBox fx:id="commentContainer" alignment="CENTER" minHeight="640.0" onMouseClicked="#commentOuterAreaClicked" prefWidth="1280.0" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS" />
-                     </children>
-                  </VBox>
-                  <VBox fx:id="mainPane">
-                     <children>
-                        <HBox alignment="TOP_CENTER" prefHeight="640.0" prefWidth="1280.0">
+                        <VBox fx:id="commentPane" alignment="TOP_CENTER">
                            <children>
-                              <ScrollPane prefHeight="200.0" prefWidth="300.0" style="-fx-background-color: transparent;">
-                                 <content>
-                                    <VBox alignment="TOP_CENTER" prefHeight="453.0" prefWidth="290.0" spacing="20.0">
-                                       <children>
-                                          <HBox id="navButton" alignment="CENTER" prefHeight="70.0" prefWidth="290.0">
+                              <VBox fx:id="commentContainer" alignment="CENTER" minHeight="640.0" onMouseClicked="#commentOuterAreaClicked" prefWidth="1280.0" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS" />
+                           </children>
+                        </VBox>
+                        <VBox fx:id="mainPane">
+                           <children>
+                              <HBox alignment="TOP_CENTER" prefHeight="640.0" prefWidth="1280.0">
+                                 <children>
+                                    <ScrollPane prefHeight="200.0" prefWidth="300.0" style="-fx-background-color: transparent;">
+                                       <content>
+                                          <VBox alignment="TOP_CENTER" prefHeight="453.0" prefWidth="290.0" spacing="20.0">
                                              <children>
-                                                <Button mnemonicParsing="false" onAction="#profileButtonClicked" style="-fx-background-color: transparent;">
-                                                   <graphic>
-                                                      <ImageView fitHeight="40.0" fitWidth="40.0" preserveRatio="true">
+                                                <HBox id="navButton" alignment="CENTER" prefHeight="70.0" prefWidth="290.0">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#profileButtonClicked" style="-fx-background-color: transparent;">
+                                                         <graphic>
+                                                            <ImageView fitHeight="40.0" fitWidth="40.0" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../Images/General/defaultProfilePic_icon.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </Button>
+                                                      <Button fx:id="usernameButton" mnemonicParsing="false" onAction="#profileButtonClicked" prefHeight="50.0" prefWidth="215.0" style="-fx-background-color: transparent; -fx-background-radius: 15; -fx-alignment: center_left; -fx-line-spacing: 50;" text="UsernameN/A">
+                                                         <font>
+                                                            <Font name="Roboto" size="20.0" />
+                                                         </font>
+                                                      </Button>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets left="10.0" right="10.0" />
+                                                   </padding>
+                                                </HBox>
+                                                <HBox>
+                                                   <children>
+                                                      <Button id="navButton" mnemonicParsing="false" onAction="#newsFeedButtonClicked" prefHeight="53.0" prefWidth="250.0" text="News Feed">
+                                                         <font>
+                                                            <Font name="Roboto" size="22.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <ImageView fitHeight="50.0" fitWidth="50.0" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../Images/General/newsfeed_icon.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                         <cursor>
+                                                            <Cursor fx:constant="HAND" />
+                                                         </cursor>
+                                                      </Button>
+                                                   </children>
+                                                </HBox>
+                                                <HBox>
+                                                   <children>
+                                                      <Button id="navButton" mnemonicParsing="false" onAction="#addPostButtonClicked" prefHeight="50.0" prefWidth="250.0" text="Create Post">
+                                                         <font>
+                                                            <Font name="Roboto" size="22.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <ImageView fitHeight="50.0" fitWidth="50.0" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../Images/General/add_icon.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                         <cursor>
+                                                            <Cursor fx:constant="HAND" />
+                                                         </cursor>
+                                                      </Button>
+                                                   </children>
+                                                </HBox>
+                                                <HBox>
+                                                   <children>
+                                                      <Button id="navButton" mnemonicParsing="false" onAction="#settingButtonClicked" prefHeight="50.0" prefWidth="250.0" text="Setting">
+                                                         <font>
+                                                            <Font name="Roboto" size="22.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <ImageView fitHeight="50.0" fitWidth="50.0" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../Images/General/setting_icon.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                         <cursor>
+                                                            <Cursor fx:constant="HAND" />
+                                                         </cursor>
+                                                      </Button>
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                             <padding>
+                                                <Insets top="30.0" />
+                                             </padding>
+                                          </VBox>
+                                       </content>
+                                    </ScrollPane>
+                                    <ScrollPane prefHeight="640.0" prefWidth="600.0" style="-fx-background-color: transparent;">
+                                      <content>
+                                          <VBox>
+                                             <children>
+                                                <VBox style="-fx-border-color: rgb(128,128,128); -fx-border-width: 0 0 0.5 0;">
+                                                   <VBox.margin>
+                                                      <Insets bottom="10.0" />
+                                                   </VBox.margin>
+                                                   <children>
+                                                      <Text fx:id="profile_username" strokeType="OUTSIDE" strokeWidth="0.0" text="\@UsernameN/A" wrappingWidth="350.666748046875">
+                                                         <font>
+                                                            <Font name="Roboto" size="22.0" />
+                                                         </font>
+                                                         <VBox.margin>
+                                                            <Insets bottom="20.0" left="20.0" top="10.0" />
+                                                         </VBox.margin>
+                                                      </Text>
+                                                   </children>
+                                                </VBox>
+                                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="115.0" prefWidth="595.0">
+                                                   <children>
+                                                      <ImageView fitHeight="72.0" fitWidth="80.0" layoutX="40.0" layoutY="25.0" preserveRatio="true">
                                                          <image>
                                                             <Image url="@../Images/General/defaultProfilePic_icon.png" />
                                                          </image>
                                                       </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                                <Button fx:id="usernameButton" mnemonicParsing="false" onAction="#profileButtonClicked" prefHeight="50.0" prefWidth="215.0" style="-fx-background-color: transparent; -fx-background-radius: 15; -fx-alignment: center_left; -fx-line-spacing: 50;" text="UsernameN/A">
-                                                   <font>
-                                                      <Font name="Roboto" size="20.0" />
-                                                   </font>
-                                                </Button>
+                                                      <Text fx:id="profile_post_count" layoutX="224.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="-" textAlignment="CENTER" wrappingWidth="50.0">
+                                                         <font>
+                                                            <Font name="Calibri Bold" size="25.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <Text layoutX="228.0" layoutY="82.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Posts">
+                                                         <font>
+                                                            <Font size="18.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <Text layoutX="349.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="-" textAlignment="CENTER" wrappingWidth="50.0">
+                                                         <font>
+                                                            <Font name="Calibri Bold" size="25.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <Text layoutX="336.0" layoutY="82.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Followers">
+                                                         <font>
+                                                            <Font size="18.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <Text layoutX="474.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="-" textAlignment="CENTER" wrappingWidth="50.0">
+                                                         <font>
+                                                            <Font name="Calibri Bold" size="25.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <Text layoutX="461.0" layoutY="82.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Following">
+                                                         <font>
+                                                            <Font size="18.0" />
+                                                         </font>
+                                                      </Text>
+                                                   </children>
+                                                </AnchorPane>
+                                                <VBox fx:id="profile_info_container">
+                                                   <children>
+                                                      <Text fx:id="profile_name" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="350.666748046875">
+                                                         <font>
+                                                            <Font name="Calibri Bold" size="18.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <Text fx:id="profile_bio" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="430.0">
+                                                         <font>
+                                                            <Font size="18.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <HBox>
+                                                         <children>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Joined since ">
+                                                               <font>
+                                                                  <Font size="18.0" />
+                                                               </font>
+                                                            </Text>
+                                                            <Text fx:id="profile_date" strokeType="OUTSIDE" strokeWidth="0.0" text="date" wrappingWidth="169.3334503173828">
+                                                               <font>
+                                                                  <Font size="18.0" />
+                                                               </font>
+                                                            </Text>
+                                                         </children>
+                                                         <VBox.margin>
+                                                            <Insets top="40.0" />
+                                                         </VBox.margin>
+                                                      </HBox>
+                                                   </children>
+                                                   <VBox.margin>
+                                                      <Insets top="10.0" />
+                                                   </VBox.margin>
+                                                </VBox>
+                                                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                                   <children>
+                                                      <Button id="profileSelectedButton" fx:id="postSectionButton" mnemonicParsing="false" onAction="#postSectionButtonClicked" prefHeight="60.0" prefWidth="280.0" text="Posts">
+                                                         <font>
+                                                            <Font size="20.0" />
+                                                         </font>
+                                                      </Button>
+                                                      <Button id="profileNotSelectedButton" fx:id="repliesSectionButton" mnemonicParsing="false" onAction="#repliedSectionButtonClicked" prefHeight="60.0" prefWidth="280.0" text="Replies">
+                                                         <font>
+                                                            <Font size="20.0" />
+                                                         </font>
+                                                      </Button>
+                                                   </children>
+                                                </HBox>
+                                                <VBox fx:id="profile_postContainer" prefHeight="61.0" prefWidth="595.0" spacing="20.0">
+                                                   <padding>
+                                                      <Insets left="13.0" />
+                                                   </padding>
+                                                </VBox>
                                              </children>
                                              <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </HBox>
-                                          <HBox>
-                                             <children>
-                                                <Button id="navButton" mnemonicParsing="false" onAction="#newsFeedButtonClicked" prefHeight="53.0" prefWidth="250.0" text="News Feed">
-                                                   <font>
-                                                      <Font name="Roboto" size="22.0" />
-                                                   </font>
-                                                   <graphic>
-                                                      <ImageView fitHeight="50.0" fitWidth="50.0" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../Images/General/newsfeed_icon.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </Button>
-                                             </children>
-                                          </HBox>
-                                          <HBox>
-                                             <children>
-                                                <Button id="navButton" mnemonicParsing="false" onAction="#addPostButtonClicked" prefHeight="50.0" prefWidth="250.0" text="Create Post">
-                                                   <font>
-                                                      <Font name="Roboto" size="22.0" />
-                                                   </font>
-                                                   <graphic>
-                                                      <ImageView fitHeight="50.0" fitWidth="50.0" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../Images/General/add_icon.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </Button>
-                                             </children>
-                                          </HBox>
-                                          <HBox>
-                                             <children>
-                                                <Button id="navButton" mnemonicParsing="false" onAction="#settingButtonClicked" prefHeight="50.0" prefWidth="250.0" text="Setting">
-                                                   <font>
-                                                      <Font name="Roboto" size="22.0" />
-                                                   </font>
-                                                   <graphic>
-                                                      <ImageView fitHeight="50.0" fitWidth="50.0" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../Images/General/setting_icon.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </Button>
-                                             </children>
-                                          </HBox>
-                                       </children>
-                                       <padding>
-                                          <Insets top="30.0" />
-                                       </padding>
-                                    </VBox>
-                                 </content>
-                              </ScrollPane>
-                              <ScrollPane prefHeight="640.0" prefWidth="600.0" style="-fx-background-color: transparent;">
-                                <content>
-                                    <VBox>
-                                       <children>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="150.0" prefWidth="595.0">
-                                             <children>
-                                                <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="40.0" layoutY="25.0" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../Images/General/defaultProfilePic_icon.png" />
-                                                   </image>
-                                                </ImageView>
-                                                <Text layoutX="170.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="350.666748046875">
-                                                   <font>
-                                                      <Font name="Roboto" size="35.0" />
-                                                   </font>
-                                                </Text>
-                                                <Text fx:id="profile_username" layoutX="170.0" layoutY="98.0" strokeType="OUTSIDE" strokeWidth="0.0" text="\@UsernameN/A" wrappingWidth="350.666748046875">
-                                                   <font>
-                                                      <Font name="Roboto" size="25.0" />
-                                                   </font>
-                                                </Text>
-                                             </children>
-                                          </AnchorPane>
-                                          <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
-                                             <children>
-                                                <Button id="profileSelectedButton" fx:id="postSectionButton" mnemonicParsing="false" onAction="#postSectionButtonClicked" prefHeight="60.0" prefWidth="280.0" text="Posts">
-                                                   <font>
-                                                      <Font size="20.0" />
-                                                   </font>
-                                                </Button>
-                                                <Button id="profileNotSelectedButton" fx:id="repliesSectionButton" mnemonicParsing="false" onAction="#repliedSectionButtonClicked" prefHeight="60.0" prefWidth="280.0" text="Replies">
-                                                   <font>
-                                                      <Font size="20.0" />
-                                                   </font>
-                                                </Button>
-                                             </children>
-                                          </HBox>
-                                          <VBox fx:id="profile_postContainer" prefHeight="61.0" prefWidth="595.0" spacing="20.0">
-                                             <padding>
-                                                <Insets left="13.0" />
+                                                <Insets top="20.0" />
                                              </padding>
                                           </VBox>
-                                       </children>
-                                       <padding>
-                                          <Insets top="20.0" />
-                                       </padding>
-                                    </VBox>
-                                </content>
-                              </ScrollPane>
-                              <VBox prefHeight="200.0" prefWidth="300.0" />
+                                      </content>
+                                    </ScrollPane>
+                                    <VBox prefHeight="200.0" prefWidth="300.0" />
+                                 </children>
+                              </HBox>
                            </children>
-                        </HBox>
+                        </VBox>
                      </children>
-                  </VBox>
+                  </AnchorPane>
                </children>
-            </AnchorPane>
+            </VBox>
          </children>
-      </VBox>
+      </HBox>
    </children>
 </VBox>

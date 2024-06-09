@@ -26,5 +26,9 @@ public interface UserRepository {
     public boolean loginUserByEmail(String email, String password);
 
     public boolean loginUserByUsername(String username, String password);
+
+    int updateProfile(Long user_id, String username, String name, String bio, int status, String suggested_preferred_topic);
+
+    int updatePassword(Long user_id, String newPassword);
 }
 

@@ -9,10 +9,14 @@ public class UserLogined {
 
     private static Long userId;
     private static String username;
+
+    private static String name;
     private static String email;
     private static String bio;
+    private static int status;
     private static Date date_created_account;
     private static String password;
+    private static int[] suggested_preferred_topic;
     private static User userLogined;
     private static List<Long> userLikedPost;
 
@@ -31,6 +35,9 @@ public class UserLogined {
         password = user.getPassword();
         userLogined = user;
         userLikedPost = postService.getUserLikeStatus(user.getUserId());
+        name = user.getName();
+        status = user.getStatus();
+        suggested_preferred_topic = user.getSuggested_preferred_topic();
     }
 
     public static List<Long> getUserLikedPost() {
@@ -39,6 +46,22 @@ public class UserLogined {
 
     public static void setUserLikedPost(List<Long> userLikedPost) {
         UserLogined.userLikedPost = userLikedPost;
+    }
+
+    public static int getStatus() {
+        return status;
+    }
+
+    public static void setStatus(int status) {
+        UserLogined.status = status;
+    }
+
+    public static int[] getSuggested_preferred_topic() {
+        return suggested_preferred_topic;
+    }
+
+    public static void setSuggested_preferred_topic(int[] suggested_preferred_topic) {
+        UserLogined.suggested_preferred_topic = suggested_preferred_topic;
     }
 
     // Method to log out the user by setting all fields to null
@@ -111,7 +134,13 @@ public class UserLogined {
         UserLogined.newPost = newPost;
     }
 
+    public static String getName() {
+        return name;
+    }
 
+    public static void setName(String name) {
+        UserLogined.name = name;
+    }
 
 
 

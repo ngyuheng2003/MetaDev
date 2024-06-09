@@ -1,5 +1,6 @@
 package com.metadev.connect.FXMLController;
 
+import com.metadev.connect.Controller.Post.PostDisplaying;
 import com.metadev.connect.Controller.Post.SearchPosts;
 import com.metadev.connect.Controller.StartUpController.StartUp;
 import com.metadev.connect.Entity.Post;
@@ -57,12 +58,12 @@ public class SearchController {
 
     @FXML
     private VBox searchUserContainer;
-    private VBox newFeedPostBox;
-    private PostContainerController postContainerController;
-    private SearchPosts search = new SearchPosts();
-    private SearchUserButtonController searchUserButtonController;
-    private PostContainerController postContainerControllerComment, internal;
+    public VBox newFeedPostBox;
+    private final SearchPosts search = new SearchPosts();
+    private PostContainerController<SearchController> postContainerControllerComment, internal;
     private SearchController parentController;
+    private final PostDisplaying<SearchController> display = new PostDisplaying<>();
+    private ThreadPool threadPoolFetchPost = new ThreadPool(1, 1);;
 
 
     @FXML
@@ -74,139 +75,131 @@ public class SearchController {
     }
 
     @FXML
-    public void searchInput(KeyEvent event) throws SQLException {
+    public void searchInput(KeyEvent event) throws Exception {
+        if(searchTF.getText().isBlank()) {
+            messageText.setText("Search for user or post");
+            return;
+        }
         messageText.setText("Fetching search result ...");
         searchPostContainerMiddle.setDisable(true);
         searchPostContainerMiddle.setVisible(false);
         searchUserContainer.getChildren().clear();
         searchPostContainer.getChildren().clear();
-        if(!searchTF.getText().isBlank()) {
-            if (searchTF.getText().charAt(0) == '#') {
-                List<Post> listPost = search.searchPostByTag(searchTF.getText().substring(1));
-                displayPost(listPost);
-            } else {
-                List<User> listUser = search.searchUserByUserName(searchTF.getText());
-                List<Post> listPost = search.searchPostByContent(searchTF.getText());
-                if (listUser != null)
-                    displayUser(listUser);
-                if (listPost != null) {
-                    displayPost(listPost);
+        threadPoolFetchPost.setUpdateFlag(false);
+        threadPoolFetchPost.execute(()-> {
+            if (!searchTF.getText().isBlank()) {
+                if (searchTF.getText().charAt(0) == '#') {
+                    List<Post> listPost;
+                    try {
+                        listPost = search.searchPostByTag(searchTF.getText().substring(1));
+                        threadPoolFetchPost.setUpdateFlag(true);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                    List<Post> finalListPost = listPost;
+                    if(threadPoolFetchPost.getQueueSize() == 0 && threadPoolFetchPost.getUpdateFlag()) {
+                        Platform.runLater(() -> {
+                            if (finalListPost != null)
+                                displayPost(finalListPost);
+                            else
+                                messageText.setText("No related post");
+                        });
+                    }
+                } else {
+                    List<User> listUser;
+                    List<Post> listPost;
+                    try {
+                        listUser = search.searchUserByUserName(searchTF.getText());
+                        listPost = search.searchPostByContent(searchTF.getText());
+                        threadPoolFetchPost.setUpdateFlag(true);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    List<User> finalListUser = listUser;
+                    List<Post> finalListPost = listPost;
+                    if(threadPoolFetchPost.getQueueSize() == 0 && threadPoolFetchPost.getUpdateFlag()) {
+                        Platform.runLater(() -> {
+                            if (finalListUser != null)
+                                displayUser(finalListUser);
+                            if (finalListPost != null) {
+                                displayPost(finalListPost);
+                            }
+                        });
+                    }
                 }
             }
-        }else{
-            messageText.setText("Search for user or post");
-        }
+        });
     }
 
     public void displayUser(List<User> list){
-        ThreadPool threadPoolFetchPost = new ThreadPool(1, 1);
+        System.out.println("NEWFD: Fetching search result (User) ...");
+
+        messageText.setText("");
         try {
-            threadPoolFetchPost.execute(()->{
-                System.out.println("NEWFD: Fetching search result (User) ...");
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        messageText.setText("");
-                        try {
-                            int limit;
-                            if(list.size() < 3)
-                                limit = list.size();
-                            else
-                                limit = 3;
-                            for(int i = 0; i < limit; i++) {
-                                FXMLLoader fxmlLoader = new FXMLLoader();
-                                fxmlLoader.setLocation(getClass().getResource("/FXMLContainer/SearchUserButton.fxml"));
-                                HBox searchUserButton = fxmlLoader.load();
-                                searchUserButtonController = fxmlLoader.getController();
-                                searchUserButtonController.setSearchUserButtonContainer(list.get(i));
-                                searchUserContainer.getChildren().add(searchUserButton);
-                            }
-                        }catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                });
-                System.out.println("NEWFD: Fetching completed");
-                threadPoolFetchPost.stop();
-            });
-        } catch (Exception e) {
+            int limit;
+            if(list.size() < 3)
+                limit = list.size();
+            else
+                limit = 3;
+            for(int i = 0; i < limit; i++) {
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                fxmlLoader.setLocation(getClass().getResource("/FXMLContainer/SearchUserButton.fxml"));
+                HBox searchUserButton = fxmlLoader.load();
+                SearchUserButtonController searchUserButtonController = fxmlLoader.getController();
+                searchUserButtonController.setSearchUserButtonContainer(list.get(i));
+                searchUserContainer.getChildren().add(searchUserButton);
+            }
+        }catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        System.out.println("NEWFD: Fetching completed");
     }
 
     public void displayPost(List<Post> list){
-        ThreadPool threadPoolFetchPost = new ThreadPool(1, 1);
         parentController = this;
-        try {
-            threadPoolFetchPost.execute(()->{
-                System.out.println("NEWFD: Fetching search result (Post) ...");
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        messageText.setText("");
-                        try {
-                            for(int i = 0; i < list.size(); i++) {
-                                FXMLLoader fxmlLoader = new FXMLLoader();
-                                fxmlLoader.setLocation(getClass().getResource("/FXMLContainer/PostContainer.fxml"));
-                                VBox newFeedPostBox = fxmlLoader.load();
-                                postContainerController = fxmlLoader.getController();
-                                postContainerController.setSearchController(parentController);
-                                postContainerController.setPostContainer(list.get(i), 1);
-                                searchPostContainer.getChildren().add(newFeedPostBox);
+        System.out.println("NEWFD: Fetching search result (Post) ...");
 
-                                searchPostContainerMiddle.setDisable(false);
-                                searchPostContainerMiddle.setVisible(true);
-                            }
-                        }catch (IOException | InterruptedException e) {
-                            throw new RuntimeException(e);
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        } catch (ClassNotFoundException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                });
-                System.out.println("NEWFD: Fetching completed");
-                threadPoolFetchPost.stop();
-            });
-        } catch (Exception e) {
+        messageText.setText("");
+        try {
+            for(int i = 0; i < list.size(); i++) {
+                // Skip if post is deleted
+                if(list.get(i).getStatus() == 2)
+                    continue;
+                // Display post
+                display.displayPost(parentController, list.get(i), searchPostContainer, 1);
+                searchPostContainerMiddle.setDisable(false);
+                searchPostContainerMiddle.setVisible(true);
+            }
+            System.out.println("NEWFD: Fetching completed");
+        }catch (IOException | InterruptedException | SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void showCommentSection(Post post, PostContainerController external){
+
+
+    public void showCommentSection(Post post, PostContainerController<SearchController> external) throws Exception {
         System.out.println("NEWFD: Opening comment section ...");
         commentPane.toFront();
         commentPane.setDisable(false);
         mainPane.setDisable(true);
-        post.updateInfo();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
+        ThreadPool threadPoolShowComment = new ThreadPool(1,1);
+        threadPoolShowComment.execute(()->{
+            post.updateInfo();
+            Platform.runLater(() -> {
                 try {
-                    FXMLLoader fxmlLoader = new FXMLLoader();
-                    fxmlLoader.setLocation(getClass().getResource("/FXMLContainer/PostContainer.fxml"));
-                    newFeedPostBox = fxmlLoader.load();
-                    PostContainerController postContainerController = fxmlLoader.getController();
+                    PostContainerController<SearchController> postContainerController = display.displayComment(parentController, post, commentContainer, external, 0);
                     internal = postContainerController;
                     postContainerControllerComment = postContainerController;
-                    postContainerController.setPostContainer(post, 0);
-                    postContainerController.setExternalPostController(external);
-                    postContainerController.setCommentSection(true);
-                    postContainerController.setSearchController(parentController);
-                    commentContainer.getChildren().add(newFeedPostBox);
-                    commentContainer.setStyle("-fx-background-color:  rgb(255,255,255,0.5)");
                     System.out.println("NEWFD: Comment section opened");
-                    postContainerController.displayComment();
-                }catch (IOException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                } catch (ClassNotFoundException e) {
+                }catch (IOException | InterruptedException | SQLException | ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
-            }
-        });
+            });
+        threadPoolShowComment.stop();
+    });
     }
 
     public void closeCommentSection(){

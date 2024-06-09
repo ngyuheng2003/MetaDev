@@ -34,6 +34,8 @@ public interface PostRepository {
 
     int deletePost(Long post_id);
 
+    int getPostCount(Long user_id);
+
     public int getLikeCount(Long post_id);
 
 

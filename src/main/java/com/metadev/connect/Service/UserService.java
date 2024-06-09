@@ -232,6 +232,33 @@ public class UserService implements UserRepository {
         return verifyPassword(inputPassword, userPassword);
     }
 
+    @Override
+    public int updateProfile(Long user_id, String username, String name, String bio, int status, String suggested_preferred_topic) {
+        String sql = """
+                    UPDATE
+                    [dbo].[user]
+                    SET
+                    [username] = ?, [name] = ?, [bio] = ?, [status] = ?, [suggested_preferred_topic] = ?
+                    WHERE
+                    user_id = ?;
+                    """;
+        return jdbc.update(sql, username, name, bio, status, suggested_preferred_topic, user_id);
+    }
+
+    @Override
+    public int updatePassword(Long user_id, String newPassword) {
+        String sql = """
+                    UPDATE
+                    [dbo].[user]
+                    SET
+                    [password] = ?
+                    WHERE
+                    user_id = ?;
+                    """;
+        return jdbc.update(sql, hashPassword(newPassword), user_id);
+    }
+
+
     // Password Hashing
 
     private String hashPassword(String password) {
