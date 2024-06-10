@@ -3,6 +3,8 @@ package com.metadev.connect.Controller;
 import com.metadev.connect.Entity.UserLogined;
 import com.metadev.connect.Service.UserService;
 
+import java.util.Random;
+
 public class Validation {
     static UserService userService = new UserService();
 
@@ -96,5 +98,24 @@ public class Validation {
 
     public static int updateNewPassword(String password){
         return userService.updatePassword(UserLogined.getUserId(), password);
+    }
+
+    private static int otpCode;
+    public static int generateOTP(){
+        //generate OTP
+        Random random = new Random();
+        otpCode = random.nextInt(1000000 - 100000) + 100000;
+        return otpCode;
+    }
+
+    public static boolean verifyOTP(int otpCodeUI){
+        //verify OTP input by user
+        if(otpCode == otpCodeUI) {
+            System.out.println(otpCode);
+            //reset OTP before returning
+            return true;
+        }
+        else
+            return false;
     }
 }

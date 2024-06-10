@@ -34,10 +34,14 @@ public class UserService implements UserRepository {
                     [dbo].[user] 
                     ([username], [email], [password]) 
                     VALUES 
-                    (?, ?, ?)
+                    (?, ?, ?);
+                    INSERT INTO 
+                    [dbo].[user_Setting]  
+                    (user_id) 
+                    SELECT user_id from [dbo].[user] WHERE username = ?;
                     """;
         // Execute the query using JdbcTemplate and return the result
-        return jdbc.update(sql, username, email, hashPassword(password));
+        return jdbc.update(sql, username, email, hashPassword(password), username);
     }
 
     public int insertUserPreferredTopic(UserPreferredTopic userPreferredTopic){
@@ -243,6 +247,31 @@ public class UserService implements UserRepository {
                     user_id = ?;
                     """;
         return jdbc.update(sql, username, name, bio, status, suggested_preferred_topic, user_id);
+    }
+
+    @Override
+    public List<Integer> fetch2FA(Long user_id) {
+        String sql = """
+                    SELECT 
+                    two_factor_authentication
+                    FROM
+                    [dbo].[user_setting]
+                    WHERE
+                    user_id = ?;
+                    """;
+        return jdbc.queryForList(sql, new Object[]{user_id}, Integer.class);
+    }
+    @Override
+    public int update2FA(Long user_id, int status) {
+        String sql = """
+                    UPDATE
+                    [dbo].[user_setting]
+                    SET
+                    [two_factor_authentication] = ?
+                    WHERE
+                    user_id = ?;
+                    """;
+        return jdbc.update(sql, status, user_id);
     }
 
     @Override
