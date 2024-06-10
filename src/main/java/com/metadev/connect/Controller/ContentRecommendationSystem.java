@@ -79,8 +79,7 @@ public class ContentRecommendationSystem {
             String[] tagArr = post.getTags();
             for(String tag : tagArr)
             {
-                if(tag.isEmpty() || tag.isBlank())
-                    continue;
+            if (tag.isEmpty()||tag.isBlank()) continue;
                 tagList.add(tag);
             }
         }
