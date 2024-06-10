@@ -2,13 +2,18 @@ package com.metadev.connect.FXMLController;
 
 import com.metadev.connect.Controller.*;
 import com.metadev.connect.Controller.StartUpController.StartUp;
+import com.metadev.connect.Email.EmailAPI;
 import com.metadev.connect.Entity.UserLogined;
 import com.metadev.connect.Service.UserService;
 import com.metadev.connect.ThreadPool.ThreadPool;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
@@ -19,6 +24,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+import javafx.stage.Stage;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -28,16 +34,16 @@ import java.util.ResourceBundle;
 @Component
 public class StartUpController implements Initializable{
     @FXML
-    private AnchorPane loginPane, signUpPane, otpPane;
+    private AnchorPane loginPane, signUpPane, otpPane, forgotPasswordPane;
     @FXML private ImageView logo;
     @FXML private VBox containerRight, loginError, signUpError;
-    @FXML private TextField usernameSU, emailSU, usernameLI;
+    @FXML private TextField usernameSU, emailSU, usernameLI, signupOTPInput;
     @FXML private PasswordField passwordSU, conPasswordSU, passwordLI;
     @FXML private Hyperlink signUpHyperLink;
     @FXML private Text usernameSUMessage, emailSUMessage, passwordSUMessage, confirmPasswordSUMessage;
     @FXML private Text loginErrorMessage,signUpErrorMessage;
     @FXML private Button nextSignUpButton, loginButton;
-
+    private int attempt = 3;
     private static boolean startup = true;
     private boolean usernameValidate = false, emailValidate = false;
     private boolean passwordValidate = false, confirmPasswordValidate = false;
@@ -45,6 +51,7 @@ public class StartUpController implements Initializable{
     Animation animation = new Animation();
 
     private ThreadPool threadPoolSUUsername, threadPoolSUEmail, threadPoolSU;
+    int otpType;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -71,6 +78,7 @@ public class StartUpController implements Initializable{
     // Login Pane
 
     public void loginButtonClicked(ActionEvent event) throws Exception {
+        otpType = 0;
         loginError.setOpacity(1);
         loginButton.setDisable(true);
         // Checking whether any input is blank
@@ -97,6 +105,10 @@ public class StartUpController implements Initializable{
                     UserService userService = new UserService();
                     System.out.println("LOGIN: Login successful");
                     new UserLogined(userService.findUserInfoByUsername(usernameLI.getText()).getFirst());
+                    int otpA = userService.fetch2FA(UserLogined.getUserId()).getFirst();
+                    if(otpA == 1)
+                        sendOTPEmail2(UserLogined.getEmail());
+                    threadPoolSU = new ThreadPool(1,1);
                     // Switching to the next scene
                     Platform.runLater(() -> {
                         try {
@@ -104,7 +116,17 @@ public class StartUpController implements Initializable{
                                 new StartUp(event, "/FXMLView/SettingView.fxml");
                             }
                             else {
-                                new StartUp(event, "/FXMLView/NewsFeedView.fxml");
+                                if(otpA ==1){
+                                    otpPane.toFront();
+                                    otpPane.setOpacity(1);
+                                    loginPane.setOpacity(0);
+                                    signUpError.setOpacity(0);
+                                    attempt = 3;
+                                    signupOTPInput.clear();
+                                }
+                                else {
+                                    new StartUp(event, "/FXMLView/NewsFeedView.fxml");
+                                }
                             }
                         } catch (IOException e) {
                             throw new RuntimeException(e);
@@ -148,6 +170,7 @@ public class StartUpController implements Initializable{
     }
 
     public void signUpNextButtonClicked(ActionEvent event) {
+        otpType = 1;
         otpPane.toFront();
         threadPoolSU = new ThreadPool(1, 1);
         animation.fade(signUpPane, 0.5, 0, 1, 0);
@@ -155,6 +178,9 @@ public class StartUpController implements Initializable{
         threadPoolSUUsername.stop();
         threadPoolSUEmail.stop();
         signUpError.setOpacity(0);
+        attempt = 3;
+        sendOTPEmail(emailSU.getText());
+        signupOTPInput.clear();
     }
 
     public void usernameSUValidation(KeyEvent event) throws Exception {
@@ -354,34 +380,53 @@ public class StartUpController implements Initializable{
         animation.fade(otpPane, 0.5, 0, 1, 0);
         animation.fade(signUpPane, 0.5, 0.5, 0, 1);
     }
-
     public void otpVerifyButtonClicked(ActionEvent event) throws Exception {
         UserService userService = new UserService();
         signUpError.setStyle("-fx-background-radius: 10; -fx-background-color: rgb(4,0,70);");
-        signUpErrorMessage.setText("Signing up ...");
-        signUpError.setOpacity(1);
-        threadPoolSU.execute(()->{
-            System.out.println("Checking register status ...");
-            boolean status = userService.registerNewUser(usernameSU.getText(), emailSU.getText(), passwordSU.getText()) == 1;
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    if(status) {
-                        loginPane.toFront();
-                        animation.fade(otpPane, 0.5, 0, 1, 0);
-                        animation.fade(loginPane, 0.5, 0.5, 0, 1);
-                        loginErrorMessage.setText("Sign up successfully");
-                        loginError.setOpacity(1);
-                    } else {
-                        signUpErrorMessage.setText("Error when signing up");
-                        signUpError.setStyle("-fx-background-radius: 10; -fx-background-color: rgb(192, 64, 0);");
-                    }
-                }
+        if (!(Validation.verifyOTP(Integer.parseInt(signupOTPInput.getText())))) {
+            signUpError.setOpacity(1);
+            attempt--;
+            signUpErrorMessage.setText("Invalid verification code. " + attempt + " attempt(s) left");
+            if (attempt == 0) {
+                loginPane.toFront();
+                animation.fade(otpPane, 0.5, 0, 1, 0);
+                animation.fade(loginPane, 0.5, 0.5, 0, 1);
+                loginErrorMessage.setText("Too many wrong attempts");
+                loginError.setOpacity(1);
+            }
+        }else {
+            if(otpType ==1) {
+                threadPoolSU.execute(() -> {
+                    System.out.println("Checking register status ...");
+                    boolean status = userService.registerNewUser(usernameSU.getText(), emailSU.getText(), passwordSU.getText()) == 1;
+                    Platform.runLater(() -> {
+                        if (status) {
+                            loginPane.toFront();
+                            animation.fade(otpPane, 0.5, 0, 1, 0);
+                            animation.fade(loginPane, 0.5, 0.5, 0, 1);
+                            loginErrorMessage.setText("Sign up successfully");
+                            loginError.setOpacity(1);
+                        } else {
+                            signUpErrorMessage.setText("Error when signing up");
+                            signUpError.setStyle("-fx-background-radius: 10; -fx-background-color: rgb(192, 64, 0);");
+                        }
 
-            });
+                    });
 
-        });
 
+                });
+            }else{
+                threadPoolSU.execute(() -> {
+                    Platform.runLater(() -> {
+                        try {
+                            new StartUp(event, "/FXMLView/NewsFeedView.fxml");
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                });
+            }
+        }
     }
 
     // General
@@ -402,5 +447,60 @@ public class StartUpController implements Initializable{
         unlockNextButton();
     }
 
+    public void sendOTPEmail(String emailSU) {
+        String subject = "Verification Code - New User Sign Up";
+        int otpCode = Validation.generateOTP();
+        String html = "<div class=\"container\" style=\"border-radius: 15px; ;background-color: #0b2e59; width: 300px; height: 400px; margin: 150px auto; padding: 30px;\">\n" +
+                "        <img src=\"https://1drv.ms/i/c/8e89b564baebfc78/IQPek6lFrjkBTo63-YCOry88Aacals08rzgKLamzhulEumQ?width=1024\" style=\"height: 30px;margin-top: 10px;margin-bottom: 10px\">\n" +
+                "        <h1 style=\"color: white; font-family: 'Arial';margin-top: 30px; font-size: 30px\">\n" +
+                "            One-Time-Password\n" +
+                "        </h1>\n" +
+                "        <p style=\"color: white; font-family: 'Arial'; font-size: 18px;\">\n" +
+                "            This is your verification code:\n" +
+                "        </p>\n" +
+                "        <p style=\"color: white; font-family: 'Arial'; font-size: 35px; text-align: center;margin-top: 0\">"+otpCode+"</p>\n" +
+                "        <p style=\"color: white; font-family: 'Arial'; font-size: 18px; align-items: center\">Do not share this code with anyone else</p>\n" +
+                "        <p style=\"margin-top: 40px; color: white; font-family: 'Arial'; font-size: 18px\">\n" +
+                "            MetaDev Team\n" +
+                "        </p>\n" +
+                "    </div>";
+        EmailAPI.sendEmail(emailSU, subject, html);
+    }
 
+    public void forgotPasswordBackButtonClicked(ActionEvent event){
+        // Switching back to login pane
+        loginPane.toFront();
+        loginError.setOpacity(0);
+        animation.fade(forgotPasswordPane, 0.5, 0, 1, 0);
+        animation.fade(loginPane, 0.5, 0.5, 0, 1);
+    }
+
+    public void sendOTPEmail2(String email) {
+        String subject = "Verification Code - Two Factor Authentication";
+        int otpCode = Validation.generateOTP();
+        String html = "<div class=\"container\" style=\"border-radius: 15px; ;background-color: #0b2e59; width: 300px; height: 400px; margin: 150px auto; padding: 30px;\">\n" +
+                "        <img src=\"https://1drv.ms/i/c/8e89b564baebfc78/IQPek6lFrjkBTo63-YCOry88Aacals08rzgKLamzhulEumQ?width=1024\" style=\"height: 30px;margin-top: 10px;margin-bottom: 10px\">\n" +
+                "        <h1 style=\"color: white; font-family: 'Arial';margin-top: 30px; font-size: 30px\">\n" +
+                "            One-Time-Password\n" +
+                "        </h1>\n" +
+                "        <p style=\"color: white; font-family: 'Arial'; font-size: 18px;\">\n" +
+                "            This is your verification code:\n" +
+                "        </p>\n" +
+                "        <p style=\"color: white; font-family: 'Arial'; font-size: 35px; text-align: center;margin-top: 0\">"+otpCode+"</p>\n" +
+                "        <p style=\"color: white; font-family: 'Arial'; font-size: 18px; align-items: center\">Do not share this code with anyone else</p>\n" +
+                "        <p style=\"margin-top: 40px; color: white; font-family: 'Arial'; font-size: 18px\">\n" +
+                "            MetaDev Team\n" +
+                "        </p>\n" +
+                "    </div>";
+        EmailAPI.sendEmail(email, subject, html);
+    }
+
+
+    public void forgotPasswordLinkClicked(ActionEvent event) {
+        // Switching back to login pane
+        forgotPasswordPane.toFront();
+        loginError.setOpacity(0);
+        animation.fade(loginPane, 0.5, 0, 1, 0);
+        animation.fade(forgotPasswordPane, 0.5, 0.5, 0, 1);
+    }
 }

@@ -29,6 +29,10 @@ public interface UserRepository {
 
     int updateProfile(Long user_id, String username, String name, String bio, int status, String suggested_preferred_topic);
 
+    List<Integer> fetch2FA(Long user_id);
+
+    int update2FA(Long user_id, int status);
+
     int updatePassword(Long user_id, String newPassword);
 }
 

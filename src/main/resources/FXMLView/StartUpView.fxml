@@ -66,7 +66,7 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <TextField layoutX="60.0" layoutY="275.0" prefHeight="40.0" prefWidth="380.0" promptText="123456" style="-fx-background-color: transparent; -fx-border-color: rgb(4,0,70); -fx-border-width: 0 0 2px 0; -fx-font-size: 15;" />
+                              <TextField fx:id="signupOTPInput" layoutX="60.0" layoutY="275.0" prefHeight="40.0" prefWidth="380.0" promptText="123456" style="-fx-background-color: transparent; -fx-border-color: rgb(4,0,70); -fx-border-width: 0 0 2px 0; -fx-font-size: 15;" />
                               <Text layoutX="60.0" layoutY="200.0" strokeType="OUTSIDE" strokeWidth="0.0" text="A verification code has been sent to your email address. Please enter the code to proceed." wrappingWidth="380.0">
                                  <font>
                                     <Font name="HarmonyOS Sans SC" size="20.0" />
@@ -166,7 +166,30 @@
                               </VBox>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="loginPane" minHeight="550.0" minWidth="500.0" opacity="0.0">
+                        <AnchorPane fx:id="forgotPasswordPane" layoutX="10.0" layoutY="10.0" minHeight="550.0" minWidth="500.0" opacity="0.0">
+                           <children>
+                              <Text layoutX="41.0" layoutY="109.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 100; -fx-fill: rgb(4,0,70);" text="Forgot Password?">
+                                 <font>
+                                    <Font name="HarmonyOS Sans SC" size="50.0" />
+                                 </font>
+                              </Text>
+                              <HBox alignment="CENTER" layoutX="60.0" layoutY="470.0" prefHeight="35.0" prefWidth="380.0">
+                                 <children>
+                                    <Button id="leftButton" mnemonicParsing="false" onAction="#forgotPasswordBackButtonClicked" prefHeight="35.0" prefWidth="135.0" text="Back">
+                                       <font>
+                                          <Font name="Roboto" size="12.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <Text layoutX="41.0" layoutY="189.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please contact us at 03-1234 5678 or email us at technialsupport@metadev.com to reset your password." wrappingWidth="409.95001220703125">
+                                 <font>
+                                    <Font size="21.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="loginPane" minHeight="550.0" minWidth="500.0">
                            <children>
                               <Pane layoutX="60.0" layoutY="30.0" prefHeight="20.0" prefWidth="380.0" />
                               <Text layoutX="160.0" layoutY="125.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 100; -fx-fill: rgb(4,0,70);" text="Login">
@@ -193,7 +216,7 @@
                                     </VBox>
                                  </children></Pane>
                               <TextField fx:id="usernameLI" layoutX="60.0" layoutY="230.0" prefHeight="40.0" prefWidth="380.0" promptText="Username / Email Address" style="-fx-background-color: transparent; -fx-border-color: rgb(4,0,70); -fx-border-width: 0 0 2px 0; -fx-font-size: 15;" />
-                              <Pane layoutX="60.0" layoutY="282.6666564941406" prefHeight="20.0" prefWidth="380.0" />
+                              <Pane fx:id="singupOTPInput" layoutX="60.0" layoutY="282.6666564941406" prefHeight="20.0" prefWidth="380.0" />
                               <PasswordField fx:id="passwordLI" layoutX="60.0" layoutY="310.0" prefHeight="40.0" prefWidth="380.0" promptText="Password" style="-fx-background-color: transparent; -fx-border-color: rgb(4,0,70); -fx-border-width: 0 0 2px 0; -fx-font-size: 15;" />
                               <Pane layoutX="60.0" layoutY="362.6666564941406" prefHeight="40.0" prefWidth="380.0" />
                               <Button id="rightButton" fx:id="loginButton" layoutX="60.0" layoutY="410.0" mnemonicParsing="false" onAction="#loginButtonClicked" prefHeight="40.0" prefWidth="380.0" text="Login">
@@ -204,7 +227,7 @@
                               <Pane layoutX="60.0" layoutY="462.6666564941406" prefHeight="10.0" prefWidth="380.0" />
                               <HBox alignment="CENTER" layoutX="60.0" layoutY="473.0" prefHeight="35.0" prefWidth="380.0">
                                  <children>
-                                    <Hyperlink focusTraversable="false" text="Forgot Password">
+                                    <Hyperlink focusTraversable="false" onAction="#forgotPasswordLinkClicked" text="Forgot Password">
                                        <font>
                                           <Font size="15.0" />
                                        </font>

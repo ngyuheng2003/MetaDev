@@ -3,6 +3,7 @@ package com.metadev.connect.FXMLController;
 import com.metadev.connect.Controller.Post.UserProfile;
 import com.metadev.connect.Controller.StartUpController.StartUp;
 import com.metadev.connect.Controller.Validation;
+import com.metadev.connect.Email.EmailAPI;
 import com.metadev.connect.Entity.User;
 import com.metadev.connect.Entity.UserLogined;
 import com.metadev.connect.Service.UserService;
@@ -70,6 +71,9 @@ public class SettingController implements Initializable {
     @FXML PasswordField oldPasswordCTF, passwordCTF, confirmPasswordCTF;
     @FXML Button updatePasswordButton;
     @FXML VBox changePasswordError;
+
+    @FXML Text errorMessage, status2FA;
+    @FXML Button enableButton;
 
 
     @Override
@@ -265,8 +269,8 @@ public class SettingController implements Initializable {
         settingChangePasswordPane.setOpacity(1);
         settingSnPPane.setOpacity(0);
     }
-
-    public void TFAButtonClicked(ActionEvent event) {
+    int statusSetting2FA;
+    public void TFAButtonClicked(ActionEvent event) throws Exception {
         setting2FAPane.toFront();
         setting2FAPane.setOpacity(1);
         settingSnPPane.setOpacity(0);
@@ -274,7 +278,33 @@ public class SettingController implements Initializable {
         otp2FAPane.setDisable(true);
         emailTF.clear();
         otpTF.clear();
+        setting2FAPane.setDisable(false);
+        emailTF.setText(UserLogined.getEmail());
+        UserService userService = new UserService();
+        ThreadPool threadPoolSetting = new ThreadPool(1,1);
+        threadPoolSetting.execute(()-> {
+            statusSetting2FA = userService.fetch2FA(UserLogined.getUserId()).getFirst();
+            if (statusSetting2FA == 1) {
+                Platform.runLater(() -> {
+                    enableButton.setText("Disable");
+                    enableButton.setDisable(false);
+                    status2FA.setText("ENABLE");
+                    status2FA.setStyle("-fx-fill: green");
+                });
+            } else{
+                Platform.runLater(() -> {
+                    enableButton.setText("Enable");
+                    enableButton.setDisable(true);
+                    status2FA.setText("DISABLE");
+                    status2FA.setStyle("-fx-fill: red");
+                });
+            }
+                threadPoolSetting.stop();
+            });
+
     }
+
+    // Change Password Pane
     boolean passwordValidate = false;
     boolean confirmPasswordValidate = false;
 
@@ -362,12 +392,13 @@ public class SettingController implements Initializable {
         updatePasswordButton.setDisable(!passwordValidate || !confirmPasswordValidate);
     }
 
-    // Change Password Pane
+
 
     public void backChangePasswordButtonClicked(ActionEvent event) {
         settingSnPPane.toFront();
         settingChangePasswordPane.setOpacity(0);
         settingSnPPane.setOpacity(1);
+        settingChangePasswordPane.setDisable(true);
     }
 
 
@@ -409,10 +440,63 @@ public class SettingController implements Initializable {
         settingSnPPane.toFront();
         settingSnPPane.setOpacity(1);
         setting2FAPane.setOpacity(0);
+        setting2FAPane.setDisable(true);
+        otp2FAPane.setOpacity(0);
+        otp2FAPane.setDisable(true);
 
     }
+    int attempt = 3;
+    public void enable2FAButtonClicked(ActionEvent event) throws Exception {
+        UserService userService = new UserService();
+        if(statusSetting2FA == 1){
+            ThreadPool threadPoolSetting = new ThreadPool(1,1);
+            threadPoolSetting.execute(() -> {
+                System.out.println("Checking status ...");
+                boolean status = userService.update2FA(UserLogined.getUserId(), 0) == 1;
+                Platform.runLater(() -> {
+                    if (status) {
+                        settingSnPPane.toFront();
+                        settingSnPPane.setOpacity(1);
+                        setting2FAPane.setOpacity(0);
+                        setting2FAPane.setDisable(true);
+                        otp2FAPane.setOpacity(0);
+                        otp2FAPane.setDisable(true);
+                    }
 
-    public void enable2FAButtonClicked(ActionEvent event) {
+                });
+                threadPoolSetting.stop();
+            });
+            return;
+        }
+        enableButton.setDisable(true);
+        if (!(Validation.verifyOTP(Integer.parseInt(otpTF.getText())))) {
+            attempt--;
+            errorMessage.setText("Invalid verification code. " + attempt + " attempt(s) left");
+            if (attempt == 0) {
+                enableButton.setDisable(true);
+                errorMessage.setText("Please try again later");
+                return;
+            }
+            enableButton.setDisable(false);
+        }else {
+            ThreadPool threadPoolSetting = new ThreadPool(1,1);
+            threadPoolSetting.execute(() -> {
+                System.out.println("Checking status ...");
+                boolean status = userService.update2FA(UserLogined.getUserId(), 1) == 1;
+                Platform.runLater(() -> {
+                    if (status) {
+                        settingSnPPane.toFront();
+                        settingSnPPane.setOpacity(1);
+                        setting2FAPane.setOpacity(0);
+                        setting2FAPane.setDisable(true);
+                        otp2FAPane.setOpacity(0);
+                        otp2FAPane.setDisable(true);
+                    }
+
+                });
+                threadPoolSetting.stop();
+            });
+        }
     }
 
 
@@ -420,6 +504,29 @@ public class SettingController implements Initializable {
     public void sendOTPButtonClicked(ActionEvent event) {
         otp2FAPane.setOpacity(1);
         otp2FAPane.setDisable(false);
+        sendOTPEmail(UserLogined.getEmail());
+        attempt = 3;
+        enableButton.setDisable(false);
+    }
+
+    public void sendOTPEmail(String email) {
+        String subject = "Verification Code - Two Factor Authentication";
+        int otpCode = Validation.generateOTP();
+        String html = "<div class=\"container\" style=\"border-radius: 15px; ;background-color: #0b2e59; width: 300px; height: 400px; margin: 150px auto; padding: 30px;\">\n" +
+                "        <img src=\"https://1drv.ms/i/c/8e89b564baebfc78/IQPek6lFrjkBTo63-YCOry88Aacals08rzgKLamzhulEumQ?width=1024\" style=\"height: 30px;margin-top: 10px;margin-bottom: 10px\">\n" +
+                "        <h1 style=\"color: white; font-family: 'Arial';margin-top: 30px; font-size: 30px\">\n" +
+                "            One-Time-Password\n" +
+                "        </h1>\n" +
+                "        <p style=\"color: white; font-family: 'Arial'; font-size: 18px;\">\n" +
+                "            This is your verification code:\n" +
+                "        </p>\n" +
+                "        <p style=\"color: white; font-family: 'Arial'; font-size: 35px; text-align: center;margin-top: 0\">"+otpCode+"</p>\n" +
+                "        <p style=\"color: white; font-family: 'Arial'; font-size: 18px; align-items: center\">Do not share this code with anyone else</p>\n" +
+                "        <p style=\"margin-top: 40px; color: white; font-family: 'Arial'; font-size: 18px\">\n" +
+                "            MetaDev Team\n" +
+                "        </p>\n" +
+                "    </div>";
+        EmailAPI.sendEmail(email, subject, html);
     }
 
 

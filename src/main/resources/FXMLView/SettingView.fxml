@@ -382,124 +382,6 @@
                         </ScrollPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="setting2FAPane" disable="true" opacity="0.0">
-                     <children>
-                        <ScrollPane prefHeight="640.0" prefWidth="600.0" style="-fx-background-color: transparent;">
-                           <content>
-                              <VBox spacing="10.0">
-                                 <children>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="595.0">
-                                       <children>
-                                          <Text layoutX="14.0" layoutY="75.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Two Factor Authentication">
-                                             <font>
-                                                <Font name="ABeeZee Regular" size="35.0" />
-                                             </font>
-                                          </Text>
-                                       </children>
-                                    </AnchorPane>
-                                    <Pane prefHeight="0.0" prefWidth="595.0" />
-                                    <AnchorPane prefHeight="510.0" prefWidth="595.0">
-                                       <children>
-                                          <VBox prefHeight="265.0" prefWidth="595.0">
-                                             <children>
-                                                <HBox>
-                                                   <children>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current Status: ">
-                                                         <font>
-                                                            <Font name="Roboto" size="20.0" />
-                                                         </font>
-                                                      </Text>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" ">
-                                                         <font>
-                                                            <Font name="Roboto" size="20.0" />
-                                                         </font>
-                                                      </Text>
-                                                   </children>
-                                                </HBox>
-                                                <VBox prefHeight="200.0" prefWidth="100.0">
-                                                   <children>
-                                                      <AnchorPane prefHeight="200.0" prefWidth="555.0">
-                                                         <children>
-                                                            <Text layoutX="14.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="To enable Two Factor Aunthenticationn please enter your email address. A verification code will be send to your email address." wrappingWidth="525.0">
-                                                               <font>
-                                                                  <Font size="20.0" />
-                                                               </font>
-                                                            </Text>
-                                                            <VBox layoutX="14.0" layoutY="137.0">
-                                                               <children>
-                                                                  <TextField fx:id="emailTF" prefHeight="33.0" prefWidth="430.0" promptText="Email Address" style="-fx-background-color: transparent; -fx-border-width: 0 0 2 0; -fx-border-color: black;">
-                                                                     <font>
-                                                                        <Font size="15.0" />
-                                                                     </font>
-                                                                  </TextField>
-                                                                  <Text strokeType="OUTSIDE" strokeWidth="0.0">
-                                                                     <VBox.margin>
-                                                                        <Insets top="5.0" />
-                                                                     </VBox.margin>
-                                                                     <font>
-                                                                        <Font size="15.0" />
-                                                                     </font>
-                                                                  </Text>
-                                                               </children>
-                                                            </VBox>
-                                                            <Button id="transparentButton" layoutX="461.0" layoutY="136.0" mnemonicParsing="false" onAction="#sendOTPButtonClicked" prefHeight="35.0" prefWidth="80.0" text="Send">
-                                                               <font>
-                                                                  <Font size="15.0" />
-                                                               </font>
-                                                            </Button>
-                                                         </children>
-                                                      </AnchorPane>
-                                                      <AnchorPane fx:id="otp2FAPane" disable="true" opacity="0.0" prefHeight="200.0" prefWidth="555.0">
-                                                         <children>
-                                                            <Text layoutX="14.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter the verification code" wrappingWidth="525.0">
-                                                               <font>
-                                                                  <Font size="20.0" />
-                                                               </font>
-                                                            </Text>
-                                                            <VBox layoutX="14.0" layoutY="60.0" prefHeight="58.0" prefWidth="525.0">
-                                                               <children>
-                                                                  <TextField fx:id="otpTF" prefHeight="33.0" prefWidth="430.0" promptText="123456" style="-fx-background-color: transparent; -fx-border-width: 0 0 2 0; -fx-border-color: black;">
-                                                                     <font>
-                                                                        <Font size="15.0" />
-                                                                     </font>
-                                                                  </TextField>
-                                                               </children>
-                                                            </VBox>
-                                                         </children>
-                                                      </AnchorPane>
-                                                   </children>
-                                                   <VBox.margin>
-                                                      <Insets top="20.0" />
-                                                   </VBox.margin>
-                                                </VBox>
-                                             </children>
-                                             <padding>
-                                                <Insets left="20.0" right="20.0" top="10.0" />
-                                             </padding>
-                                          </VBox>
-                                          <HBox alignment="CENTER" layoutX="108.0" layoutY="430.0" prefHeight="35.0" prefWidth="380.0">
-                                             <children>
-                                                <Button id="resetButton" mnemonicParsing="false" onAction="#backTFAButtonClicked" prefHeight="35.0" prefWidth="135.0" text="Back">
-                                                   <font>
-                                                      <Font name="Roboto" size="12.0" />
-                                                   </font>
-                                                </Button>
-                                                <Pane prefHeight="35.0" prefWidth="45.0" />
-                                                <Button id="postButton" disable="true" mnemonicParsing="false" onAction="#enable2FAButtonClicked" prefHeight="35.0" prefWidth="135.0" text="Enable">
-                                                   <font>
-                                                      <Font name="Roboto" size="12.0" />
-                                                   </font>
-                                                </Button>
-                                             </children>
-                                          </HBox>
-                                       </children>
-                                    </AnchorPane>
-                                 </children>
-                              </VBox>
-                           </content>
-                        </ScrollPane>
-                     </children>
-                  </AnchorPane>
                   <AnchorPane fx:id="settingSnPPane" disable="true" opacity="0.0">
                      <children>
                         <ScrollPane prefHeight="640.0" prefWidth="600.0" style="-fx-background-color: transparent;">
@@ -553,6 +435,132 @@
                                           </Button>
                                        </children>
                                     </HBox>
+                                 </children>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane fx:id="setting2FAPane" disable="true" opacity="0.0">
+                     <children>
+                        <ScrollPane prefHeight="640.0" prefWidth="600.0" style="-fx-background-color: transparent;">
+                           <content>
+                              <VBox spacing="10.0">
+                                 <children>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="595.0">
+                                       <children>
+                                          <Text layoutX="14.0" layoutY="75.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Two Factor Authentication">
+                                             <font>
+                                                <Font name="ABeeZee Regular" size="35.0" />
+                                             </font>
+                                          </Text>
+                                       </children>
+                                    </AnchorPane>
+                                    <Pane prefHeight="0.0" prefWidth="595.0" />
+                                    <AnchorPane prefHeight="510.0" prefWidth="595.0">
+                                       <children>
+                                          <VBox prefHeight="265.0" prefWidth="595.0">
+                                             <children>
+                                                <HBox>
+                                                   <children>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current Status: ">
+                                                         <font>
+                                                            <Font name="Roboto" size="20.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <Text fx:id="status2FA" strokeType="OUTSIDE" strokeWidth="0.0" text=" ">
+                                                         <font>
+                                                            <Font name="Roboto" size="20.0" />
+                                                         </font>
+                                                      </Text>
+                                                   </children>
+                                                </HBox>
+                                                <VBox prefHeight="200.0" prefWidth="100.0">
+                                                   <children>
+                                                      <AnchorPane prefHeight="200.0" prefWidth="555.0">
+                                                         <children>
+                                                            <Text layoutX="14.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="To enable Two Factor Aunthenticationn, an verification code will be sent to your email address as shown below. Please check your email for the code." wrappingWidth="525.0">
+                                                               <font>
+                                                                  <Font size="20.0" />
+                                                               </font>
+                                                            </Text>
+                                                            <VBox layoutX="14.0" layoutY="137.0">
+                                                               <children>
+                                                                  <TextField fx:id="emailTF" disable="true" prefHeight="33.0" prefWidth="430.0" promptText="Email Address" style="-fx-background-color: transparent; -fx-border-width: 0 0 2 0; -fx-border-color: black;">
+                                                                     <font>
+                                                                        <Font size="15.0" />
+                                                                     </font>
+                                                                  </TextField>
+                                                                  <Text strokeType="OUTSIDE" strokeWidth="0.0">
+                                                                     <VBox.margin>
+                                                                        <Insets top="5.0" />
+                                                                     </VBox.margin>
+                                                                     <font>
+                                                                        <Font size="15.0" />
+                                                                     </font>
+                                                                  </Text>
+                                                               </children>
+                                                            </VBox>
+                                                            <Button id="transparentButton" layoutX="461.0" layoutY="136.0" mnemonicParsing="false" onAction="#sendOTPButtonClicked" prefHeight="35.0" prefWidth="80.0" text="Send">
+                                                               <font>
+                                                                  <Font size="15.0" />
+                                                               </font>
+                                                            </Button>
+                                                         </children>
+                                                      </AnchorPane>
+                                                      <AnchorPane fx:id="otp2FAPane" disable="true" opacity="0.0" prefHeight="200.0" prefWidth="555.0">
+                                                         <children>
+                                                            <Text layoutX="14.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter the verification code" wrappingWidth="525.0">
+                                                               <font>
+                                                                  <Font size="20.0" />
+                                                               </font>
+                                                            </Text>
+                                                            <VBox layoutX="14.0" layoutY="60.0" prefHeight="73.0" prefWidth="525.0">
+                                                               <children>
+                                                                  <TextField fx:id="otpTF" prefHeight="33.0" prefWidth="430.0" promptText="123456" style="-fx-background-color: transparent; -fx-border-width: 0 0 2 0; -fx-border-color: black;">
+                                                                     <font>
+                                                                        <Font size="15.0" />
+                                                                     </font>
+                                                                  </TextField>
+                                                                  <Text fx:id="errorMessage" fill="#ae1e1e" strokeType="OUTSIDE" strokeWidth="0.0">
+                                                                     <VBox.margin>
+                                                                        <Insets top="5.0" />
+                                                                     </VBox.margin>
+                                                                     <font>
+                                                                        <Font size="15.0" />
+                                                                     </font>
+                                                                  </Text>
+                                                               </children>
+                                                            </VBox>
+                                                         </children>
+                                                      </AnchorPane>
+                                                   </children>
+                                                   <VBox.margin>
+                                                      <Insets top="20.0" />
+                                                   </VBox.margin>
+                                                </VBox>
+                                             </children>
+                                             <padding>
+                                                <Insets left="20.0" right="20.0" top="10.0" />
+                                             </padding>
+                                          </VBox>
+                                          <HBox alignment="CENTER" layoutX="108.0" layoutY="430.0" prefHeight="35.0" prefWidth="380.0">
+                                             <children>
+                                                <Button id="resetButton" mnemonicParsing="false" onAction="#backTFAButtonClicked" prefHeight="35.0" prefWidth="135.0" text="Back">
+                                                   <font>
+                                                      <Font name="Roboto" size="12.0" />
+                                                   </font>
+                                                </Button>
+                                                <Pane prefHeight="35.0" prefWidth="45.0" />
+                                                <Button id="postButton" fx:id="enableButton" mnemonicParsing="false" onAction="#enable2FAButtonClicked" prefHeight="35.0" prefWidth="135.0" text="Enable">
+                                                   <font>
+                                                      <Font name="Roboto" size="12.0" />
+                                                   </font>
+                                                </Button>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </AnchorPane>
                                  </children>
                               </VBox>
                            </content>
